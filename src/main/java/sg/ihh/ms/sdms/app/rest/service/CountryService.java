@@ -1,10 +1,12 @@
 package sg.ihh.ms.sdms.app.rest.service;
 
 import java.util.List;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +19,7 @@ import sg.ihh.ms.sdms.app.rest.model.CountryListResponse;
 @RestController
 @RequestMapping(path = "countries", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
         consumes = MediaType.APPLICATION_JSON_VALUE)
+@Validated
 public class CountryService extends BaseService {
 
     @Autowired
@@ -30,18 +33,17 @@ public class CountryService extends BaseService {
     }
 
     @GetMapping
-    public CountryListResponse list(@RequestHeader("Accept-Version") String versionHeader,
-            @RequestParam("languageCode") String languageCode) {
+    public CountryListResponse list(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") @NotNull String languageCode) {
         final String methodName = "list";
         start(methodName);
-
-        // Version
-        Version version = Version.getVersion(versionHeader);
 
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<Country> list = repository.list(version, languageList);
+        List<Country> list = repository.list(Version.getVersion(version), languageList);
 
         list = processor.processList(list, languageCode);
 

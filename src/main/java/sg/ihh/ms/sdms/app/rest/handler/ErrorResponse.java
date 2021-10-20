@@ -12,6 +12,11 @@ public class ErrorResponse {
         this.message = status.getReasonPhrase();
     }
 
+    public ErrorResponse(HttpStatus status, String message) {
+        this.code = status.value();
+        this.message = message;
+    }
+
     public int getCode() {
         return code;
     }
