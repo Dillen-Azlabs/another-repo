@@ -16,8 +16,7 @@ import sg.ihh.ms.sdms.app.repository.LanguageRepository;
 import sg.ihh.ms.sdms.app.rest.model.LanguageListResponse;
 
 @RestController
-@RequestMapping(path = "languages", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-        consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "languages", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 @Validated
 public class LanguageService extends BaseService {
 

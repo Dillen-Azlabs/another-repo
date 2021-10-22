@@ -18,8 +18,7 @@ import sg.ihh.ms.sdms.app.rest.model.DoctorReasonListResponse;
 
 @RestController
 @RequestMapping(path = "doctors/reasons",
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-        consumes = MediaType.APPLICATION_JSON_VALUE)
+        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 @Validated
 public class DoctorReasonService extends BaseService {
 

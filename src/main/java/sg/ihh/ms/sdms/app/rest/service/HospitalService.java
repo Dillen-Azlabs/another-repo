@@ -16,8 +16,7 @@ import sg.ihh.ms.sdms.app.repository.HospitalRepository;
 import sg.ihh.ms.sdms.app.rest.model.HospitalListResponse;
 
 @RestController
-@RequestMapping(path = "hospitals", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-        consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "hospitals", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 @Validated
 public class HospitalService extends BaseService {
 

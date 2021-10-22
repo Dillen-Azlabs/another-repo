@@ -17,8 +17,7 @@ import sg.ihh.ms.sdms.app.repository.CountryRepository;
 import sg.ihh.ms.sdms.app.rest.model.CountryListResponse;
 
 @RestController
-@RequestMapping(path = "countries", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-        consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "countries", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 @Validated
 public class CountryService extends BaseService {
 
