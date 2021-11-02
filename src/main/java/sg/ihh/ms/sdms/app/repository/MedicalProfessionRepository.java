@@ -14,7 +14,7 @@ public class MedicalProfessionRepository extends BaseRepository {
 
         tableMap = new HashMap<>();
         tableMap.put(Version.DRAFT.getKey(), "medical_profession_type");
-        tableMap.put(Version.PUBLISHED.getKey(), "medical_profession_type");
+        tableMap.put(Version.PUBLISHED.getKey(), "medical_profession_type_ro");
     }
 
     public List<MedicalProfession> list(Version version, List<String> languageList) {

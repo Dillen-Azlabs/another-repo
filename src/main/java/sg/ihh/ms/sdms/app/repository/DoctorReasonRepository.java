@@ -14,7 +14,7 @@ public class DoctorReasonRepository extends BaseRepository {
 
         tableMap = new HashMap<>();
         tableMap.put(Version.DRAFT.getKey(), "doctor_reason");
-        tableMap.put(Version.PUBLISHED.getKey(), "doctor_reason");
+        tableMap.put(Version.PUBLISHED.getKey(), "doctor_reason_ro");
     }
 
     public List<DoctorReason> list(Version version, List<String> languageList) {

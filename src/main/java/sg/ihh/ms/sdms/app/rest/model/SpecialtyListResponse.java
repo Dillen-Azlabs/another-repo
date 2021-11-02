@@ -4,34 +4,34 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import sg.ihh.ms.sdms.app.model.ServiceProvider;
+import sg.ihh.ms.sdms.app.model.Specialty;
 
-@JsonPropertyOrder({"code", "message", "count", "serviceProviders"})
-public class ServiceProviderListResponse extends BaseResponse {
+@JsonPropertyOrder({"code", "message", "count", "specialties"})
+public class SpecialtyListResponse extends BaseResponse {
 
-    @JsonProperty("serviceProviders")
-    private List<ServiceProvider> list;
+    @JsonProperty("specialties")
+    private List<Specialty> list;
     @JsonProperty("count")
     private int count;
 
 
-    public ServiceProviderListResponse(List<ServiceProvider> list) {
+    public SpecialtyListResponse(List<Specialty> list) {
         super(HttpStatus.OK);
         this.count = list.size();
         this.list = list;
     }
 
-    public ServiceProviderListResponse(List<ServiceProvider> list, int count) {
+    public SpecialtyListResponse(List<Specialty> list, int count) {
         super(HttpStatus.OK);
         this.count = count;
         this.list = list;
     }
 
-    public List<ServiceProvider> getList() {
+    public List<Specialty> getList() {
         return list;
     }
 
-    public void setList(List<ServiceProvider> list) {
+    public void setList(List<Specialty> list) {
         this.list = list;
     }
 

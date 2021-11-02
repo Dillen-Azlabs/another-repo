@@ -3,35 +3,33 @@ package sg.ihh.ms.sdms.app.rest.model;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import sg.ihh.ms.sdms.app.model.ServiceProvider;
+import sg.ihh.ms.sdms.app.model.Gender;
 
-@JsonPropertyOrder({"code", "message", "count", "serviceProviders"})
-public class ServiceProviderListResponse extends BaseResponse {
+public class GenderListResponse extends BaseResponse {
 
-    @JsonProperty("serviceProviders")
-    private List<ServiceProvider> list;
+    @JsonProperty("genders")
+    private List<Gender> list;
     @JsonProperty("count")
     private int count;
 
 
-    public ServiceProviderListResponse(List<ServiceProvider> list) {
+    public GenderListResponse(List<Gender> list) {
         super(HttpStatus.OK);
         this.count = list.size();
         this.list = list;
     }
 
-    public ServiceProviderListResponse(List<ServiceProvider> list, int count) {
+    public GenderListResponse(List<Gender> list, int count) {
         super(HttpStatus.OK);
         this.count = count;
         this.list = list;
     }
 
-    public List<ServiceProvider> getList() {
+    public List<Gender> getList() {
         return list;
     }
 
-    public void setList(List<ServiceProvider> list) {
+    public void setList(List<Gender> list) {
         this.list = list;
     }
 

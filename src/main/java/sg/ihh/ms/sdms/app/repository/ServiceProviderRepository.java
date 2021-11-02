@@ -14,7 +14,7 @@ public class ServiceProviderRepository extends BaseRepository {
 
         tableMap = new HashMap<>();
         tableMap.put(Version.DRAFT.getKey(), "service_provider_type");
-        tableMap.put(Version.PUBLISHED.getKey(), "service_provider_type");
+        tableMap.put(Version.PUBLISHED.getKey(), "service_provider_type_ro");
     }
 
     public List<ServiceProvider> list(Version version, List<String> languageList) {

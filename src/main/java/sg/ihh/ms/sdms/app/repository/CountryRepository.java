@@ -14,7 +14,7 @@ public class CountryRepository extends BaseRepository {
 
         tableMap = new HashMap<>();
         tableMap.put(Version.DRAFT.getKey(), "country");
-        tableMap.put(Version.PUBLISHED.getKey(), "country");
+        tableMap.put(Version.PUBLISHED.getKey(), "country_ro");
     }
 
     public List<Country> list(Version version, List<String> languageList) {

@@ -14,7 +14,7 @@ public class InsuranceProviderRepository extends BaseRepository {
 
         tableMap = new HashMap<>();
         tableMap.put(Version.DRAFT.getKey(), "insurance_provider");
-        tableMap.put(Version.PUBLISHED.getKey(), "insurance_provider");
+        tableMap.put(Version.PUBLISHED.getKey(), "insurance_provider_ro");
     }
 
     public List<InsuranceProvider> list(Version version, List<String> languageList) {

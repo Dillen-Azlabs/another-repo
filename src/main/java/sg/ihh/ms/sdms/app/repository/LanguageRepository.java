@@ -14,7 +14,7 @@ public class LanguageRepository extends BaseRepository {
 
         tableMap = new HashMap<>();
         tableMap.put(Version.DRAFT.getKey(), "spoken_language");
-        tableMap.put(Version.PUBLISHED.getKey(), "spoken_language");
+        tableMap.put(Version.PUBLISHED.getKey(), "spoken_language_ro");
     }
 
     public List<Language> list(Version version, List<String> languageList) {
