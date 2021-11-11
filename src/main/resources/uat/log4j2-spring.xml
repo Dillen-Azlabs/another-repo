@@ -7,8 +7,8 @@
 		</Console>
 
 		<RollingFile name="RollingFile"
-			fileName="./logs/digihealth.log"
-			filePattern="./logs/$${date:yyyy-MM}/digihealth-%d{yyyy-MM-dd}-%i.log.gz">
+			fileName="./logs/sdms.log"
+			filePattern="./logs/$${date:yyyy-MM}/sdms-%d{yyyy-MM-dd}-%i.log.gz">
 			<PatternLayout>
 				<pattern>%d %p %C{1.} [%t] %m%n</pattern>
 			</PatternLayout>
