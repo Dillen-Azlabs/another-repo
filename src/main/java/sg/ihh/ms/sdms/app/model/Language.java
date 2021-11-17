@@ -4,23 +4,23 @@ import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"uid", "languageCode", "value", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "language", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class Language extends BaseModel {
 
-    @JsonProperty("value")
-    private String value;
+    @JsonProperty("language")
+    private String language;
 
     public Language() {
         // Empty Constructor
     }
 
-    public String getValue() {
-        return value;
+    public String getLanguage() {
+        return language;
     }
 
-    @ColumnName("value")
-    public void setValue(String value) {
-        this.value = value;
+    @ColumnName("language")
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
 }

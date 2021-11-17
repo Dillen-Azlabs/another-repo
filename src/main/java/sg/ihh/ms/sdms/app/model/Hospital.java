@@ -4,23 +4,23 @@ import org.jdbi.v3.core.mapper.reflect.ColumnName;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"uid", "languageCode", "name", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "hospital", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class Hospital extends BaseModel {
 
-    @JsonProperty("name")
-    private String name;
+    @JsonProperty("hospital")
+    private String hospital;
 
     public Hospital() {
         // Empty Constructor
     }
 
-    public String getName() {
-        return name;
+    public String getHospital() {
+        return hospital;
     }
 
-    @ColumnName("name")
-    public void setName(String name) {
-        this.name = name;
+    @ColumnName("hospital")
+    public void setHospital(String hospital) {
+        this.hospital = hospital;
     }
 
 

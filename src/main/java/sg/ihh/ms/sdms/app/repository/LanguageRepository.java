@@ -13,8 +13,8 @@ public class LanguageRepository extends BaseRepository {
         log = getLogger(this.getClass());
 
         tableMap = new HashMap<>();
-        tableMap.put(Version.DRAFT.getKey(), "spoken_language");
-        tableMap.put(Version.PUBLISHED.getKey(), "spoken_language_ro");
+        tableMap.put(Version.DRAFT.getKey(), "language");
+        tableMap.put(Version.PUBLISHED.getKey(), "language_ro");
     }
 
     public List<Language> list(Version version, List<String> languageList) {
