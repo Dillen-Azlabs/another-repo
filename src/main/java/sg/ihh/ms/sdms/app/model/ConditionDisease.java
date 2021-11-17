@@ -18,7 +18,7 @@ public class ConditionDisease extends BaseModel {
         return value;
     }
 
-    @ColumnName("condition_disease")
+    @ColumnName("condition")
     public void setValue(String value) {
         this.value = value;
     }
