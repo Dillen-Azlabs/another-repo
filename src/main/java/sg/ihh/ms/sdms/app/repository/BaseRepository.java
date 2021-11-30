@@ -91,7 +91,7 @@ public class BaseRepository {
     protected String generatePagination(Pagination pagination) {
         String statement = "";
         if (isValid(pagination)) {
-            statement = " LIMIT" + pagination.getPageSize() + " OFFSET " + pagination.getOffset();
+            statement = " LIMIT " + pagination.getPageSize() + " OFFSET " + pagination.getOffset();
         }
         return statement;
     }
