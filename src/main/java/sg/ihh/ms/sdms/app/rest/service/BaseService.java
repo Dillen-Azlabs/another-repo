@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import sg.ihh.ms.sdms.app.rest.model.BaseResponse;
+import sg.ihh.ms.sdms.app.util.json.JsonUtil;
 
 public class BaseService {
 
@@ -45,6 +46,11 @@ public class BaseService {
         list.add(defaultLanguageCode);
         list.add(languageCode);
         return list;
+    }
+
+    protected void logRequest(String methodName, Object obj) {
+        String message = "Request : " + JsonUtil.toJson(obj);
+        log.debug("[{}] {}", methodName, message);
     }
 
 }
