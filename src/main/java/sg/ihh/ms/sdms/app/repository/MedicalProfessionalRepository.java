@@ -179,7 +179,10 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "getClinics";
         start(methodName);
 
-        String sql = "SELECT mpc.*, c.clinic_name, c.address, c.phone_numbers, c.fax_numbers FROM medical_professional_clinic mpc " +
+        String sql = "SELECT mpc.uid, mpc.language_code, mpc.is_primary_clinic, mpc.created_dt, mpc.modified_dt, " +
+                " mpc.publish_flag, mpc.display_order, mpc.status, mpc.publish_date, c.name, c.address_1, " +
+                " c.address_2, c.city, c.state, c.postal_code, c.phone_numbers, c.fax_numbers " +
+                " FROM medical_professional_clinic mpc " +
                 " LEFT JOIN medical_professional mp ON mp.uid = mpc.medical_professional_uid " +
                 " LEFT JOIN clinic c ON mpc.clinic_uid = c.uid " +
                 " WHERE mpc.language_code IN(<languageList>) AND mp.item_url = :item_url";
