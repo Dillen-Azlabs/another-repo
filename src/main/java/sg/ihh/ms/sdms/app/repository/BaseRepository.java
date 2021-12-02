@@ -126,4 +126,23 @@ public class BaseRepository {
         completed(methodName);
         return result;
     }
+    protected <T> List<T> list(Version version, Class<T> clazz) {
+        final String methodName = "list";
+        start(methodName);
+
+        String sql = "SELECT * FROM {TABLE};";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        List<T> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+
+            result = query.mapToBean(clazz).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
 }

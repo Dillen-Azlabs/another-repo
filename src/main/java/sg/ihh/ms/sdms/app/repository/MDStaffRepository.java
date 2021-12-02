@@ -1,7 +1,6 @@
 package sg.ihh.ms.sdms.app.repository;
 
 import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.mapper.JoinRow;
 import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
 import sg.ihh.ms.sdms.app.model.*;
@@ -26,22 +25,6 @@ public class MDStaffRepository extends BaseRepository {
         tableMap.put(Version.PUBLISHED.getKey(), "medical_professional_ro");
     }
 
-    public List<MDStaffProvider> list() {
-        final String methodName = "list";
-        start(methodName);
-
-        String sql = "SELECT * FROM mdstaff_providers ";
-
-        List<MDStaffProvider> result = null;
-        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            result = query.mapToBean(MDStaffProvider.class).list();
-
-        } catch (Exception ex) {
-            log.error(methodName, ex);
-        }
-        completed(methodName);
-        return result;
-    }
 
     public List<MDStaffProvider> search(String searchTerm, List<Sort> sortList, Pagination pagination) {
         final String methodName = "search";
@@ -93,4 +76,6 @@ public class MDStaffRepository extends BaseRepository {
         completed(methodName);
         return result;
     }
+
+
 }
