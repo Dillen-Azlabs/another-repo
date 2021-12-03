@@ -8,10 +8,10 @@ import sg.ihh.ms.sdms.app.model.MedicalProfessionalDetail;
 
 import java.util.List;
 
-@JsonPropertyOrder({"code", "message", "count", "medicalProfessionals"})
+@JsonPropertyOrder({"code", "message", "count", "medicalProfessional"})
 public class MedicalProfessionalDetailListResponse extends BaseResponse {
 
-    @JsonProperty("medicalProfessionals")
+    @JsonProperty("medicalProfessional")
     private List<MedicalProfessionalDetail> list;
     @JsonProperty("count")
     private int count;
