@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-//@JsonPropertyOrder({"uid", "languageCode", "firstName", "order", "publishFlag", "createdDt", "modifiedDt"})
+//@JsonPropertyOrder({"providerId", "ssn", "firstName", "middleName", "lastName", "suffix", "salutation", "preferredName", "degreeId1", "degreeId2", "degreeId3", "specialityId1", "specialityId2", "specialityId3", "specialityId4", "otherFirstName", "otherMiddleName", "otherLastName", "gender", "maritalStatus", "spaoseName", "birthPlace", "birthDate", "birthDateText", "citizen", "ethnicity", "graduate", "graduateText", "associateTelephone", "associate1", "associate2", "associate3", "associate4", "associate5", "pager", "practice", "taxId", "otherId", "answeringService", "cellPhone", "email", "acceptNewPatient", "acceptMedicare", "medicareNumber", "acceptMedicaId", "medicaIdNumber", "medicalSanction", "upin", "lastUpdated", "lastUpdatedText", "updatedBy", "npi", "notifyBy", "languageId1", "languageId2", "languageId3", "languageId4", "languageId5", "taxonomyId1", "taxonomyId2", "taxonomyId3", "taxonomyId4", "fieldOfLicensureId", "fieldOfLicensureOther", "formattedName", "formattedNameWithDegree", "formalName", "formalNameWithDegree", "comments", "commentsHtml", "customProviderId", "others1", "others2", "pcrc", "cts", "ctsDate", "ctsDateText", "ctsEnd", "ctsEndText", "retired", "deceased", "retiredDate", "retiredDateText", "suspensionDate", "suspensionDateText", "deceasedDate", "deceasedDateText", "suspensionEndDate", "suspensionEndDateText"})
 public class MDStaffDemographic {
 
     @JsonProperty("providerId")
@@ -144,7 +144,7 @@ public class MDStaffDemographic {
     @JsonProperty("formattedNameWithDegree")
     private String formattedNameWithDegree;
     @JsonProperty("formalName")
-    private String formalformalNamename;
+    private String formalName;
     @JsonProperty("formalNameWithDegree")
     private String formalNameWithDegree;
     @JsonProperty("comments")
@@ -788,12 +788,12 @@ public class MDStaffDemographic {
         this.formattedNameWithDegree = formattedNameWithDegree;
     }
 
-    public String getFormalformalNamename() {
-        return formalformalNamename;
+    public String getFormalName() {
+        return formalName;
     }
 
-    public void setFormalformalNamename(String formalformalNamename) {
-        this.formalformalNamename = formalformalNamename;
+    public void setFormalName(String formalName) {
+        this.formalName = formalName;
     }
 
     public String getFormalNameWithDegree() {
