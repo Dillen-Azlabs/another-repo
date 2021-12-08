@@ -49,7 +49,7 @@ public class MDStaffRepository extends BaseRepository {
 
         String sql = "SELECT mdp.*, mddt.other_id as mcr_number FROM mdstaff_providers mdp"
                 + " LEFT JOIN mdstaff_demographic mddt ON mdp.provider_id = mddt.provider_id"
-                + " WHERE LOWER(name) LIKE CONCAT('%',:searchTermName,'%') "
+                + " WHERE LOWER(mdp.name) LIKE CONCAT('%',:searchTermName,'%') "
                 + " OR LOWER(other_id) LIKE CONCAT('%',:searchTermMcrNumber,'%') ";
 
         sortList = sortList.stream().map(sort -> new Sort(SORT_MAP.get(sort.getField()), sort.getModifier()))
