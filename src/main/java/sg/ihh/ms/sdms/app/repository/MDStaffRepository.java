@@ -48,7 +48,7 @@ public class MDStaffRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mdp.*, mddt.other_id as mcr_number FROM mdstaff_providers mdp"
-                + " LEFT JOIN mdstaff_demographic_test mddt ON mdp.provider_id = mddt.provider_id"
+                + " LEFT JOIN mdstaff_demographic mddt ON mdp.provider_id = mddt.provider_id"
                 + " WHERE LOWER(name) LIKE CONCAT('%',:searchTermName,'%') "
                 + " OR LOWER(other_id) LIKE CONCAT('%',:searchTermMcrNumber,'%') ";
 
@@ -79,7 +79,7 @@ public class MDStaffRepository extends BaseRepository {
         String sql = "SELECT mds.* FROM mdstaff_address ma" +
                 " INNER JOIN mdstaff_sites mds ON ma.medical_group_id = mds.site_id " +
                 " LEFT JOIN mdstaff_providers mp ON ma.provider_id = mp.provider_id " +
-                " LEFT JOIN mdstaff_demographic_test mddt ON mp.provider_id = mddt.provider_id " +
+                " LEFT JOIN mdstaff_demographic mddt ON mp.provider_id = mddt.provider_id " +
                 " WHERE mddt.other_id = :mcrNumber";
 
         List<MDStaffSite> result = null;
