@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
-@JsonPropertyOrder({"uid", "languageCode", "name", "address1", "address2", "city", "state", "postalCode", "telephoneNumbers", "faxNumbers", "primaryClinic", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "name", "address1", "address2", "city", "state", "postalCode", "telephoneNumbers", "faxNumbers", "isPrimaryClinic", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class Clinic extends BaseModel {
 
     @JsonProperty("name")
@@ -24,7 +24,7 @@ public class Clinic extends BaseModel {
     private String telephoneNumbers;
     @JsonProperty("faxNumbers")
     private String faxNumbers;
-    @JsonProperty("primaryClinic")
+    @JsonProperty("isPrimaryClinic")
     private boolean isPrimaryClinic;
 
     public Clinic() {
@@ -72,7 +72,7 @@ public class Clinic extends BaseModel {
         this.faxNumbers = faxNumbers;
     }
 
-    public boolean isPrimaryClinic() {
+    public boolean getIsPrimaryClinic() {
         return isPrimaryClinic;
     }
 
@@ -101,7 +101,7 @@ public class Clinic extends BaseModel {
     }
 
     @ColumnName("is_primary_clinic")
-    public void setPrimaryClinic(boolean primaryClinic) {
-        isPrimaryClinic = primaryClinic;
+    public void setIsPrimaryClinic(boolean isPrimaryClinic) {
+        this.isPrimaryClinic = isPrimaryClinic;
     }
 }
