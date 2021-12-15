@@ -179,19 +179,21 @@ public class MedicalProfessionalRepository extends BaseRepository {
         return result;
     }
 
-    public List<MediaCoverage> getMediaCoverage(Version version, List<String> languageList, String medicalProfessionalItemUrl) {
+    public List<MediaCoverage> getMediaCoverage(Version version, List<String> languageList, String medicalProfessionalItemUrl, String mediaCoverageLanguage) {
         final String methodName = "getMediaCoverage";
         start(methodName);
 
-        String sql = "SELECT mc.* FROM media_coverage mc " +
+        String sql = "SELECT mc.*, l.language FROM media_coverage mc " +
                 " LEFT JOIN medical_professional mp ON mp.uid = mc.related_specialist_uid " +
-                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url";
+                " LEFT JOIN language l ON l.uid = mc.language_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
+                " AND l.language = :language";
 
         sql = getTableVersion(version, tableMap, sql);
 
         List<MediaCoverage> result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("language", mediaCoverageLanguage);
             result = query.mapToBean(MediaCoverage.class).list();
 
         } catch (Exception ex) {

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
-@JsonPropertyOrder({"uid", "languageCode", "title", "imageUrl", "imageAltText", "summary", "source", "articleDate", "resourceType", "landingUrl", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "title", "imageUrl", "imageAltText", "summary", "source", "articleDate", "resourceType", "landingUrl", "language", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class MediaCoverage extends BaseModel {
 
     @JsonProperty("title")
@@ -24,6 +24,8 @@ public class MediaCoverage extends BaseModel {
     private String resourceType;
     @JsonProperty("landingUrl")
     private String landingUrl;
+    @JsonProperty("language")
+    private String language;
 
     public MediaCoverage() {
         // Empty Constructor
@@ -91,5 +93,13 @@ public class MediaCoverage extends BaseModel {
 
     public void setLandingUrl(String landingUrl) {
         this.landingUrl = landingUrl;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }
