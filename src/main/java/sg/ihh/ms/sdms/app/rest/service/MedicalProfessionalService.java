@@ -172,14 +172,15 @@ public class MedicalProfessionalService extends BaseService {
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
                     message = "Allowed Values : DRAFT, PUBLISHED") String version,
             @RequestParam("languageCode") String languageCode,
-            @RequestParam("medicalProfessionalUrl") String medicalProfessionalUrl) {
+            @RequestParam("medicalProfessionalUrl") String medicalProfessionalUrl,
+            @RequestParam("mediaCoverageLanguage") String mediaCoverageLanguage) {
         final String methodName = "getMedicalProfessionalMediaCoverages";
         start(methodName);
 
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<MediaCoverage> result = mpRepository.getMediaCoverage(Version.getVersion(version), languageList, medicalProfessionalUrl);
+        List<MediaCoverage> result = mpRepository.getMediaCoverage(Version.getVersion(version), languageList, medicalProfessionalUrl, mediaCoverageLanguage);
 
         result = mcProcessor.processList(result, languageCode);
 
