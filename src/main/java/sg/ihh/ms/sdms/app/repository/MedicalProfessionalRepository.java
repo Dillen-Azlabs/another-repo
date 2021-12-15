@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import sg.ihh.ms.sdms.app.model.*;
 
 import javax.sound.sampled.Port;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -70,27 +71,76 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "getDetails";
         start(methodName);
 
-        String sql = "SELECT mp.*, l.language, ip.insurance, g.gender, s.specialty, mpmd.meta_title, mpmd.meta_description, COUNT(mc.title) > 0 AS media_coverage FROM medical_professional mp " +
+        String sql = "SELECT mp.*, g.gender, s.specialty, mpmd.meta_title, mpmd.meta_description, COUNT(mc.title) > 0 AS media_coverage FROM medical_professional mp " +
                         " LEFT JOIN medical_professional_specialty mps ON mp.uid = mps.medical_professional_uid " +
                         " LEFT JOIN specialty s ON s.uid = mps.specialty_uid " +
-                        " LEFT JOIN medical_professional_language mpl ON mp.uid = mpl.medical_professional_uid " +
-                        " LEFT JOIN language l ON l.uid = mpl.language_uid " +
-                        " LEFT JOIN medical_professional_insurance mpi ON mp.uid = mpi.medical_professional_uid " +
-                        " LEFT JOIN insurance_panel ip ON ip.uid = mpi.insurance_uid " +
                         " LEFT JOIN gender g ON g.uid = mp.gender_uid " +
                         " LEFT JOIN medical_professional_metadata mpmd ON mp.uid = mpmd.medical_professional_uid " +
                         " LEFT JOIN medical_professional_metadata_hospital mpmdh ON mpmdh.medical_professional_metadata_uid = mpmd.uid " +
                         " LEFT JOIN hospital h ON mpmdh.hospital_uid = h.uid " +
                         " LEFT JOIN media_coverage mc ON mp.uid = mc.related_specialist_uid " +
                         " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
-                        " GROUP BY mp.uid, mp.language_code, l.language, ip.insurance, g.gender, s.specialty, mpmd.meta_title, mpmd.meta_description";
+                        " GROUP BY mp.uid, mp.language_code, g.gender, s.specialty, mpmd.meta_title, mpmd.meta_description";
 
         sql = getTableVersion(version, tableMap, sql);
 
-        List<MedicalProfessionalDetail> result = null;
+        List<MedicalProfessionalDetail> result = new ArrayList<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
             result = query.mapToBean(MedicalProfessionalDetail.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        for (MedicalProfessionalDetail medicalProfessionalDetail : result) {
+            medicalProfessionalDetail.setInsurancePanel(getMedicalProfessionalInsurance(version, languageList, medicalProfessionalItemUrl));
+            medicalProfessionalDetail.setLanguageSpoken(getMedicalProfessionalSpokenLanguages(version, languageList, medicalProfessionalItemUrl));
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    public List<String> getMedicalProfessionalSpokenLanguages(Version version, List<String> languageList, String medicalProfessionalItemUrl) {
+        final String methodName = "getMedicalProfessionalSpokenLanguages";
+        start(methodName);
+
+        String sql = "SELECT l.language FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_language mpl ON mp.uid = mpl.medical_professional_uid " +
+                " LEFT JOIN language l ON l.uid = mpl.language_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
+                " GROUP BY l.language";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        List<String> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
+            result = query.mapTo(String.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    public List<String> getMedicalProfessionalInsurance(Version version, List<String> languageList, String medicalProfessionalItemUrl) {
+        final String methodName = "getMedicalProfessionalInsurance";
+        start(methodName);
+
+        String sql = "SELECT i.insurance FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_insurance mpi ON mp.uid = mpi.medical_professional_uid " +
+                " LEFT JOIN insurance_panel i ON i.uid = mpi.insurance_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
+                " GROUP BY i.insurance";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        List<String> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
+            result = query.mapTo(String.class).list();
 
         } catch (Exception ex) {
             log.error(methodName, ex);

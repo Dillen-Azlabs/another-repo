@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
+import java.util.List;
+
 @JsonPropertyOrder({"uid", "languageCode", "displayName", "itemUrl", "salutation", "mcrNumber", "isMedicalReviewer", "profileImageUrl", "profileImageAltText", "designation", "specialty", "languageSpoken", "gender", "insurancePanel", "videoUrl", "quote", "qnaUrl", "qnaLinkText", "hasMediaCoverage", "shortBio", "socialSummary", "metaTitle", "metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class MedicalProfessionalDetail extends BaseModel {
 
@@ -27,11 +29,11 @@ public class MedicalProfessionalDetail extends BaseModel {
     @JsonProperty("specialty")
     private String specialty;
     @JsonProperty("languageSpoken")
-    private String languageSpoken;
+    private List<String> languageSpoken;
     @JsonProperty("gender")
     private String gender;
     @JsonProperty("insurancePanel")
-    private String insurancePanel;
+    private List<String> insurancePanel;
     @JsonProperty("videoUrl")
     private String videoUrl;
     @JsonProperty("quote")
@@ -88,12 +90,12 @@ public class MedicalProfessionalDetail extends BaseModel {
         this.salutation = salutation;
     }
 
-    public boolean isMedicalReviewer() {
+    public boolean getIsMedicalReviewer() {
         return isMedicalReviewer;
     }
 
-    public void setMedicalReviewer(boolean medicalReviewer) {
-        isMedicalReviewer = medicalReviewer;
+    public void setIsMedicalReviewer(boolean isMedicalReviewer) {
+        this.isMedicalReviewer = isMedicalReviewer;
     }
 
     public String getProfileImageUrl() {
@@ -130,13 +132,20 @@ public class MedicalProfessionalDetail extends BaseModel {
         this.specialty = specialty;
     }
 
-    public String getLanguageSpoken() {
+    public List<String> getLanguageSpoken() {
         return languageSpoken;
     }
 
-    @ColumnName("language")
-    public void setLanguageSpoken(String languageSpoken) {
+    public void setLanguageSpoken(List<String> languageSpoken) {
         this.languageSpoken = languageSpoken;
+    }
+
+    public List<String> getInsurancePanel() {
+        return insurancePanel;
+    }
+
+    public void setInsurancePanel(List<String> insurancePanel) {
+        this.insurancePanel = insurancePanel;
     }
 
     public String getGender() {
@@ -145,15 +154,6 @@ public class MedicalProfessionalDetail extends BaseModel {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public String getInsurancePanel() {
-        return insurancePanel;
-    }
-
-    @ColumnName("insurance")
-    public void setInsurancePanel(String insurancePanel) {
-        this.insurancePanel = insurancePanel;
     }
 
     public String getVideoUrl() {
