@@ -4,7 +4,6 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
 import sg.ihh.ms.sdms.app.model.Pac;
-import sg.ihh.ms.sdms.app.model.Treatment;
 import sg.ihh.ms.sdms.app.model.Version;
 
 import java.util.HashMap;
@@ -49,7 +48,7 @@ public class PacRepository extends BaseRepository {
         final String methodName = "searchByItemUrl";
         start(methodName);
 
-        String sql = "SELECT pac.*, mp.display_name FROM patient_assistance_centre pac " +
+        String sql = "SELECT pac.*, mp.display_name, c.country FROM patient_assistance_centre pac " +
                         "LEFT JOIN medical_professional_pac mppac ON pac.uid = mppac.pac_uid " +
                         "LEFT JOIN medical_professional mp ON mppac.medical_professional_uid = mp.uid " +
                         "LEFT JOIN country c ON c.uid = pac.country_uid " +
