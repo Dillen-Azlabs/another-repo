@@ -5,7 +5,6 @@ import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
 import sg.ihh.ms.sdms.app.model.*;
 
-import javax.sound.sampled.Port;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -153,31 +152,107 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "getPortfolio";
         start(methodName);
 
-        String sql = "SELECT mp.*, at.treatment, mpa.achievement, mpe.experiences, mpaw.award FROM medical_professional mp " +
+        String sql = "SELECT mp.*, at.treatment FROM medical_professional mp " +
                 " LEFT JOIN medical_professional_assoc_treatment mpat ON mp.uid = mpat.medical_professional_uid " +
                 " LEFT JOIN associated_treatment at ON at.uid = mpat.associated_treatment_uid " +
-                " LEFT JOIN medical_professional_achievement mpa ON mp.uid = mpa.medical_professional_uid " +
-                " LEFT JOIN medical_professional_achievement_country mpac ON mpa.uid = mpac.medical_professional_achievement_uid " +
-                " LEFT JOIN country ac ON ac.uid = mpac.country_uid " +
-                " LEFT JOIN medical_professional_experience mpe ON mp.uid = mpe.medical_professional_uid " +
-                " LEFT JOIN medical_professional_experience_country mpec ON mpe.uid = mpec.medical_professional_experience_uid " +
-                " LEFT JOIN country ec ON ec.uid = mpec.country_uid " +
-                " LEFT JOIN medical_professional_award mpaw ON mp.uid = mpaw.medical_professional_uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url";
 
         sql = getTableVersion(version, tableMap, sql);
 
         List<Portfolio> result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("country", country);
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
             result = query.mapToBean(Portfolio.class).list();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
         }
+
+        for (Portfolio portfolio : result) {
+            portfolio.setAchievements(getMedicalProfessionalAchievement(version, languageList, medicalProfessionalItemUrl, country));
+            portfolio.setExperiences(getMedicalProfessionalExperience(version, languageList, medicalProfessionalItemUrl, country));
+            portfolio.setAwards(getMedicalProfessionalAward(version, languageList, medicalProfessionalItemUrl, country));
+        }
+
         completed(methodName);
         return result;
     }
+
+    public String getMedicalProfessionalAchievement(Version version, List<String> languageList, String medicalProfessionalItemUrl, String country) {
+        final String methodName = "getMedicalProfessionalAchievement";
+        start(methodName);
+
+        String sql = "SELECT mpa.achievement FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_achievement mpa ON mp.uid = mpa.medical_professional_uid " +
+                " LEFT JOIN medical_professional_achievement_country mpac ON mpa.uid = mpac.medical_professional_achievement_uid " +
+                " LEFT JOIN country c ON c.uid = mpac.country_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country = :country";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        String result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("country", country);
+            result = query.mapTo(String.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    public String getMedicalProfessionalExperience(Version version, List<String> languageList, String medicalProfessionalItemUrl, String country) {
+        final String methodName = "getMedicalProfessionalExperience";
+        start(methodName);
+
+        String sql = "SELECT mpe.experiences FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_experience mpe ON mp.uid = mpe.medical_professional_uid " +
+                " LEFT JOIN medical_professional_experience_country mpec ON mpe.uid = mpec.medical_professional_experience_uid " +
+                " LEFT JOIN country c ON c.uid = mpec.country_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country = :country";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        String result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("country", country);
+            result = query.mapTo(String.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    public String getMedicalProfessionalAward(Version version, List<String> languageList, String medicalProfessionalItemUrl, String country) {
+        final String methodName = "getMedicalProfessionalAward";
+        start(methodName);
+
+        String sql = "SELECT mpa.award FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_award mpa ON mp.uid = mpa.medical_professional_uid " +
+                " LEFT JOIN medical_professional_award_country mpac ON mpa.uid = mpac.medical_professional_award_uid " +
+                " LEFT JOIN country c ON c.uid = mpac.country_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country = :country";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        String result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("country", country);
+            result = query.mapTo(String.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+
 
     public List<MediaCoverage> getMediaCoverage(Version version, List<String> languageList, String medicalProfessionalItemUrl, String mediaCoverageLanguage) {
         final String methodName = "getMediaCoverage";
