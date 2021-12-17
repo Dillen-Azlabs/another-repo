@@ -5,10 +5,7 @@ import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
 import sg.ihh.ms.sdms.app.model.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class MedicalProfessionalRepository extends BaseRepository {
@@ -73,16 +70,13 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "getDetails";
         start(methodName);
 
-        String sql = "SELECT mp.*, g.gender, s.specialty, mpmd.meta_title, mpmd.meta_description, COUNT(mc.title) > 0 AS media_coverage FROM medical_professional mp " +
+        String sql = "SELECT mp.*, g.gender, s.specialty, COUNT(mc.title) > 0 AS media_coverage FROM medical_professional mp " +
                         " LEFT JOIN medical_professional_specialty mps ON mp.uid = mps.medical_professional_uid " +
                         " LEFT JOIN specialty s ON s.uid = mps.specialty_uid " +
                         " LEFT JOIN gender g ON g.uid = mp.gender_uid " +
-                        " LEFT JOIN medical_professional_metadata mpmd ON mp.uid = mpmd.medical_professional_uid " +
-                        " LEFT JOIN medical_professional_metadata_hospital mpmdh ON mpmdh.medical_professional_metadata_uid = mpmd.uid " +
-                        " LEFT JOIN hospital h ON mpmdh.hospital_uid = h.uid " +
                         " LEFT JOIN media_coverage mc ON mp.uid = mc.related_specialist_uid " +
                         " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
-                        " GROUP BY mp.uid, mp.language_code, g.gender, s.specialty, mpmd.meta_title, mpmd.meta_description";
+                        " GROUP BY mp.uid, mp.language_code, g.gender, s.specialty";
 
         sql = getTableVersion(version, tableMap, sql);
 
@@ -98,6 +92,34 @@ public class MedicalProfessionalRepository extends BaseRepository {
         for (MedicalProfessionalDetail medicalProfessionalDetail : result) {
             medicalProfessionalDetail.setInsurancePanel(getMedicalProfessionalInsurance(version, languageList, medicalProfessionalItemUrl));
             medicalProfessionalDetail.setLanguageSpoken(getMedicalProfessionalSpokenLanguages(version, languageList, medicalProfessionalItemUrl));
+            Map<String, Object> metadata = getMetadata(version, languageList, medicalProfessionalItemUrl, hospitalCode);
+            medicalProfessionalDetail.setMetaTitle((String) metadata.get("meta_title"));
+            medicalProfessionalDetail.setMetaDescription((String) metadata.get("meta_description"));
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    public Map<String, Object> getMetadata(Version version, List<String> languageList, String medicalProfessionalItemUrl, String hospitalCode) {
+        final String methodName = "getMetadata";
+        start(methodName);
+
+        String sql = "SELECT mpmd.meta_title, mpmd.meta_description FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_metadata mpmd ON mp.uid = mpmd.medical_professional_uid " +
+                " LEFT JOIN hospital h ON mpmd.hospital_uid = h.uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND h.hospital = :hospital " +
+                " GROUP BY mp.uid, mp.language_code";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        Map<String, Object> result = new HashMap<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("hospital", hospitalCode);
+            result = query.mapToMap().one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
         }
 
         completed(methodName);

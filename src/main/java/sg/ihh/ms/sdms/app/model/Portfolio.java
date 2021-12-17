@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
-@JsonPropertyOrder({"uid", "languageCode", "displayName", "associatedTreatments", "achievements", "experiences", "accreditations", "education", "publications", "awards", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "displayName", "associatedTreatments", "achievements", "experiences", "accreditation", "education", "publications", "awards", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class Portfolio extends BaseModel {
 
     @JsonProperty("displayName")
@@ -16,8 +16,8 @@ public class Portfolio extends BaseModel {
     private String achievements;
     @JsonProperty("experiences")
     private String experiences;
-    @JsonProperty("accreditations")
-    private boolean accreditations;
+    @JsonProperty("accreditation")
+    private String accreditation;
     @JsonProperty("education")
     private String education;
     @JsonProperty("publications")
@@ -63,12 +63,12 @@ public class Portfolio extends BaseModel {
         this.experiences = experiences;
     }
 
-    public boolean isAccreditations() {
-        return accreditations;
+    public String getAccreditation() {
+        return accreditation;
     }
 
-    public void setAccreditations(boolean accreditations) {
-        this.accreditations = accreditations;
+    public void setAccreditation(String accreditation) {
+        this.accreditation = accreditation;
     }
 
     public String getEducation() {
