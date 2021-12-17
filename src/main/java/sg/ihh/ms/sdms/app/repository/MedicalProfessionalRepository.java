@@ -8,6 +8,7 @@ import sg.ihh.ms.sdms.app.model.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MedicalProfessionalRepository extends BaseRepository {
@@ -57,11 +58,13 @@ public class MedicalProfessionalRepository extends BaseRepository {
         String result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
-            result = query.mapTo(String.class).one();
+            Optional<String> displayName = query.mapTo(String.class).findOne();
+            result = displayName.isPresent() ? displayName.get() : "";
 
         } catch (Exception ex) {
             log.error(methodName, ex);
         }
+
         completed(methodName);
         return result;
     }
