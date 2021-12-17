@@ -4,7 +4,9 @@ package sg.ihh.ms.sdms.app.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"uid", "languageCode", "testimonial", "patientName", "patientAlias", "thumbnailUrl", "thumbnailAltText", "keyQuote", "expiryDate", "order", "publishFlag", "createdDt", "modifiedDt"})
+import java.util.List;
+
+@JsonPropertyOrder({"uid", "languageCode", "testimonial", "patientName", "patientAlias", "thumbnailUrl", "thumbnailAltText", "keyQuote", "expiryDate", "countries", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class Testimonial extends BaseModel {
 
     @JsonProperty("testimonial")
@@ -19,6 +21,8 @@ public class Testimonial extends BaseModel {
     private String thumbnailAltText;
     @JsonProperty("keyQuote")
     private String keyQuote;
+    @JsonProperty("countries")
+    private List<String> countries;
 
     public Testimonial() {
         // Empty Constructor
@@ -70,5 +74,13 @@ public class Testimonial extends BaseModel {
 
     public void setKeyQuote(String keyQuote) {
         this.keyQuote = keyQuote;
+    }
+
+    public List<String> getCountries() {
+        return countries;
+    }
+
+    public void setCountries(List<String> countries) {
+        this.countries = countries;
     }
 }
