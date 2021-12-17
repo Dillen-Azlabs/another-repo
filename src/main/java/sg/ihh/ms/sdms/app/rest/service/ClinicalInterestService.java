@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
-import sg.ihh.ms.sdms.app.model.ClinicInterest;
+import sg.ihh.ms.sdms.app.model.ClinicalInterest;
 import sg.ihh.ms.sdms.app.model.Version;
 import sg.ihh.ms.sdms.app.processor.ControlledListProcessor;
-import sg.ihh.ms.sdms.app.repository.ClinicInterestRepository;
-import sg.ihh.ms.sdms.app.rest.model.ClinicInterestListResponse;
+import sg.ihh.ms.sdms.app.repository.ClinicalInterestRepository;
+import sg.ihh.ms.sdms.app.rest.model.ClinicalInterestListResponse;
 
 
 import javax.validation.constraints.NotNull;
@@ -21,21 +21,21 @@ import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "clinicInterest", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping(path = "clinicalInterest", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 @Validated
-public class ClinicInterestService extends BaseService{
+public class ClinicalInterestService extends BaseService{
     @Autowired
-    private ClinicInterestRepository repository;
+    private ClinicalInterestRepository repository;
 
     @Autowired
-    private ControlledListProcessor<ClinicInterest> processor;
+    private ControlledListProcessor<ClinicalInterest> processor;
 
-    public ClinicInterestService() {
+    public ClinicalInterestService() {
         log = getLogger(this.getClass());
     }
 
     @GetMapping
-    public ClinicInterestListResponse list(
+    public ClinicalInterestListResponse list(
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
                     message = "Allowed Values : DRAFT, PUBLISHED") String version,
             @RequestParam("languageCode") @NotNull String languageCode) {
@@ -45,11 +45,11 @@ public class ClinicInterestService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<ClinicInterest> list = repository.list(Version.getVersion(version), languageList);
+        List<ClinicalInterest> list = repository.list(Version.getVersion(version), languageList);
 
         list = processor.processList(list, languageCode);
 
-        ClinicInterestListResponse response = new ClinicInterestListResponse(list);
+        ClinicalInterestListResponse response = new ClinicalInterestListResponse(list);
 
         completed(methodName);
         return response;
