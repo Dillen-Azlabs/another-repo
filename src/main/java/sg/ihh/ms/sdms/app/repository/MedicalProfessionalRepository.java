@@ -281,7 +281,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
         return result;
     }
 
-    public List<Testimonial> getTestimonials(Version version, List<String> languageList, String medicalProfessionalItemUrl) {
+    public List<Testimonial> getTestimonials(Version version, List<String> languageList, String medicalProfessionalItemUrl, String country) {
         final String methodName = "getTestimonials";
         start(methodName);
 
@@ -289,14 +289,40 @@ public class MedicalProfessionalRepository extends BaseRepository {
                 " LEFT JOIN medical_professional mp ON mp.uid = mpt.medical_professional_uid " +
                 " LEFT JOIN medical_professional_testimonial_country mptc ON mpt.uid = mptc.medical_professional_testimonial_uid " +
                 " LEFT JOIN country c ON mptc.country_uid = c.uid " +
-                " WHERE mpt.language_code IN(<languageList>) AND mp.item_url = :item_url";
+                " WHERE mpt.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country = :country";
 
         sql = getTableVersion(version, tableMap, sql);
 
         List<Testimonial> result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("country", country);
             result = query.mapToBean(Testimonial.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        for (Testimonial testimonial : result) {
+            testimonial.setCountries(getTestimonialCountries(testimonial.getUid()));
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    public List<String> getTestimonialCountries(String uid) {
+        final String methodName = "getTestimonialCountries";
+        start(methodName);
+
+        String sql = "SELECT c.country FROM medical_professional_testimonial mpt " +
+                " LEFT JOIN medical_professional_testimonial_country mptc ON mpt.uid = mptc.medical_professional_testimonial_uid " +
+                " LEFT JOIN country c ON mptc.country_uid = c.uid " +
+                " WHERE mpt.uid = :uid";
+
+         List<String> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bind("uid", uid);
+            result = query.mapTo(String.class).list();
 
         } catch (Exception ex) {
             log.error(methodName, ex);

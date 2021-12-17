@@ -15,6 +15,7 @@ import sg.ihh.ms.sdms.app.rest.model.*;
 
 import javax.validation.constraints.Pattern;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "medicalProfessionals", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -148,18 +149,27 @@ public class MedicalProfessionalService extends BaseService {
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
                     message = "Allowed Values : DRAFT, PUBLISHED") String version,
             @RequestParam("languageCode") String languageCode,
-            @RequestParam("medicalProfessionalUrl") String medicalProfessionalUrl) {
+            @RequestParam("medicalProfessionalUrl") String medicalProfessionalUrl,
+            @RequestParam("country") String country,
+            @RequestParam("itemCount") Optional<Integer> itemCount) {
         final String methodName = "getMedicalProfessionalTestimonials";
         start(methodName);
 
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<Testimonial> result = mpRepository.getTestimonials(Version.getVersion(version), languageList, medicalProfessionalUrl);
+        List<Testimonial> result = mpRepository.getTestimonials(Version.getVersion(version), languageList, medicalProfessionalUrl, country);
 
         result = tProcessor.processList(result, languageCode);
 
-        TestimonialListResponse response = new TestimonialListResponse(result);
+        // set to big number if request param is not present
+        int count = itemCount.isPresent() ? itemCount.get() : 255;
+
+        count = result.size() < count ? result.size() : count;
+
+        List<Testimonial> resultResponse = result.subList(0, count);
+
+        TestimonialListResponse response = new TestimonialListResponse(resultResponse);
 
         response.setDisplayName(mpRepository.getDisplayName(Version.getVersion(version), languageList, medicalProfessionalUrl));
 
