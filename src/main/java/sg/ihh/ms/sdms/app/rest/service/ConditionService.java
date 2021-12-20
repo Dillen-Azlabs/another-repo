@@ -29,6 +29,9 @@ public class ConditionService extends BaseService{
     private StructuredDataProcessor<ConditionSymptom> csProcessor;
 
     @Autowired
+    private StructuredDataProcessor<ConditionDiagnosis> cdprocessor;
+
+    @Autowired
     private StructuredDataProcessor<ConditionExpertise> ceProcessor;
 
     public ConditionService() {
@@ -75,6 +78,29 @@ public class ConditionService extends BaseService{
         result = csProcessor.processList(result, languageCode);
 
         ConditionSymptomListResponse response = new ConditionSymptomListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+
+    @RequestMapping(path = "diagnosis", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ConditionDiagnosisListResponse getConditionDiagnosis(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("conditionUrl") String conditionUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getConditionDiagnosis";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<ConditionDiagnosis> result = repository.getDiagnosis(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
+
+        result = cdprocessor.processList(result, languageCode);
+
+        ConditionDiagnosisListResponse response = new ConditionDiagnosisListResponse(result);
 
         completed(methodName);
         return response;
