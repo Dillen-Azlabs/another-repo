@@ -23,7 +23,10 @@ public class ConditionService extends BaseService{
     private ConditionRepository repository;
 
     @Autowired
-    private StructuredDataProcessor<ConditionCta> processor;
+    private StructuredDataProcessor<ConditionCta> ccProcessor;
+
+    @Autowired
+    private StructuredDataProcessor<ConditionExpertise> ceProcessor;
 
     public ConditionService() {
         log = getLogger(this.getClass());
@@ -43,11 +46,35 @@ public class ConditionService extends BaseService{
 
         List<ConditionCta> result = repository.getCta(Version.getVersion(version), languageList, conditionUrl);
 
-        result = processor.processList(result, languageCode);
+        result = ccProcessor.processList(result, languageCode);
 
         ConditionCtaListResponse response = new ConditionCtaListResponse(result);
 
         completed(methodName);
         return response;
     }
+
+    @RequestMapping(path = "expertise", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ConditionExpertiseListResponse getConditionExpertise(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("conditionUrl") String conditionUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getConditionExpertise";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<ConditionExpertise> result = repository.getExpertise(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
+
+        result = ceProcessor.processList(result, languageCode);
+
+        ConditionExpertiseListResponse response = new ConditionExpertiseListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+
 }
