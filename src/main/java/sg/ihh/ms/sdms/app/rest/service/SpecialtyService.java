@@ -16,7 +16,7 @@ import sg.ihh.ms.sdms.app.repository.SpecialtyRepository;
 import sg.ihh.ms.sdms.app.rest.model.SpecialtyListResponse;
 
 @RestController
-@RequestMapping(path = "specialties", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping(path = "cl/specialties", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 @Validated
 public class SpecialtyService extends BaseService {
 
