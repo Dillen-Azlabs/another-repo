@@ -27,6 +27,9 @@ public class SpecialtySdService extends BaseService{
     @Autowired
     private StructuredDataProcessor<SpecialtyCta> scProcessor;
 
+    @Autowired
+    private StructuredDataProcessor<SpecialtyOverview> soProcessor;
+
     public SpecialtySdService() {
         log = getLogger(this.getClass());
     }
@@ -74,5 +77,26 @@ public class SpecialtySdService extends BaseService{
         return response;
     }
 
+    @RequestMapping(path = "overview", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public SpecialtyOverviewListResponse getSpecialtyOverview(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("specialtyUrl") String specialtyUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getSpecialtyOverview";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<SpecialtyOverview> result = repository.getSpecialtyOverview(Version.getVersion(version), languageList, specialtyUrl, hospitalCode);
+
+        result = soProcessor.processList(result, languageCode);
+
+        SpecialtyOverviewListResponse response = new SpecialtyOverviewListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
 
 }

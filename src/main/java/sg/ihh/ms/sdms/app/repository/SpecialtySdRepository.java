@@ -3,9 +3,7 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
 
-import sg.ihh.ms.sdms.app.model.SpecialtyCta;
-import sg.ihh.ms.sdms.app.model.SpecialtyDetail;
-import sg.ihh.ms.sdms.app.model.Version;
+import sg.ihh.ms.sdms.app.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,4 +120,56 @@ public class SpecialtySdRepository extends BaseRepository{
         return !hospitalUid.isEmpty();
     }
 
+    public List<SpecialtyOverview> getSpecialtyOverview(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
+        final String methodName = "getSpecialtyOverview";
+        start(methodName);
+
+        String sql = "SELECT ss.*, ssm.oai,ssm.oavu,ssm.wcu,ssm.wcuvu FROM specialty_sd ss " +
+                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        List<SpecialtyOverview> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
+            result = query.mapToBean(SpecialtyOverview.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        // these 2 fields need to set separately as they should be null when hospitalCode dont match.
+        // the other fields should still display if the hospitalCode doesn't match
+        for(SpecialtyOverview overview : result) {
+            Map<String, Object> metadata = getMetadata(version, languageList, specialtyItemUrl, hospitalCode);
+            overview.setOverviewMetaTitle((String) metadata.get("overview_meta_title"));
+            overview.setOverviewMetaDesc((String) metadata.get("overview_meta_desc"));
+        }
+        completed(methodName);
+        return result;
+    }
+
+    public Map<String, Object> getMetadata(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
+        final String methodName = "getMetadata";
+        start(methodName);
+
+        String sql = "SELECT ssm.overview_meta_title,ssm.overview_meta_desc FROM specialty_sd ss " +
+                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
+                " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        Map<String, Object> result = new HashMap<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", conditionItemUrl).bind("hospital", hospitalCode);
+            result = query.mapToMap().one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
 }
