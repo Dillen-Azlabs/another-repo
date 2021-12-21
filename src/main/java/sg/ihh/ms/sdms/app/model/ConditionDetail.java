@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
-@JsonPropertyOrder({"uid", "languageCode", "conditionH1Display", "itemUrl", "mainImageUrl", "mainImageAltText", "hideMainImage", "summary", "socialSummary", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "conditionH1Display","conditionH1Display", "itemUrl", "mainImageUrl", "mainImageAltText", "hideMainImage", "summary", "socialSummary", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class ConditionDetail extends BaseModel{
 
+    @JsonProperty("conditionH1Display")
+    private String conditionH1Display;
     @JsonProperty("itemUrl")
     private String itemUrl;
     @JsonProperty("mainImageUrl")
@@ -22,6 +24,14 @@ public class ConditionDetail extends BaseModel{
 
     public ConditionDetail() {
         //Empty Constructor
+    }
+
+    public String getConditionH1Display() {
+        return conditionH1Display;
+    }
+
+    public void setConditionH1Display(String conditionH1Display) {
+        this.conditionH1Display = conditionH1Display;
     }
 
     public String getItemUrl() {
