@@ -18,8 +18,61 @@ public class ConditionRepository extends BaseRepository {
         tableMap = new HashMap<>();
         tableMap.put(Version.DRAFT.getKey(), "condition_disease");
         tableMap.put(Version.PUBLISHED.getKey(), "condition_disease_ro");
-
     }
+
+    public List<ConditionDetail> getDetails(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
+        final String methodName = "getDetails";
+        start(methodName);
+
+        String sql = "SELECT cd.* FROM condition_disease_sd cd " +
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url ";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        List<ConditionDetail> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", conditionItemUrl);
+            result = query.mapToBean(ConditionDetail.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        if (isHospitalValid(hospitalCode)) {
+            for (ConditionDetail detail : result) {
+                Map<String, Object> metadataDetails = getMetadataDetails(version, languageList, conditionItemUrl, hospitalCode);
+                detail.setMainImageUrl((String) metadataDetails.get("hospital_main_image"));
+                detail.setMainImageAltText((String) metadataDetails.get("hospital_main_text"));
+            }
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    public Map<String, Object> getMetadataDetails(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
+        final String methodName = "getMetadataDetails";
+        start(methodName);
+
+        String sql = "SELECT cdsm.hospital_main_image, cdsm.hospital_main_text FROM condition_disease_sd cd " +
+                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
+                "LEFT JOIN hospital h ON cdsm.hospital_uid = h.uid"+
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        Map<String, Object> result = new HashMap<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", conditionItemUrl).bind("hospital", hospitalCode);
+            result = query.mapToMap().one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
     public List<ConditionCta> getCta(Version version, List<String> languageList, String conditionItemUrl) {
         final String methodName = "getDetails";
         start(methodName);
@@ -163,5 +216,26 @@ public class ConditionRepository extends BaseRepository {
         }
         completed(methodName);
         return result;
+    }
+
+    private boolean isHospitalValid(String hospitalCode) {
+        final String methodName = "isHospitalValid";
+        start(methodName);
+
+        String sql = "SELECT uid FROM hospital " +
+                " WHERE hospital = :hospital";
+
+        String hospitalUid = "";
+
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bind("hospital", hospitalCode);
+            hospitalUid = query.mapTo(String.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+
+        return !hospitalUid.isEmpty();
     }
 }

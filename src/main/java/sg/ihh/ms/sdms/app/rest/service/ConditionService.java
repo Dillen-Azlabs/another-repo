@@ -3,6 +3,7 @@ package sg.ihh.ms.sdms.app.rest.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +24,9 @@ public class ConditionService extends BaseService{
     private ConditionRepository repository;
 
     @Autowired
+    private StructuredDataProcessor<ConditionDetail> cdeProcessor;
+
+    @Autowired
     private StructuredDataProcessor<ConditionCta> ccProcessor;
 
     @Autowired
@@ -39,6 +43,29 @@ public class ConditionService extends BaseService{
 
     public ConditionService() {
         log = getLogger(this.getClass());
+    }
+
+    @RequestMapping(path = "details", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ConditionDetailListResponse getConditionDetails(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("conditionUrl") String conditionUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getConditionDetails";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<ConditionDetail> result = repository.getDetails(Version.getVersion(version), languageList, conditionUrl, hospitalCode);
+
+        result = cdeProcessor.processList(result, languageCode);
+
+        ConditionDetailListResponse response = new ConditionDetailListResponse(result);
+
+        completed(methodName);
+        return response;
     }
 
     @RequestMapping(path = "cta", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
