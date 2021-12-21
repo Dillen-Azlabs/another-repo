@@ -30,6 +30,9 @@ public class SpecialtySdService extends BaseService{
     @Autowired
     private StructuredDataProcessor<SpecialtyOverview> soProcessor;
 
+    @Autowired
+    private StructuredDataProcessor<SpecialtyExpertise> seProcessor;
+
     public SpecialtySdService() {
         log = getLogger(this.getClass());
     }
@@ -99,4 +102,25 @@ public class SpecialtySdService extends BaseService{
         return response;
     }
 
+    @RequestMapping(path = "expertise", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public SpecialtyExpertiseListResponse getSpecialtyExpertise(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("specialtyUrl") String specialtyUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getSpecialtyExpertise";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<SpecialtyExpertise> result = repository.getSpecialtyExpertise(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
+
+        result = seProcessor.processList(result, languageCode);
+
+        SpecialtyExpertiseListResponse response = new SpecialtyExpertiseListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
 }
