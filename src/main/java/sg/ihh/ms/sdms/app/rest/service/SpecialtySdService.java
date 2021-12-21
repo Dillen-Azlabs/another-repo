@@ -31,6 +31,9 @@ public class SpecialtySdService extends BaseService{
     private StructuredDataProcessor<SpecialtyOverview> soProcessor;
 
     @Autowired
+    private StructuredDataProcessor<SpecialtyRelatedTreatment> srtProcessor;
+
+    @Autowired
     private StructuredDataProcessor<SpecialtyExpertise> seProcessor;
 
     @Autowired
@@ -100,6 +103,28 @@ public class SpecialtySdService extends BaseService{
         result = soProcessor.processList(result, languageCode);
 
         SpecialtyOverviewListResponse response = new SpecialtyOverviewListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+
+    @RequestMapping(path = "relatedTreatmentsContent", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public SpecialtyRelatedTreatmentListResponse getSpecialtyRelatedTreatment(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("specialtyUrl") String specialtyUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getSpecialtyRelatedTreatment";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<SpecialtyRelatedTreatment> result = repository.getSpecialtyRelatedTreatment(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
+
+        result = srtProcessor.processList(result, languageCode);
+
+        SpecialtyRelatedTreatmentListResponse response = new SpecialtyRelatedTreatmentListResponse(result);
 
         completed(methodName);
         return response;
