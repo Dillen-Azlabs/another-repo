@@ -41,6 +41,9 @@ public class ConditionService extends BaseService{
     @Autowired
     private StructuredDataProcessor<ConditionFaq> cfProcessor;
 
+    @Autowired
+    private StructuredDataProcessor<ConditionRelatedData> crdProcessor;
+
     public ConditionService() {
         log = getLogger(this.getClass());
     }
@@ -177,6 +180,27 @@ public class ConditionService extends BaseService{
         result = cfProcessor.processList(result, languageCode);
 
         ConditionFaqListResponse response = new ConditionFaqListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+
+    @RequestMapping(path = "relatedData", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ConditionRelatedDataListResponse getConditionRelatedData(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("conditionUrl") String conditionUrl) {
+        final String methodName = "getConditionRelatedData";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        ConditionRelatedData result = repository.getConditionRelatedData(Version.getVersion(version), languageList, conditionUrl);
+
+        //result = crdProcessor.processList(result, languageCode);
+
+        ConditionRelatedDataListResponse response = new ConditionRelatedDataListResponse(result);
 
         completed(methodName);
         return response;
