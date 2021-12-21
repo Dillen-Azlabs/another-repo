@@ -31,12 +31,12 @@ public class PacService extends BaseService {
     }
 
     @RequestMapping(path = "country", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public PacListResponse list(
+    public PacListResponse getPacByCountry(
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
                     message = "Allowed Values : DRAFT, PUBLISHED") String version,
             @RequestParam("languageCode") String languageCode,
             @RequestParam("country") String country) {
-        final String methodName = "list";
+        final String methodName = "getPacByCountry";
         start(methodName);
 
         // Language Code

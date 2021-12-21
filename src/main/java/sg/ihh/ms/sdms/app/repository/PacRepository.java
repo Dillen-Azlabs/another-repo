@@ -25,10 +25,12 @@ public class PacRepository extends BaseRepository {
     }
 
     public List<Pac> searchByCountry(Version version, List<String> languageList, String country) {
-        final String methodName = "list";
+        final String methodName = "searchByCountry";
         start(methodName);
 
-        String sql = "SELECT pac.*, c.country FROM patient_assistance_centre pac LEFT JOIN country c ON pac.country_uid = c.uid WHERE pac.language_code IN(<languageList>) AND c.country = country;";
+        String sql = "SELECT pac.*, c.country FROM patient_assistance_centre pac " +
+                " LEFT JOIN country c ON pac.country_uid = c.uid " +
+                " WHERE pac.language_code IN(<languageList>) AND c.country = :country;";
 
         sql = getTableVersion(version, tableMap, sql);
 
