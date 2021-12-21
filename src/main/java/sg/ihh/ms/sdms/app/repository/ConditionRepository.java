@@ -238,4 +238,107 @@ public class ConditionRepository extends BaseRepository {
 
         return !hospitalUid.isEmpty();
     }
+
+    public ConditionRelatedData getConditionRelatedData(Version version, List<String> languageList, String conditionItemUrl) {
+        final String methodName = "getConditionRelatedData";
+        start(methodName);
+
+        ConditionRelatedData conditionRelatedData = getConditionDisease(version, languageList, conditionItemUrl);
+        List<ConditionRelatedDataCondition> relatedConditions = getRelatedDataConditions(version,conditionRelatedData.getUid());
+
+        List<ConditionRelatedDataTreatment> relatedTreatments = getRelatedTreatments(version, conditionRelatedData.getUid());
+
+        conditionRelatedData.setRelatedCondition(relatedConditions);
+        conditionRelatedData.setRelatedTreatments(relatedTreatments);
+
+        completed(methodName);
+        return conditionRelatedData;
+    }
+
+    private ConditionRelatedData getConditionDisease(Version version, List<String> languageList,String conditionItemUrl)
+    {
+        String methodName = "getConditionDisease";
+        String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt FROM condition_disease_sd " +
+                "WHERE language_code IN(<languageList>) AND item_url = :item_url;";
+        sql = getTableVersion(version, tableMap, sql);
+
+        ConditionRelatedData result = new ConditionRelatedData();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", conditionItemUrl);
+            result = query.mapToBean(ConditionRelatedData.class).one();
+        }
+        catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        return result;
+    }
+
+    private List<ConditionRelatedDataCondition> getRelatedDataConditions(Version version,String uid)
+    {
+        String methodName = "getRelatedCondition";
+        String relatedConditionSql = "SELECT condition_disease_uid FROM condition_disease_sd_related_condition " +
+                "WHERE condition_disease_sd_uid =:uid";
+
+        String conditionDiseaseSql = "SELECT item_url, condition_h1_display FROM condition_disease_sd " +
+                "WHERE primary_condition_uid = :primaryUid";
+
+        relatedConditionSql = getTableVersion(version, tableMap, relatedConditionSql);
+        conditionDiseaseSql = getTableVersion(version, tableMap, conditionDiseaseSql);
+
+        List<ConditionRelatedDataCondition> result = new ArrayList<>();
+
+        try (Handle h = getHandle()) {
+
+            List<String> conditionUid = new ArrayList<>();
+            Query query1 = h.createQuery(relatedConditionSql);
+            query1.bind("uid", uid);
+            conditionUid = query1.mapTo(String.class).list();
+            if (!conditionUid.isEmpty()) {
+                for (String primaryUid : conditionUid) {
+                    Query query2 = h.createQuery(conditionDiseaseSql);
+                    query2.bind("primaryUid", primaryUid);
+                    result = query2.mapToBean(ConditionRelatedDataCondition.class).list();
+                }
+            }
+
+        }
+        catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        return result;
+    }
+
+    private List<ConditionRelatedDataTreatment> getRelatedTreatments(Version version,String uid)
+    {
+        String methodName = "getRelatedTreatments";
+        String relatedTreatmentSql = "SELECT test_treatment_sd_uid FROM condition_disease_sd_related_treatment" +
+                " WHERE condition_disease_sd_uid = :uid;";
+
+        String treatmentSql = "SELECT item_url, treatment_h1_display FROM test_treatment_sd " +
+                "WHERE  primary_treatment_uid = :primaryUid";
+
+        relatedTreatmentSql = getTableVersion(version, tableMap, relatedTreatmentSql);
+        treatmentSql = getTableVersion(version, tableMap, treatmentSql);
+
+        List<ConditionRelatedDataTreatment> result = new ArrayList<>();
+
+        try (Handle h = getHandle()) {
+
+            List<String> conditionUid = new ArrayList<>();
+            Query query1 = h.createQuery(relatedTreatmentSql);
+            query1.bind("uid", uid);
+            conditionUid = query1.mapTo(String.class).list();
+            if (!conditionUid.isEmpty()) {
+                for (String primaryUid : conditionUid) {
+                    Query query2 = h.createQuery(treatmentSql);
+                    query2.bind("primaryUid", primaryUid);
+                    result = query2.mapToBean(ConditionRelatedDataTreatment.class).list();
+                }
+            }
+        }
+        catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        return result;
+    }
 }
