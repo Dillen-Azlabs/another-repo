@@ -34,6 +34,9 @@ public class ConditionService extends BaseService{
     @Autowired
     private StructuredDataProcessor<ConditionExpertise> ceProcessor;
 
+    @Autowired
+    private StructuredDataProcessor<ConditionFaq> cfProcessor;
+
     public ConditionService() {
         log = getLogger(this.getClass());
     }
@@ -124,6 +127,29 @@ public class ConditionService extends BaseService{
         result = ceProcessor.processList(result, languageCode);
 
         ConditionExpertiseListResponse response = new ConditionExpertiseListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+
+    @RequestMapping(path = "faqs", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ConditionFaqListResponse getConditionFaq(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("conditionUrl") String conditionUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getConditionFaq";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<ConditionFaq> result = repository.getFaq(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
+
+        result = cfProcessor.processList(result, languageCode);
+
+        ConditionFaqListResponse response = new ConditionFaqListResponse(result);
 
         completed(methodName);
         return response;
