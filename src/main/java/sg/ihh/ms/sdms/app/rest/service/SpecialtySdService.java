@@ -22,10 +22,35 @@ public class SpecialtySdService extends BaseService{
     private SpecialtySdRepository repository;
 
     @Autowired
-    private StructuredDataProcessor<SpecialtyCta> processor;
+    private StructuredDataProcessor<SpecialtyDetail> sdProcessor;
+
+    @Autowired
+    private StructuredDataProcessor<SpecialtyCta> scProcessor;
 
     public SpecialtySdService() {
         log = getLogger(this.getClass());
+    }
+
+    @RequestMapping(path = "details", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public SpecialtyDetailListResponse getSpecialtyDetail(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("specialtyUrl") String specialtyUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getSpecialtyDetail";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<SpecialtyDetail> result = repository.getSpecialtyDetail(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
+
+        result = sdProcessor.processList(result, languageCode);
+
+        SpecialtyDetailListResponse response = new SpecialtyDetailListResponse(result);
+
+        completed(methodName);
+        return response;
     }
 
     @RequestMapping(path = "cta", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -41,7 +66,7 @@ public class SpecialtySdService extends BaseService{
 
         List<SpecialtyCta> result = repository.getSpecialtyCta(Version.getVersion(version), languageList, specialtyUrl);
 
-        result = processor.processList(result, languageCode);
+        result = scProcessor.processList(result, languageCode);
 
         SpecialtyCtaListResponse response = new SpecialtyCtaListResponse(result);
 
