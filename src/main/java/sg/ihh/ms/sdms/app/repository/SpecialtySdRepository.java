@@ -173,6 +173,59 @@ public class SpecialtySdRepository extends BaseRepository{
         return result;
     }
 
+    public List<SpecialtyRelatedCondition> getSpecialtyRelatedCondition(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
+        final String methodName = "getSpecialtyRelatedCondition";
+        start(methodName);
+
+        String sql = "SELECT ss.* FROM specialty_sd ss " +
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        List<SpecialtyRelatedCondition> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
+            result = query.mapToBean(SpecialtyRelatedCondition.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        // these 2 fields need to set separately as they should be null when hospitalCode dont match.
+        // the other fields should still display if the hospitalCode doesn't match
+        for(SpecialtyRelatedCondition relatedCondition : result) {
+            Map<String, Object> metadata = getSpecialtyRelatedConditionMetadata(version, languageList, specialtyItemUrl, hospitalCode);
+            relatedCondition.setRelatedConditionMetaTitle((String) metadata.get("related_condition_meta_title"));
+            relatedCondition.setRelatedConditionMetaDesc((String) metadata.get("related_condition_meta_desc"));
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    private Map<String, Object> getSpecialtyRelatedConditionMetadata(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
+        final String methodName = "getSpecialtyRelatedConditionMetadata";
+        start(methodName);
+
+        String sql = "SELECT ssm.related_condition_meta_title,ssm.related_condition_meta_desc FROM specialty_sd ss " +
+                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
+                " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        Map<String, Object> result = new HashMap<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl).bind("hospital", hospitalCode);
+            result = query.mapToMap().one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
     public List<SpecialtyRelatedTreatment> getSpecialtyRelatedTreatment(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
         final String methodName = "getSpecialtyRelatedTreatment";
         start(methodName);
