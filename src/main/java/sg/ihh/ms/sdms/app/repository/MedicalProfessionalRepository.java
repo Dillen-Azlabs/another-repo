@@ -376,43 +376,6 @@ public class MedicalProfessionalRepository extends BaseRepository {
             log.error(methodName, ex);
         }
 
-        // temporary fix to add primary clinic. to fix at Admin Portal for 1 main array
-        if (result != null) {
-            result.add(getPrimaryClinic(version, languageList, medicalProfessionalItemUrl));
-        }
-
-        completed(methodName);
-        return result;
-    }
-
-    public Clinic getPrimaryClinic(Version version, List<String> languageList, String medicalProfessionalItemUrl) {
-        final String methodName = "getPrimaryClinic";
-        start(methodName);
-
-        String sql = "SELECT c.uid, c.language_code, c.name, c.address_1, " +
-                " c.address_2, c.city, c.state, c.postal_code, c.phone_numbers, c.fax_numbers, c.created_dt, c.modified_dt, " +
-                " c.publish_flag, c.display_order, c.status, c.publish_date" +
-                " FROM medical_professional mp " +
-                " LEFT JOIN clinic c ON mp.primary_clinic_uid = c.uid " +
-                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url";
-
-        sql = getTableVersion(version, tableMap, sql);
-
-        Clinic result = null;
-        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
-            result = query.mapToBean(Clinic.class).one();
-
-        } catch (Exception ex) {
-            log.error(methodName, ex);
-        }
-
-        // set primary clinic
-        if (result != null) {
-            result.setIsPrimaryClinic(true);
-        }
-
-
         completed(methodName);
         return result;
     }
