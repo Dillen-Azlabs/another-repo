@@ -173,7 +173,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
         return result;
     }
 
-    public List<Portfolio> getPortfolio(Version version, List<String> languageList, String medicalProfessionalItemUrl, String country) {
+    public List<Portfolio> getPortfolio(Version version, List<String> languageList, String medicalProfessionalItemUrl, String countryOfResidence) {
         final String methodName = "getPortfolio";
         start(methodName);
 
@@ -194,30 +194,30 @@ public class MedicalProfessionalRepository extends BaseRepository {
         }
 
         for (Portfolio portfolio : result) {
-            portfolio.setAchievements(getMedicalProfessionalAchievement(version, languageList, medicalProfessionalItemUrl, country));
-            portfolio.setExperiences(getMedicalProfessionalExperience(version, languageList, medicalProfessionalItemUrl, country));
-            portfolio.setAwards(getMedicalProfessionalAward(version, languageList, medicalProfessionalItemUrl, country));
+            portfolio.setAchievements(getMedicalProfessionalAchievement(version, languageList, medicalProfessionalItemUrl, countryOfResidence));
+            portfolio.setExperiences(getMedicalProfessionalExperience(version, languageList, medicalProfessionalItemUrl, countryOfResidence));
+            portfolio.setAwards(getMedicalProfessionalAward(version, languageList, medicalProfessionalItemUrl, countryOfResidence));
         }
 
         completed(methodName);
         return result;
     }
 
-    public String getMedicalProfessionalAchievement(Version version, List<String> languageList, String medicalProfessionalItemUrl, String country) {
+    public String getMedicalProfessionalAchievement(Version version, List<String> languageList, String medicalProfessionalItemUrl, String countryOfResidence) {
         final String methodName = "getMedicalProfessionalAchievement";
         start(methodName);
 
         String sql = "SELECT mpa.achievement FROM medical_professional mp " +
                 " LEFT JOIN medical_professional_achievement mpa ON mp.uid = mpa.medical_professional_uid " +
                 " LEFT JOIN medical_professional_achievement_country mpac ON mpa.uid = mpac.medical_professional_achievement_uid " +
-                " LEFT JOIN country c ON c.uid = mpac.country_uid " +
-                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country = :country";
+                " LEFT JOIN country_of_residence c ON c.uid = mpac.country_of_residence_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country_of_residence = :countryOfResidence";
 
         sql = getTableVersion(version, tableMap, sql);
 
         String result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("country", country);
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("countryOfResidence", countryOfResidence);
             result = query.mapTo(String.class).one();
 
         } catch (Exception ex) {
@@ -228,21 +228,21 @@ public class MedicalProfessionalRepository extends BaseRepository {
         return result;
     }
 
-    public String getMedicalProfessionalExperience(Version version, List<String> languageList, String medicalProfessionalItemUrl, String country) {
+    public String getMedicalProfessionalExperience(Version version, List<String> languageList, String medicalProfessionalItemUrl, String countryOfResidence) {
         final String methodName = "getMedicalProfessionalExperience";
         start(methodName);
 
         String sql = "SELECT mpe.experiences FROM medical_professional mp " +
                 " LEFT JOIN medical_professional_experience mpe ON mp.uid = mpe.medical_professional_uid " +
                 " LEFT JOIN medical_professional_experience_country mpec ON mpe.uid = mpec.medical_professional_experience_uid " +
-                " LEFT JOIN country c ON c.uid = mpec.country_uid " +
-                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country = :country";
+                " LEFT JOIN country_of_residence c ON c.uid = mpec.country_of_residence_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country = :countryOfResidence";
 
         sql = getTableVersion(version, tableMap, sql);
 
         String result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("country", country);
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("countryOfResidence", countryOfResidence);
             result = query.mapTo(String.class).one();
 
         } catch (Exception ex) {
@@ -253,21 +253,21 @@ public class MedicalProfessionalRepository extends BaseRepository {
         return result;
     }
 
-    public String getMedicalProfessionalAward(Version version, List<String> languageList, String medicalProfessionalItemUrl, String country) {
+    public String getMedicalProfessionalAward(Version version, List<String> languageList, String medicalProfessionalItemUrl, String countryOfResidence) {
         final String methodName = "getMedicalProfessionalAward";
         start(methodName);
 
         String sql = "SELECT mpa.award FROM medical_professional mp " +
                 " LEFT JOIN medical_professional_award mpa ON mp.uid = mpa.medical_professional_uid " +
                 " LEFT JOIN medical_professional_award_country mpac ON mpa.uid = mpac.medical_professional_award_uid " +
-                " LEFT JOIN country c ON c.uid = mpac.country_uid " +
-                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country = :country";
+                " LEFT JOIN country_of_residence c ON c.uid = mpac.country_of_residence_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country_of_residence = :countryOfResidence";
 
         sql = getTableVersion(version, tableMap, sql);
 
         String result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("country", country);
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("countryOfResidence", countryOfResidence);
             result = query.mapTo(String.class).one();
 
         } catch (Exception ex) {
