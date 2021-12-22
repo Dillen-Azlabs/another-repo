@@ -210,8 +210,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         String sql = "SELECT mpa.achievement FROM medical_professional mp " +
                 " LEFT JOIN medical_professional_achievement mpa ON mp.uid = mpa.medical_professional_uid " +
                 " LEFT JOIN medical_professional_achievement_country mpac ON mpa.uid = mpac.medical_professional_achievement_uid " +
-                " LEFT JOIN country_of_residence c ON c.uid = mpac.country_of_residence_uid " +
-                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country_of_residence = :countryOfResidence";
+                " LEFT JOIN country_of_residence c ON c.uid = mpac.cor_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :countryOfResidence";
 
         sql = getTableVersion(version, tableMap, sql);
 
@@ -235,8 +235,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         String sql = "SELECT mpe.experiences FROM medical_professional mp " +
                 " LEFT JOIN medical_professional_experience mpe ON mp.uid = mpe.medical_professional_uid " +
                 " LEFT JOIN medical_professional_experience_country mpec ON mpe.uid = mpec.medical_professional_experience_uid " +
-                " LEFT JOIN country_of_residence c ON c.uid = mpec.country_of_residence_uid " +
-                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country = :countryOfResidence";
+                " LEFT JOIN country_of_residence c ON c.uid = mpec.cor_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :countryOfResidence";
 
         sql = getTableVersion(version, tableMap, sql);
 
@@ -260,8 +260,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         String sql = "SELECT mpa.award FROM medical_professional mp " +
                 " LEFT JOIN medical_professional_award mpa ON mp.uid = mpa.medical_professional_uid " +
                 " LEFT JOIN medical_professional_award_country mpac ON mpa.uid = mpac.medical_professional_award_uid " +
-                " LEFT JOIN country_of_residence c ON c.uid = mpac.country_of_residence_uid " +
-                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country_of_residence = :countryOfResidence";
+                " LEFT JOIN country_of_residence c ON c.uid = mpac.cor_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :countryOfResidence";
 
         sql = getTableVersion(version, tableMap, sql);
 
@@ -277,7 +277,6 @@ public class MedicalProfessionalRepository extends BaseRepository {
         completed(methodName);
         return result;
     }
-
 
     public List<MediaCoverage> getMediaCoverage(Version version, List<String> languageList, String medicalProfessionalItemUrl, String mediaCoverageLanguage) {
         final String methodName = "getMediaCoverage";
