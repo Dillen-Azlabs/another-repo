@@ -61,9 +61,9 @@ public class ConditionService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<ConditionDetail> result = repository.getDetails(Version.getVersion(version), languageList, conditionUrl, hospitalCode);
+        ConditionDetail result = repository.getDetails(Version.getVersion(version), languageList, conditionUrl, hospitalCode);
 
-        result = cdeProcessor.processList(result, languageCode);
+//        result = cdeProcessor.processList(result, languageCode);
 
         ConditionDetailListResponse response = new ConditionDetailListResponse(result);
 
@@ -83,9 +83,9 @@ public class ConditionService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<ConditionCta> result = repository.getCta(Version.getVersion(version), languageList, conditionUrl);
+        ConditionCta result = repository.getCta(Version.getVersion(version), languageList, conditionUrl);
 
-        result = ccProcessor.processList(result, languageCode);
+//        result = ccProcessor.processList(result, languageCode);
 
         ConditionCtaListResponse response = new ConditionCtaListResponse(result);
 
@@ -106,9 +106,9 @@ public class ConditionService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<ConditionSymptom> result = repository.getSymptom(Version.getVersion(version), languageList, conditionUrl, hospitalCode);
+        ConditionSymptom result = repository.getSymptom(Version.getVersion(version), languageList, conditionUrl, hospitalCode);
 
-        result = csProcessor.processList(result, languageCode);
+//        result = csProcessor.processList(result, languageCode);
 
         ConditionSymptomListResponse response = new ConditionSymptomListResponse(result);
 
@@ -129,9 +129,9 @@ public class ConditionService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<ConditionDiagnosis> result = repository.getDiagnosis(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
+        ConditionDiagnosis result = repository.getDiagnosis(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
 
-        result = cdprocessor.processList(result, languageCode);
+//        result = cdprocessor.processList(result, languageCode);
 
         ConditionDiagnosisListResponse response = new ConditionDiagnosisListResponse(result);
 
@@ -152,9 +152,9 @@ public class ConditionService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<ConditionExpertise> result = repository.getExpertise(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
+        ConditionExpertise result = repository.getExpertise(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
 
-        result = ceProcessor.processList(result, languageCode);
+//        result = ceProcessor.processList(result, languageCode);
 
         ConditionExpertiseListResponse response = new ConditionExpertiseListResponse(result);
 
@@ -175,9 +175,9 @@ public class ConditionService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<ConditionFaq> result = repository.getFaq(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
+        ConditionFaq result = repository.getFaq(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
 
-        result = cfProcessor.processList(result, languageCode);
+//        result = cfProcessor.processList(result, languageCode);
 
         ConditionFaqListResponse response = new ConditionFaqListResponse(result);
 

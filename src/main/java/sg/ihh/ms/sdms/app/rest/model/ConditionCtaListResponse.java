@@ -11,18 +11,18 @@ import java.util.List;
 public class ConditionCtaListResponse extends BaseResponse{
 
     @JsonProperty("condition")
-    private List<ConditionCta> list;
+    private ConditionCta conditionCta;
 
-    public ConditionCtaListResponse(List<ConditionCta> list) {
+    public ConditionCtaListResponse(ConditionCta conditionCta) {
         super(HttpStatus.OK);
-        this.list = list;
+        this.conditionCta = conditionCta;
     }
 
-    public List<ConditionCta> getList() {
-        return list;
+    public ConditionCta getConditionCta() {
+        return conditionCta;
     }
 
-    public void setList(List<ConditionCta> list) {
-        this.list = list;
+    public void setConditionCta(ConditionCta conditionCta) {
+        this.conditionCta = conditionCta;
     }
 }

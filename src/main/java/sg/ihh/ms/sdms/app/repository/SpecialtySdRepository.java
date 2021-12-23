@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import sg.ihh.ms.sdms.app.model.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,7 @@ public class SpecialtySdRepository extends BaseRepository{
 
     }
 
-    public List<SpecialtyDetail> getSpecialtyDetail(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
+    public SpecialtyDetail getSpecialtyDetail(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
         final String methodName = "getSpecialtyDetail";
         start(methodName);
 
@@ -30,24 +29,22 @@ public class SpecialtySdRepository extends BaseRepository{
 
         sql = getTableVersion(version, tableMap, sql);
 
-        List<SpecialtyDetail> result = new ArrayList<>();
+        SpecialtyDetail result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
-            result = query.mapToBean(SpecialtyDetail.class).list();
+            result = query.mapToBean(SpecialtyDetail.class).one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
         }
 
-        if (isHospitalValid(hospitalCode)) {
-            for (SpecialtyDetail detail : result) {
-                Map<String, Object> metadataDetails = getMetadataDetails(version, languageList, specialtyItemUrl, hospitalCode);
-                if (metadataDetails.get("hospital_main_image") != null) {
-                    detail.setMainImageUrl((String) metadataDetails.get("hospital_main_image"));
-                }
-                if (metadataDetails.get("hospital_main_text") != null) {
-                    detail.setMainImageAltText((String) metadataDetails.get("hospital_main_text"));
-                }
+        if (isHospitalValid(hospitalCode) && result != null) {
+            Map<String, Object> metadataDetails = getMetadataDetails(version, languageList, specialtyItemUrl, hospitalCode);
+            if (metadataDetails.get("hospital_main_image") != null) {
+                result.setMainImageUrl((String) metadataDetails.get("hospital_main_image"));
+            }
+            if (metadataDetails.get("hospital_main_text") != null) {
+                result.setMainImageAltText((String) metadataDetails.get("hospital_main_text"));
             }
         }
 
@@ -78,7 +75,7 @@ public class SpecialtySdRepository extends BaseRepository{
         return result;
     }
 
-    public List<SpecialtyCta> getSpecialtyCta(Version version, List<String> languageList, String specialtyItemUrl) {
+    public SpecialtyCta getSpecialtyCta(Version version, List<String> languageList, String specialtyItemUrl) {
         final String methodName = "getSpecialtyCta";
         start(methodName);
 
@@ -87,10 +84,10 @@ public class SpecialtySdRepository extends BaseRepository{
 
         sql = getTableVersion(version, tableMap, sql);
 
-        List<SpecialtyCta> result = null;
+        SpecialtyCta result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
-            result = query.mapToBean(SpecialtyCta.class).list();
+            result = query.mapToBean(SpecialtyCta.class).one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
@@ -120,7 +117,7 @@ public class SpecialtySdRepository extends BaseRepository{
         return !hospitalUid.isEmpty();
     }
 
-    public List<SpecialtyOverview> getSpecialtyOverview(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
+    public SpecialtyOverview getSpecialtyOverview(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
         final String methodName = "getSpecialtyOverview";
         start(methodName);
 
@@ -130,10 +127,10 @@ public class SpecialtySdRepository extends BaseRepository{
 
         sql = getTableVersion(version, tableMap, sql);
 
-        List<SpecialtyOverview> result = new ArrayList<>();
+        SpecialtyOverview result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
-            result = query.mapToBean(SpecialtyOverview.class).list();
+            result = query.mapToBean(SpecialtyOverview.class).one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
@@ -141,11 +138,12 @@ public class SpecialtySdRepository extends BaseRepository{
 
         // these 2 fields need to set separately as they should be null when hospitalCode dont match.
         // the other fields should still display if the hospitalCode doesn't match
-        for(SpecialtyOverview overview : result) {
+        if (result != null) {
             Map<String, Object> metadata = getMetadata(version, languageList, specialtyItemUrl, hospitalCode);
-            overview.setOverviewMetaTitle((String) metadata.get("overview_meta_title"));
-            overview.setOverviewMetaDesc((String) metadata.get("overview_meta_desc"));
+            result.setOverviewMetaTitle((String) metadata.get("overview_meta_title"));
+            result.setOverviewMetaDesc((String) metadata.get("overview_meta_desc"));
         }
+
         completed(methodName);
         return result;
     }
@@ -173,7 +171,7 @@ public class SpecialtySdRepository extends BaseRepository{
         return result;
     }
 
-    public List<SpecialtyRelatedCondition> getSpecialtyRelatedCondition(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
+    public SpecialtyRelatedCondition getSpecialtyRelatedCondition(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
         final String methodName = "getSpecialtyRelatedCondition";
         start(methodName);
 
@@ -182,10 +180,10 @@ public class SpecialtySdRepository extends BaseRepository{
 
         sql = getTableVersion(version, tableMap, sql);
 
-        List<SpecialtyRelatedCondition> result = new ArrayList<>();
+        SpecialtyRelatedCondition result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
-            result = query.mapToBean(SpecialtyRelatedCondition.class).list();
+            result = query.mapToBean(SpecialtyRelatedCondition.class).one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
@@ -193,10 +191,10 @@ public class SpecialtySdRepository extends BaseRepository{
 
         // these 2 fields need to set separately as they should be null when hospitalCode dont match.
         // the other fields should still display if the hospitalCode doesn't match
-        for(SpecialtyRelatedCondition relatedCondition : result) {
+        if (result != null) {
             Map<String, Object> metadata = getSpecialtyRelatedConditionMetadata(version, languageList, specialtyItemUrl, hospitalCode);
-            relatedCondition.setRelatedConditionMetaTitle((String) metadata.get("related_condition_meta_title"));
-            relatedCondition.setRelatedConditionMetaDesc((String) metadata.get("related_condition_meta_desc"));
+            result.setRelatedConditionMetaTitle((String) metadata.get("related_condition_meta_title"));
+            result.setRelatedConditionMetaDesc((String) metadata.get("related_condition_meta_desc"));
         }
 
         completed(methodName);
@@ -226,7 +224,7 @@ public class SpecialtySdRepository extends BaseRepository{
         return result;
     }
 
-    public List<SpecialtyRelatedTreatment> getSpecialtyRelatedTreatment(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
+    public SpecialtyRelatedTreatment getSpecialtyRelatedTreatment(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
         final String methodName = "getSpecialtyRelatedTreatment";
         start(methodName);
 
@@ -236,10 +234,10 @@ public class SpecialtySdRepository extends BaseRepository{
 
         sql = getTableVersion(version, tableMap, sql);
 
-        List<SpecialtyRelatedTreatment> result = new ArrayList<>();
+        SpecialtyRelatedTreatment result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
-            result = query.mapToBean(SpecialtyRelatedTreatment.class).list();
+            result = query.mapToBean(SpecialtyRelatedTreatment.class).one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
@@ -247,10 +245,10 @@ public class SpecialtySdRepository extends BaseRepository{
 
         // these 2 fields need to set separately as they should be null when hospitalCode dont match.
         // the other fields should still display if the hospitalCode doesn't match
-        for(SpecialtyRelatedTreatment relatedTreatment : result) {
+        if (result != null) {
             Map<String, Object> metadata = getSpecialtyRelatedTreatmentMetadata(version, languageList, specialtyItemUrl, hospitalCode);
-            relatedTreatment.setRelatedTreatmentMetaTitle((String) metadata.get("related_treatment_meta_title"));
-            relatedTreatment.setRelatedTreatmentMetaDesc((String) metadata.get("related_treatment_meta_desc"));
+            result.setRelatedTreatmentMetaTitle((String) metadata.get("related_treatment_meta_title"));
+            result.setRelatedTreatmentMetaDesc((String) metadata.get("related_treatment_meta_desc"));
         }
 
         completed(methodName);
@@ -280,7 +278,7 @@ public class SpecialtySdRepository extends BaseRepository{
         return result;
     }
 
-    public List<SpecialtyExpertise> getSpecialtyExpertise(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
+    public SpecialtyExpertise getSpecialtyExpertise(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
         final String methodName = "getSpecialtyExpertise";
         start(methodName);
 
@@ -290,10 +288,10 @@ public class SpecialtySdRepository extends BaseRepository{
 
         sql = getTableVersion(version, tableMap, sql);
 
-        List<SpecialtyExpertise> result = new ArrayList<>();
+        SpecialtyExpertise result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
-            result = query.mapToBean(SpecialtyExpertise.class).list();
+            result = query.mapToBean(SpecialtyExpertise.class).one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
@@ -301,10 +299,10 @@ public class SpecialtySdRepository extends BaseRepository{
 
         // these 2 fields need to set separately as they should be null when hospitalCode dont match.
         // the other fields should still display if the hospitalCode doesn't match
-        for(SpecialtyExpertise expertise : result) {
+        if (result != null) {
             Map<String, Object> metadata = getMetadataOurDoc(version, languageList, specialtyItemUrl, hospitalCode);
-            expertise.setOurDocMetaTitle((String) metadata.get("our_doc_meta_title"));
-            expertise.setOurDocMetaDesc((String) metadata.get("our_doc_meta_desc"));
+            result.setOurDocMetaTitle((String) metadata.get("our_doc_meta_title"));
+            result.setOurDocMetaDesc((String) metadata.get("our_doc_meta_desc"));
         }
 
         completed(methodName);
@@ -334,7 +332,7 @@ public class SpecialtySdRepository extends BaseRepository{
         return result;
     }
 
-    public List<SpecialtyFaq> getSpecialtyFaq(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
+    public SpecialtyFaq getSpecialtyFaq(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
         final String methodName = "getSpecialtyFaq";
         start(methodName);
 
@@ -345,10 +343,10 @@ public class SpecialtySdRepository extends BaseRepository{
 
         sql = getTableVersion(version, tableMap, sql);
 
-        List<SpecialtyFaq> result = new ArrayList<>();
+        SpecialtyFaq result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
-            result = query.mapToBean(SpecialtyFaq.class).list();
+            result = query.mapToBean(SpecialtyFaq.class).one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
@@ -356,11 +354,12 @@ public class SpecialtySdRepository extends BaseRepository{
 
         // these 2 fields need to set separately as they should be null when hospitalCode dont match.
         // the other fields should still display if the hospitalCode doesn't match
-        for(SpecialtyFaq faq : result) {
+        if (result != null) {
             Map<String, Object> metadata = getMetadataFaq(version, languageList, specialtyItemUrl, hospitalCode);
-            faq.setFaqTitle((String) metadata.get("faq_title"));
-            faq.setFaqDesc((String) metadata.get("faq_desc"));
+            result.setFaqTitle((String) metadata.get("faq_title"));
+            result.setFaqDesc((String) metadata.get("faq_desc"));
         }
+
         completed(methodName);
         return result;
     }
