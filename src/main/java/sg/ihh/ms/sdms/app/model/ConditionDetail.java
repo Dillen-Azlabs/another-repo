@@ -16,7 +16,7 @@ public class ConditionDetail extends BaseModel{
     @JsonProperty("mainImageAltText")
     private String mainImageAltText;
     @JsonProperty("hideMainImage")
-    private String hideHeroImage;
+    private boolean hideHeroImage;
     @JsonProperty("summary")
     private String summary;
     @JsonProperty("socialSummary")
@@ -60,11 +60,11 @@ public class ConditionDetail extends BaseModel{
         this.mainImageAltText = mainImageAltText;
     }
 
-    public String getHideHeroImage() {
+    public boolean isHideHeroImage() {
         return hideHeroImage;
     }
 
-    public void setHideHeroImage(String hideHeroImage) {
+    public void setHideHeroImage(boolean hideHeroImage) {
         this.hideHeroImage = hideHeroImage;
     }
 

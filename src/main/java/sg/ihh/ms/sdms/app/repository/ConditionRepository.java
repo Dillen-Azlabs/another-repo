@@ -102,7 +102,6 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cd.* FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url";
 
         sql = getTableVersion(version, tableMap, sql);
@@ -156,7 +155,6 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cd.* FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url";
 
         sql = getTableVersion(version, tableMap, sql);
@@ -209,8 +207,7 @@ public class ConditionRepository extends BaseRepository {
         final String methodName = "getExpertise";
         start(methodName);
 
-        String sql = "SELECT cd.*, cdsm.wcu,cdsm.doc_intro FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
+        String sql = "SELECT cd.* FROM condition_disease_sd cd " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url";
 
         sql = getTableVersion(version, tableMap, sql);
@@ -230,6 +227,8 @@ public class ConditionRepository extends BaseRepository {
             Map<String, Object> metadata = getExpertiseMetadata(version, languageList, conditionItemUrl, hospitalCode);
             result.setExpertiseMetaTitle((String) metadata.get("expertise_meta_title"));
             result.setExpertiseMetaDesc((String) metadata.get("expertise_meta_desc"));
+            result.setWcu((String) metadata.get("wcu"));
+            result.setDocIntro((String) metadata.get("doc_intro"));
         }
 
         completed(methodName);
@@ -240,7 +239,7 @@ public class ConditionRepository extends BaseRepository {
         final String methodName = "getExpertiseMetadata";
         start(methodName);
 
-        String sql = "SELECT cdsm.expertise_meta_title, cdsm.expertise_meta_desc FROM condition_disease_sd cd " +
+        String sql = "SELECT cdsm.wcu, cdsm.doc_intro, cdsm.expertise_meta_title, cdsm.expertise_meta_desc FROM condition_disease_sd cd " +
                 " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital";
