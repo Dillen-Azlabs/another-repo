@@ -9,18 +9,18 @@ import java.util.List;
 @JsonPropertyOrder({"code", "message", "specialty"})
 public class SpecialtyCtaListResponse extends BaseResponse{
     @JsonProperty("specialty")
-    private List<SpecialtyCta> list;
+    private SpecialtyCta specialtyCta;
 
-    public SpecialtyCtaListResponse(List<SpecialtyCta> list) {
+    public SpecialtyCtaListResponse(SpecialtyCta specialtyCta) {
         super(HttpStatus.OK);
-        this.list = list;
+        this.specialtyCta = specialtyCta;
     }
 
-    public List<SpecialtyCta> getList() {
-        return list;
+    public SpecialtyCta getSpecialtyCta() {
+        return specialtyCta;
     }
 
-    public void setList(List<SpecialtyCta> list) {
-        this.list = list;
+    public void setSpecialtyCta(SpecialtyCta specialtyCta) {
+        this.specialtyCta = specialtyCta;
     }
 }

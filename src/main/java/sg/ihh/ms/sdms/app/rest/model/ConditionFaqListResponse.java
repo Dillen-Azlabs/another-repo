@@ -10,20 +10,18 @@ import java.util.List;
 @JsonPropertyOrder({"code", "message", "condition"})
 public class ConditionFaqListResponse extends BaseResponse{
     @JsonProperty("conditions")
-    private List<ConditionFaq> list;
+    private ConditionFaq conditionFaq;
 
-    public ConditionFaqListResponse(List<ConditionFaq> list) {
+    public ConditionFaqListResponse(ConditionFaq conditionFaq) {
         super(HttpStatus.OK);
-        this.list = list;
+        this.conditionFaq = conditionFaq;
     }
 
-
-    public List<ConditionFaq> getList() {
-        return list;
+    public ConditionFaq getConditionFaq() {
+        return conditionFaq;
     }
 
-    public void setList(List<ConditionFaq> list) {
-        this.list = list;
+    public void setConditionFaq(ConditionFaq conditionFaq) {
+        this.conditionFaq = conditionFaq;
     }
-
 }

@@ -58,9 +58,9 @@ public class SpecialtySdService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<SpecialtyDetail> result = repository.getSpecialtyDetail(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
+        SpecialtyDetail result = repository.getSpecialtyDetail(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
 
-        result = sdProcessor.processList(result, languageCode);
+//        result = sdProcessor.processList(result, languageCode);
 
         SpecialtyDetailListResponse response = new SpecialtyDetailListResponse(result);
 
@@ -79,9 +79,9 @@ public class SpecialtySdService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<SpecialtyCta> result = repository.getSpecialtyCta(Version.getVersion(version), languageList, specialtyUrl);
+        SpecialtyCta result = repository.getSpecialtyCta(Version.getVersion(version), languageList, specialtyUrl);
 
-        result = scProcessor.processList(result, languageCode);
+//        result = scProcessor.processList(result, languageCode);
 
         SpecialtyCtaListResponse response = new SpecialtyCtaListResponse(result);
 
@@ -101,9 +101,10 @@ public class SpecialtySdService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<SpecialtyOverview> result = repository.getSpecialtyOverview(Version.getVersion(version), languageList, specialtyUrl, hospitalCode);
+//        SpecialtyOverview result = repository.getSpecialtyOverview(Version.getVersion(version), languageList, specialtyUrl, hospitalCode);
 
-        result = soProcessor.processList(result, languageCode);
+        SpecialtyOverview result = repository.getSpecialtyOverview(Version.getVersion(version), languageList, specialtyUrl, hospitalCode);
+//        result = soProcessor.processList(result, languageCode);
 
         SpecialtyOverviewListResponse response = new SpecialtyOverviewListResponse(result);
 
@@ -123,9 +124,9 @@ public class SpecialtySdService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<SpecialtyRelatedCondition> result = repository.getSpecialtyRelatedCondition(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
+        SpecialtyRelatedCondition result = repository.getSpecialtyRelatedCondition(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
 
-        result = srcProcessor.processList(result, languageCode);
+//        result = srcProcessor.processList(result, languageCode);
 
         SpecialtyRelatedConditionListResponse response = new SpecialtyRelatedConditionListResponse(result);
 
@@ -145,9 +146,9 @@ public class SpecialtySdService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<SpecialtyRelatedTreatment> result = repository.getSpecialtyRelatedTreatment(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
+        SpecialtyRelatedTreatment result = repository.getSpecialtyRelatedTreatment(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
 
-        result = srtProcessor.processList(result, languageCode);
+//        result = srtProcessor.processList(result, languageCode);
 
         SpecialtyRelatedTreatmentListResponse response = new SpecialtyRelatedTreatmentListResponse(result);
 
@@ -167,9 +168,9 @@ public class SpecialtySdService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<SpecialtyExpertise> result = repository.getSpecialtyExpertise(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
+        SpecialtyExpertise result = repository.getSpecialtyExpertise(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
 
-        result = seProcessor.processList(result, languageCode);
+//        result = seProcessor.processList(result, languageCode);
 
         SpecialtyExpertiseListResponse response = new SpecialtyExpertiseListResponse(result);
 
@@ -189,9 +190,9 @@ public class SpecialtySdService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<SpecialtyFaq> result = repository.getSpecialtyFaq(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
+        SpecialtyFaq result = repository.getSpecialtyFaq(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
 
-        result = sfProcessor.processList(result, languageCode);
+//        result = sfProcessor.processList(result, languageCode);
 
         SpecialtyFaqListResponse response = new SpecialtyFaqListResponse(result);
 

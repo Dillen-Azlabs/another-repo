@@ -10,19 +10,18 @@ import java.util.List;
 @JsonPropertyOrder({"code", "message", "specialty"})
 public class SpecialtyExpertiseListResponse extends BaseResponse{
     @JsonProperty("specialty")
-    private List<SpecialtyExpertise> list;
+    private SpecialtyExpertise specialtyExpertise;
 
-    public SpecialtyExpertiseListResponse(List<SpecialtyExpertise> list) {
+    public SpecialtyExpertiseListResponse(SpecialtyExpertise specialtyExpertise) {
         super(HttpStatus.OK);
-        this.list = list;
+        this.specialtyExpertise = specialtyExpertise;
     }
 
-    public List<SpecialtyExpertise> getList() {
-        return list;
+    public SpecialtyExpertise getSpecialtyExpertise() {
+        return specialtyExpertise;
     }
 
-    public void setList(List<SpecialtyExpertise> list) {
-        this.list = list;
+    public void setSpecialtyExpertise(SpecialtyExpertise specialtyExpertise) {
+        this.specialtyExpertise = specialtyExpertise;
     }
-
 }

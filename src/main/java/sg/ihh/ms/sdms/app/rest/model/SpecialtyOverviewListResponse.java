@@ -12,22 +12,18 @@ import java.util.List;
 public class SpecialtyOverviewListResponse extends BaseResponse{
 
     @JsonProperty("specialty")
-    private List<SpecialtyOverview> list;
+    private SpecialtyOverview specialtyOverview;
 
-    public SpecialtyOverviewListResponse(List<SpecialtyOverview> list) {
+    public SpecialtyOverviewListResponse(SpecialtyOverview specialtyOverview) {
         super(HttpStatus.OK);
-        this.list = list;
+        this.specialtyOverview = specialtyOverview;
     }
 
-
-
-    public List<SpecialtyOverview> getList() {
-        return list;
+    public SpecialtyOverview getSpecialtyOverview() {
+        return specialtyOverview;
     }
 
-    public void setList(List<SpecialtyOverview> list) {
-        this.list = list;
+    public void setSpecialtyOverview(SpecialtyOverview specialtyOverview) {
+        this.specialtyOverview = specialtyOverview;
     }
-
-
 }
