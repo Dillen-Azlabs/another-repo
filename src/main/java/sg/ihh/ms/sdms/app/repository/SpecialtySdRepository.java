@@ -121,8 +121,7 @@ public class SpecialtySdRepository extends BaseRepository{
         final String methodName = "getSpecialtyOverview";
         start(methodName);
 
-        String sql = "SELECT ss.*, ssm.oai,ssm.oavu,ssm.wcu,ssm.wcuvu FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
+        String sql = "SELECT ss.* FROM specialty_sd ss " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
 
         sql = getTableVersion(version, tableMap, sql);
@@ -142,6 +141,10 @@ public class SpecialtySdRepository extends BaseRepository{
             Map<String, Object> metadata = getMetadata(version, languageList, specialtyItemUrl, hospitalCode);
             result.setOverviewMetaTitle((String) metadata.get("overview_meta_title"));
             result.setOverviewMetaDesc((String) metadata.get("overview_meta_desc"));
+            result.setOai((String) metadata.get("oai"));
+            result.setOavu((String) metadata.get("oavu"));
+            result.setWcu((String) metadata.get("wcu"));
+            result.setWcuvu((String) metadata.get("wcuvu"));
         }
 
         completed(methodName);
@@ -152,7 +155,7 @@ public class SpecialtySdRepository extends BaseRepository{
         final String methodName = "getMetadata";
         start(methodName);
 
-        String sql = "SELECT ssm.overview_meta_title,ssm.overview_meta_desc FROM specialty_sd ss " +
+        String sql = "SELECT ssm.overview_meta_title,ssm.overview_meta_desc, ssm.oai,ssm.oavu,ssm.wcu,ssm.wcuvu FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
@@ -228,8 +231,7 @@ public class SpecialtySdRepository extends BaseRepository{
         final String methodName = "getSpecialtyRelatedTreatment";
         start(methodName);
 
-        String sql = "SELECT ss.*, ssm.related_treatment_content FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
+        String sql = "SELECT ss.* FROM specialty_sd ss " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
 
         sql = getTableVersion(version, tableMap, sql);
@@ -249,6 +251,7 @@ public class SpecialtySdRepository extends BaseRepository{
             Map<String, Object> metadata = getSpecialtyRelatedTreatmentMetadata(version, languageList, specialtyItemUrl, hospitalCode);
             result.setRelatedTreatmentMetaTitle((String) metadata.get("related_treatment_meta_title"));
             result.setRelatedTreatmentMetaDesc((String) metadata.get("related_treatment_meta_desc"));
+            result.setRelatedTreatmentContent((String) metadata.get("related_treatment_content"));
         }
 
         completed(methodName);
@@ -259,7 +262,7 @@ public class SpecialtySdRepository extends BaseRepository{
         final String methodName = "getSpecialtyRelatedTreatmentMetadata";
         start(methodName);
 
-        String sql = "SELECT ssm.related_treatment_meta_title, ssm.related_treatment_meta_desc FROM specialty_sd ss " +
+        String sql = "SELECT ssm.related_treatment_meta_title, ssm.related_treatment_meta_desc, ssm.related_treatment_content FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
@@ -282,8 +285,7 @@ public class SpecialtySdRepository extends BaseRepository{
         final String methodName = "getSpecialtyExpertise";
         start(methodName);
 
-        String sql = "SELECT ss.*, ssm.our_doc_intro FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
+        String sql = "SELECT ss.* FROM specialty_sd ss " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
 
         sql = getTableVersion(version, tableMap, sql);
@@ -303,6 +305,7 @@ public class SpecialtySdRepository extends BaseRepository{
             Map<String, Object> metadata = getMetadataOurDoc(version, languageList, specialtyItemUrl, hospitalCode);
             result.setOurDocMetaTitle((String) metadata.get("our_doc_meta_title"));
             result.setOurDocMetaDesc((String) metadata.get("our_doc_meta_desc"));
+            result.setOurDocIntro((String) metadata.get("our_doc_intro"));
         }
 
         completed(methodName);
@@ -313,7 +316,7 @@ public class SpecialtySdRepository extends BaseRepository{
         final String methodName = "getMetadata";
         start(methodName);
 
-        String sql = "SELECT ssm.our_doc_meta_title,ssm.our_doc_meta_desc FROM specialty_sd ss " +
+        String sql = "SELECT ssm.our_doc_meta_title,ssm.our_doc_meta_desc, ssm.our_doc_intro FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
