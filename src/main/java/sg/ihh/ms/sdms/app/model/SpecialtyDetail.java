@@ -15,7 +15,7 @@ public class SpecialtyDetail extends BaseModel{
     @JsonProperty("mainImageAltText")
     private String mainImageAltText;
     @JsonProperty("hideMainImage")
-    private Integer hideHeroImage;
+    private boolean hideHeroImage;
     @JsonProperty("summary")
     private String summary;
     @JsonProperty("socialSummary")
@@ -59,11 +59,11 @@ public class SpecialtyDetail extends BaseModel{
         this.mainImageAltText = mainImageAltText;
     }
 
-    public Integer getHideHeroImage() {
+    public boolean isHideHeroImage() {
         return hideHeroImage;
     }
 
-    public void setHideHeroImage(Integer hideHeroImage) {
+    public void setHideHeroImage(boolean hideHeroImage) {
         this.hideHeroImage = hideHeroImage;
     }
 
