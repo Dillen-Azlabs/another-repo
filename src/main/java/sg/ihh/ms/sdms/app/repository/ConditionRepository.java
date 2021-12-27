@@ -257,9 +257,29 @@ public class ConditionRepository extends BaseRepository {
         completed(methodName);
         return result;
     }
-
-    public ConditionFaq getFaq(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
+    public ConditionFaq getFaq(Version version, List<String> languageList, String conditionItemUrl,String hospitalCode) {
         final String methodName = "getFaq";
+        start(methodName);
+
+        ConditionFaq conditionFaq = getConditionDiseaseFaq(version, languageList, conditionItemUrl, hospitalCode);
+
+        if (conditionFaq != null) {
+            List<ConditionSdFaq> conditionSdFaqs = getConditionSdFaq(version, languageList, conditionItemUrl, hospitalCode);
+
+            conditionFaq.setFaqs(conditionSdFaqs);
+        }
+        Map<String, Object> metadataFaq = getMetadataFaq(version, languageList, conditionItemUrl, hospitalCode);
+        ConditionFaq result = new ConditionFaq();
+
+        result.setFaqTitle((String) metadataFaq.get("faq_title"));
+        result.setFaqDesc((String) metadataFaq.get("faq_desc"));
+
+        completed(methodName);
+        return conditionFaq;
+    }
+    private List<ConditionSdFaq> getConditionSdFaq(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode)
+    {
+        final String methodName = "getConditionSdFaq";
         start(methodName);
 
         String sql = "SELECT cd.*, cdsf.question,cdsf.answer FROM condition_disease_sd cd " +
@@ -268,21 +288,13 @@ public class ConditionRepository extends BaseRepository {
 
         sql = getTableVersion(version, tableMap, sql);
 
-        ConditionFaq result = null;
+        List<ConditionSdFaq> result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", conditionItemUrl);
-            result = query.mapToBean(ConditionFaq.class).one();
+            result = query.mapToBean(ConditionSdFaq.class).list();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
-        }
-
-        // these 2 fields need to set separately as they should be null when hospitalCode dont match.
-        // the other fields should still display if the hospitalCode doesn't match
-        if (result != null) {
-            Map<String, Object> metadataFaq = getMetadataFaq(version, languageList, conditionItemUrl, hospitalCode);
-            result.setFaqTitle((String) metadataFaq.get("faq_title"));
-            result.setFaqDesc((String) metadataFaq.get("faq_desc"));
         }
 
         completed(methodName);
@@ -362,6 +374,24 @@ public class ConditionRepository extends BaseRepository {
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", conditionItemUrl);
             result = query.mapToBean(ConditionRelatedData.class).one();
+        }
+        catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        return result;
+    }
+
+    private ConditionFaq getConditionDiseaseFaq(Version version, List<String> languageList,String conditionItemUrl, String hospitalCode)
+    {
+        String methodName = "getConditionDiseaseFaq";
+        String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt,additional_resource FROM condition_disease_sd " +
+                "WHERE language_code IN(<languageList>) AND item_url = :item_url;";
+        sql = getTableVersion(version, tableMap, sql);
+
+        ConditionFaq result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", conditionItemUrl);
+            result = query.mapToBean(ConditionFaq.class).one();
         }
         catch (Exception ex) {
             log.error(methodName, ex);

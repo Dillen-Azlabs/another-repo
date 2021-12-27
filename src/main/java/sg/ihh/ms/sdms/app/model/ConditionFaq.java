@@ -4,46 +4,38 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
-@JsonPropertyOrder({"uid", "languageCode", "additionalResources", "question", "answer","faqMetaTitle","faqMetaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
+import java.util.List;
+
+@JsonPropertyOrder({"uid", "languageCode", "additionalResources", "faqs","faqMetaTitle", "faqMetaDescription",  "order", "publishFlag", "createdDt", "modifiedDt"})
 public class ConditionFaq extends BaseModel{
 
     @JsonProperty("additionalResources")
     private String additionalResource;
-    @JsonProperty("question")
-    private String question;
-    @JsonProperty("answer")
-    private String answer;
+    @JsonProperty("faqs")
+    private List<ConditionSdFaq> faqs;
     @JsonProperty("faqMetaTitle")
     private String faqTitle;
     @JsonProperty("faqMetaDescription")
     private String faqDesc;
-
     public ConditionFaq() {
         //Empty Constructor
+    }
+
+    public List<ConditionSdFaq> getFaqs() {
+        return faqs;
+    }
+
+    public void setFaqs(List<ConditionSdFaq> faqs) {
+        this.faqs = faqs;
     }
 
     public String getAdditionalResource() {
         return additionalResource;
     }
 
+    @ColumnName("additional_resource")
     public void setAdditionalResource(String additionalResource) {
         this.additionalResource = additionalResource;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-    @ColumnName("question")
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-    @ColumnName("answer")
-    public void setAnswer(String answer) {
-        this.answer = answer;
     }
 
     public String getFaqTitle() {

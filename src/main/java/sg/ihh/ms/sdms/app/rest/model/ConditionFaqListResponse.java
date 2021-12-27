@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.http.HttpStatus;
 import sg.ihh.ms.sdms.app.model.ConditionFaq;
+import sg.ihh.ms.sdms.app.model.ConditionSdFaq;
 
 import java.util.List;
 
