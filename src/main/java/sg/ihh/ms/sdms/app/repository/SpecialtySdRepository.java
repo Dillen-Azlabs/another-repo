@@ -334,38 +334,68 @@ public class SpecialtySdRepository extends BaseRepository{
         completed(methodName);
         return result;
     }
-
-    public SpecialtyFaq getSpecialtyFaq(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
-        final String methodName = "getSpecialtyFaq";
-        start(methodName);
-
-        String sql = "SELECT ss.*, ssf.question, ssf.answer FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_faq ssf ON ss.uid = ssf.specialty_sd_uid  " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
-
-
+    private SpecialtyFaq getSpecialty(Version version, List<String> languageList,String specialtyItemUrl, String hospitalCode)
+    {
+        String methodName = "getSpecialty";
+        String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt,additional_resource FROM specialty_sd " +
+                "WHERE language_code IN(<languageList>) AND item_url = :item_url;";
         sql = getTableVersion(version, tableMap, sql);
 
         SpecialtyFaq result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
             result = query.mapToBean(SpecialtyFaq.class).one();
+        }
+        catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        return result;
+    }
+
+    public SpecialtyFaq getSpecialtyFaq(Version version, List<String> languageList, String specialtyItemUrl,String hospitalCode) {
+        final String methodName = "getFaq";
+        start(methodName);
+
+        SpecialtyFaq specialtyFaq = getSpecialty(version, languageList, specialtyItemUrl, hospitalCode);
+
+        if (specialtyFaq != null) {
+            List<SpecialtySdFaq> specialtySdFaqs = getSpecialtySdFaq(version, languageList, specialtyItemUrl, hospitalCode);
+
+            specialtyFaq.setFaqs(specialtySdFaqs);
+        }
+        Map<String, Object> metadataFaq = getMetadataFaq(version, languageList, specialtyItemUrl, hospitalCode);
+        SpecialtyFaq result = new SpecialtyFaq();
+
+        result.setFaqTitle((String) metadataFaq.get("faq_title"));
+        result.setFaqDesc((String) metadataFaq.get("faq_desc"));
+
+        completed(methodName);
+        return specialtyFaq;
+    }
+    private List<SpecialtySdFaq> getSpecialtySdFaq(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode)
+    {
+        final String methodName = "getSpecialtySdFaq";
+        start(methodName);
+
+        String sql = "SELECT ss.*, ssf.question, ssf.answer FROM specialty_sd ss " +
+                " LEFT JOIN specialty_sd_faq ssf ON ss.uid = ssf.specialty_sd_uid  " +
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        List<SpecialtySdFaq> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", specialtyItemUrl);
+            result = query.mapToBean(SpecialtySdFaq.class).list();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
         }
 
-        // these 2 fields need to set separately as they should be null when hospitalCode dont match.
-        // the other fields should still display if the hospitalCode doesn't match
-        if (result != null) {
-            Map<String, Object> metadata = getMetadataFaq(version, languageList, specialtyItemUrl, hospitalCode);
-            result.setFaqTitle((String) metadata.get("faq_title"));
-            result.setFaqDesc((String) metadata.get("faq_desc"));
-        }
-
         completed(methodName);
         return result;
     }
+
 
     public Map<String, Object> getMetadataFaq(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
         final String methodName = "getFaq";
