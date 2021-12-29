@@ -1,15 +1,18 @@
 
 package sg.ihh.ms.sdms.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
 import java.util.List;
 
-@JsonPropertyOrder({"uid", "languageCode", "displayName", "itemUrl", "salutation", "mcrNumber", "isMedicalReviewer", "profileImageUrl", "profileImageAltText", "designation", "specialty", "languageSpoken", "gender", "insurancePanel", "videoUrl", "quote", "qnaUrl", "qnaLinkText", "hasMediaCoverage", "shortBio", "socialSummary", "metaTitle", "metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "displayName", "itemUrl", "salutation", "mcrNumber", "isMedicalReviewer", "profileImageUrl", "profileImageAltText", "designation", "specialty", "languageSpoken", "gender", "insurancePanel", "videoUrl", "quote", "qnaUrl", "qnaLinkText", "hasMediaCoverage", "shortBio", "socialSummary", "laymanTerm", "metaCta", "metaTitle", "metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class MedicalProfessionalDetail extends BaseModel {
 
+    @JsonIgnore
+    private String medProType;
     @JsonProperty("displayName")
     private String displayName;
     @JsonProperty("itemUrl")
@@ -48,6 +51,10 @@ public class MedicalProfessionalDetail extends BaseModel {
     private String shortBio;
     @JsonProperty("socialSummary")
     private String socialSummary;
+    @JsonProperty("laymanTerm")
+    private String laymanTerm;
+    @JsonProperty("metaCta")
+    private String metaCta;
     @JsonProperty("metaTitle")
     private String metaTitle;
     @JsonProperty("metaDescription")
@@ -56,6 +63,14 @@ public class MedicalProfessionalDetail extends BaseModel {
 
     public MedicalProfessionalDetail() {
         // Empty Constructor
+    }
+
+    public String getMedProType() {
+        return medProType;
+    }
+
+    public void setMedProType(String medProType) {
+        this.medProType = medProType;
     }
 
     public String getDisplayName() {
@@ -227,5 +242,21 @@ public class MedicalProfessionalDetail extends BaseModel {
 
     public void setMetaDescription(String metaDescription) {
         this.metaDescription = metaDescription;
+    }
+
+    public String getLaymanTerm() {
+        return laymanTerm;
+    }
+
+    public void setLaymanTerm(String laymanTerm) {
+        this.laymanTerm = laymanTerm;
+    }
+
+    public String getMetaCta() {
+        return metaCta;
+    }
+
+    public void setMetaCta(String metaCta) {
+        this.metaCta = metaCta;
     }
 }
