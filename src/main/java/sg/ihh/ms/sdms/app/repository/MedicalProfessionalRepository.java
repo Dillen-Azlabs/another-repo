@@ -4,6 +4,7 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
 import sg.ihh.ms.sdms.app.model.*;
+import sg.ihh.ms.sdms.app.util.constant.Constant;
 
 import java.util.*;
 
@@ -70,11 +71,12 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "getDetails";
         start(methodName);
 
-        String sql = "SELECT mp.*, g.gender, s.specialty, COUNT(mc.title) > 0 AS media_coverage FROM medical_professional mp " +
+        String sql = "SELECT mp.*, mpt.profession AS med_pro_type, g.gender, s.specialty, COUNT(mc.title) > 0 AS media_coverage FROM medical_professional mp " +
                         " LEFT JOIN medical_professional_specialty mps ON mp.uid = mps.medical_professional_uid " +
                         " LEFT JOIN specialty s ON s.uid = mps.specialty_uid " +
                         " LEFT JOIN gender g ON g.uid = mp.gender_uid " +
                         " LEFT JOIN media_coverage mc ON mp.uid = mc.related_specialist_uid " +
+                        " LEFT JOIN medical_professional_type mpt ON mpt.uid = mp.medical_professional_type_uid " +
                         " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
                         " GROUP BY mp.uid, mp.language_code, g.gender, s.specialty";
 
@@ -89,9 +91,21 @@ public class MedicalProfessionalRepository extends BaseRepository {
             log.error(methodName, ex);
         }
 
+        // setting additional information from other tables
         for (MedicalProfessionalDetail medicalProfessionalDetail : result) {
+            // setting the array of items
             medicalProfessionalDetail.setInsurancePanel(getMedicalProfessionalInsurance(version, languageList, medicalProfessionalItemUrl));
             medicalProfessionalDetail.setLanguageSpoken(getMedicalProfessionalSpokenLanguages(version, languageList, medicalProfessionalItemUrl));
+
+            // special handling for specialists and allied health professionals (AHP)
+            if (medicalProfessionalDetail.getMedProType().equals(Constant.MEDPRO_SPECIALISTS)) {
+                medicalProfessionalDetail.setMetaCta("");
+                medicalProfessionalDetail.setLaymanTerm(getMedicalProfessionalSpecialistInfo(version, languageList, medicalProfessionalItemUrl));
+            } else if (medicalProfessionalDetail.getMedProType().equals(Constant.MEDPRO_ALLIED_HEALTH_PROFESSIONALS)) {
+                Map<String, Object> ahpInfo = getMedicalProfessionalAHPInfo(version, languageList, medicalProfessionalItemUrl);
+                medicalProfessionalDetail.setMetaCta((String) ahpInfo.get(Constant.SERVICE_PROVIDER_META_CTA));
+                medicalProfessionalDetail.setLaymanTerm((String) ahpInfo.get(Constant.SERVICE_PROVIDER_LAYMAN_TERM));
+            }
             Map<String, Object> metadata = getMetadata(version, languageList, medicalProfessionalItemUrl, hospitalCode);
             medicalProfessionalDetail.setMetaTitle((String) metadata.get("meta_title"));
             medicalProfessionalDetail.setMetaDescription((String) metadata.get("meta_description"));
@@ -149,6 +163,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
         completed(methodName);
         return result;
     }
+
     public List<String> getMedicalProfessionalInsurance(Version version, List<String> languageList, String medicalProfessionalItemUrl) {
         final String methodName = "getMedicalProfessionalInsurance";
         start(methodName);
@@ -165,6 +180,54 @@ public class MedicalProfessionalRepository extends BaseRepository {
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
             result = query.mapTo(String.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
+    public String getMedicalProfessionalSpecialistInfo(Version version, List<String> languageList, String medicalProfessionalItemUrl) {
+        final String methodName = "getMedicalProfessionalSpecialistInfo";
+        start(methodName);
+
+        String sql = "SELECT s.layman_term FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_specialty mps ON mp.uid = mps.medical_professional_uid " +
+                " LEFT JOIN specialization s ON s.specialty_uid = mps.specialty_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
+                " GROUP BY s.layman_term";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        String result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
+            result = query.mapTo(String.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
+    public Map<String, Object> getMedicalProfessionalAHPInfo(Version version, List<String> languageList, String medicalProfessionalItemUrl) {
+        final String methodName = "getMedicalProfessionalAHPInfo";
+        start(methodName);
+
+        String sql = "SELECT spmd.meta_cta_value AS meta_cta, sp.layman_term FROM medical_professional mp " +
+                " LEFT JOIN service_provider sp ON sp.type_uid = mp.service_provider_uid " +
+                " LEFT JOIN service_provider_metadata spmd ON sp.uid = spmd.service_provider_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
+                " GROUP BY spmd.meta_cta_value";
+
+        sql = getTableVersion(version, tableMap, sql);
+
+        Map<String, Object> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
+            result = query.mapToMap().one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
