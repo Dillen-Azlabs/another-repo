@@ -13,11 +13,6 @@ import java.util.Map;
 public class SpecialtySdRepository extends BaseRepository{
     public SpecialtySdRepository() {
         log = getLogger(this.getClass());
-
-        tableMap = new HashMap<>();
-        tableMap.put(Version.DRAFT.getKey(), "specialty_sd");
-        tableMap.put(Version.PUBLISHED.getKey(), "specialty_sd_ro");
-
     }
 
     public SpecialtyDetail getSpecialtyDetail(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
@@ -25,9 +20,10 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ss.* FROM specialty_sd ss " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url " +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         SpecialtyDetail result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -58,10 +54,11 @@ public class SpecialtySdRepository extends BaseRepository{
 
         String sql = "SELECT ssm.hospital_main_image,ssm.hospital_main_text FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
-                "LEFT JOIN hospital h ON ssm.hospital_uid = h.uid"+
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
+                " LEFT JOIN hospital h ON ssm.hospital_uid = h.uid" +
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -80,9 +77,10 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ss.* FROM specialty_sd ss " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url " +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         SpecialtyCta result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -122,9 +120,10 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ss.* FROM specialty_sd ss " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url " +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         SpecialtyOverview result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -158,9 +157,10 @@ public class SpecialtySdRepository extends BaseRepository{
         String sql = "SELECT ssm.overview_meta_title,ssm.overview_meta_desc, ssm.oai,ssm.oavu,ssm.wcu,ssm.wcuvu FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -179,9 +179,10 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ss.* FROM specialty_sd ss " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url " +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         SpecialtyRelatedCondition result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -211,9 +212,10 @@ public class SpecialtySdRepository extends BaseRepository{
         String sql = "SELECT ssm.related_condition_meta_title,ssm.related_condition_meta_desc FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -232,9 +234,10 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ss.* FROM specialty_sd ss " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url " +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         SpecialtyRelatedTreatment result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -265,9 +268,10 @@ public class SpecialtySdRepository extends BaseRepository{
         String sql = "SELECT ssm.related_treatment_meta_title, ssm.related_treatment_meta_desc, ssm.related_treatment_content FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -286,9 +290,10 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ss.* FROM specialty_sd ss " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url " +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         SpecialtyExpertise result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -319,9 +324,10 @@ public class SpecialtySdRepository extends BaseRepository{
         String sql = "SELECT ssm.our_doc_meta_title,ssm.our_doc_meta_desc, ssm.our_doc_intro FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -334,12 +340,14 @@ public class SpecialtySdRepository extends BaseRepository{
         completed(methodName);
         return result;
     }
-    private SpecialtyFaq getSpecialty(Version version, List<String> languageList,String specialtyItemUrl, String hospitalCode)
+    private SpecialtyFaq getSpecialty(Version version, List<String> languageList,String specialtyItemUrl)
     {
         String methodName = "getSpecialty";
         String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt,additional_resource FROM specialty_sd " +
-                "WHERE language_code IN(<languageList>) AND item_url = :item_url;";
-        sql = getTableVersion(version, tableMap, sql);
+                "WHERE language_code IN(<languageList>) AND item_url = :item_url" +
+                " AND ss.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
 
         SpecialtyFaq result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -356,10 +364,10 @@ public class SpecialtySdRepository extends BaseRepository{
         final String methodName = "getFaq";
         start(methodName);
 
-        SpecialtyFaq specialtyFaq = getSpecialty(version, languageList, specialtyItemUrl, hospitalCode);
+        SpecialtyFaq specialtyFaq = getSpecialty(version, languageList, specialtyItemUrl);
 
         if (specialtyFaq != null) {
-            List<SpecialtySdFaq> specialtySdFaqs = getSpecialtySdFaq(version, languageList, specialtyItemUrl, hospitalCode);
+            List<SpecialtySdFaq> specialtySdFaqs = getSpecialtySdFaq(version, languageList, specialtyItemUrl);
 
             specialtyFaq.setFaqs(specialtySdFaqs);
         }
@@ -372,16 +380,17 @@ public class SpecialtySdRepository extends BaseRepository{
         completed(methodName);
         return specialtyFaq;
     }
-    private List<SpecialtySdFaq> getSpecialtySdFaq(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode)
+    private List<SpecialtySdFaq> getSpecialtySdFaq(Version version, List<String> languageList, String specialtyItemUrl)
     {
         final String methodName = "getSpecialtySdFaq";
         start(methodName);
 
         String sql = "SELECT ss.*, ssf.question, ssf.answer FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_faq ssf ON ss.uid = ssf.specialty_sd_uid  " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url ";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url " +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         List<SpecialtySdFaq> result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -404,9 +413,10 @@ public class SpecialtySdRepository extends BaseRepository{
         String sql = "SELECT ssm.faq_title, ssm.faq_desc FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid " +
-                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital";
+                " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
+                " AND ss.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {

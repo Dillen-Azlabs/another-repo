@@ -14,10 +14,6 @@ import java.util.Map;
 public class ConditionRepository extends BaseRepository {
     public ConditionRepository() {
         log = getLogger(this.getClass());
-
-        tableMap = new HashMap<>();
-        tableMap.put(Version.DRAFT.getKey(), "condition_disease");
-        tableMap.put(Version.PUBLISHED.getKey(), "condition_disease_ro");
     }
 
     public ConditionDetail getDetails(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
@@ -25,9 +21,10 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cd.* FROM condition_disease_sd cd " +
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url ";
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url " +
+                " AND cd.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         ConditionDetail result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -59,9 +56,10 @@ public class ConditionRepository extends BaseRepository {
         String sql = "SELECT cdsm.hospital_main_image, cdsm.hospital_main_text FROM condition_disease_sd cd " +
                 " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
                 "LEFT JOIN hospital h ON cdsm.hospital_uid = h.uid"+
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital";
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +
+                " AND cd.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -81,9 +79,10 @@ public class ConditionRepository extends BaseRepository {
 
         String sql = "SELECT c.* FROM condition_disease_sd c " +
                 " WHERE c.language_code IN(<languageList>) AND c.item_url = :item_url " +
-                " GROUP BY c.uid, c.language_code";
+                " GROUP BY c.uid, c.language_code" +
+                " AND c.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         ConditionCta result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -102,9 +101,10 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cd.* FROM condition_disease_sd cd " +
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url";
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url" +
+                " AND cd.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         ConditionSymptom result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -134,9 +134,10 @@ public class ConditionRepository extends BaseRepository {
         String sql = "SELECT cdsm.symptoms_meta_title, cdsm.symptoms_meta_desc FROM condition_disease_sd cd " +
                 " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital";
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital " +
+                " AND cd.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -155,9 +156,10 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cd.* FROM condition_disease_sd cd " +
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url";
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url" +
+                " AND cd.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         ConditionDiagnosis result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -187,9 +189,10 @@ public class ConditionRepository extends BaseRepository {
         String sql = "SELECT cdsm.diagnosis_meta_title,cdsm.diagnosis_meta_desc FROM condition_disease_sd cd " +
                 " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital";
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +
+                " AND cd.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -208,9 +211,10 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cd.* FROM condition_disease_sd cd " +
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url";
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url" +
+                " AND cd.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         ConditionExpertise result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -242,9 +246,10 @@ public class ConditionRepository extends BaseRepository {
         String sql = "SELECT cdsm.wcu, cdsm.doc_intro, cdsm.expertise_meta_title, cdsm.expertise_meta_desc FROM condition_disease_sd cd " +
                 " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital";
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +
+                " AND cd.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -257,14 +262,15 @@ public class ConditionRepository extends BaseRepository {
         completed(methodName);
         return result;
     }
+
     public ConditionFaq getFaq(Version version, List<String> languageList, String conditionItemUrl,String hospitalCode) {
         final String methodName = "getFaq";
         start(methodName);
 
-        ConditionFaq conditionFaq = getConditionDiseaseFaq(version, languageList, conditionItemUrl, hospitalCode);
+        ConditionFaq conditionFaq = getConditionDiseaseFaq(version, languageList, conditionItemUrl);
 
         if (conditionFaq != null) {
-            List<ConditionSdFaq> conditionSdFaqs = getConditionSdFaq(version, languageList, conditionItemUrl, hospitalCode);
+            List<ConditionSdFaq> conditionSdFaqs = getConditionSdFaq(version, languageList, conditionItemUrl);
 
             conditionFaq.setFaqs(conditionSdFaqs);
         }
@@ -277,16 +283,18 @@ public class ConditionRepository extends BaseRepository {
         completed(methodName);
         return conditionFaq;
     }
-    private List<ConditionSdFaq> getConditionSdFaq(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode)
+
+    private List<ConditionSdFaq> getConditionSdFaq(Version version, List<String> languageList, String conditionItemUrl)
     {
         final String methodName = "getConditionSdFaq";
         start(methodName);
 
         String sql = "SELECT cd.*, cdsf.question,cdsf.answer FROM condition_disease_sd cd " +
                 " LEFT JOIN condition_disease_sd_faq cdsf ON cd.uid = cdsf.condition_disease_sd_uid  " +
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url";
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url" +
+                " AND cd.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         List<ConditionSdFaq> result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -308,9 +316,10 @@ public class ConditionRepository extends BaseRepository {
         String sql = "SELECT cdsm.faq_title,cdsm.faq_desc FROM condition_disease_sd cd " +
                 " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital";
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +
+                " AND cd.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -367,8 +376,10 @@ public class ConditionRepository extends BaseRepository {
     {
         String methodName = "getConditionDisease";
         String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt FROM condition_disease_sd " +
-                "WHERE language_code IN(<languageList>) AND item_url = :item_url;";
-        sql = getTableVersion(version, tableMap, sql);
+                "WHERE language_code IN(<languageList>) AND item_url = :item_url" +
+                " AND publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
 
         ConditionRelatedData result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -381,12 +392,14 @@ public class ConditionRepository extends BaseRepository {
         return result;
     }
 
-    private ConditionFaq getConditionDiseaseFaq(Version version, List<String> languageList,String conditionItemUrl, String hospitalCode)
+    private ConditionFaq getConditionDiseaseFaq(Version version, List<String> languageList,String conditionItemUrl)
     {
         String methodName = "getConditionDiseaseFaq";
         String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt,additional_resource FROM condition_disease_sd " +
-                "WHERE language_code IN(<languageList>) AND item_url = :item_url;";
-        sql = getTableVersion(version, tableMap, sql);
+                "WHERE language_code IN(<languageList>) AND item_url = :item_url " +
+                " AND publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
 
         ConditionFaq result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -399,17 +412,20 @@ public class ConditionRepository extends BaseRepository {
         return result;
     }
 
-    private List<ConditionRelatedDataCondition> getRelatedDataConditions(Version version,String uid)
+    private List<ConditionRelatedDataCondition> getRelatedDataConditions(Version version, String uid)
     {
         String methodName = "getRelatedCondition";
-        String relatedConditionSql = "SELECT condition_disease_uid FROM condition_disease_sd_related_condition " +
-                "WHERE condition_disease_sd_uid =:uid";
+        String relatedConditionSql = "SELECT condition_disease_uid FROM condition_disease_sd_related_condition cdsdrc " +
+                " LEFT JOIN condition_disease_sd cd ON cd.uid = cdsdrc.condition_disease_sd_uid " +
+                " WHERE cdsdrc.condition_disease_sd_uid =:uid " +
+                " AND cd.publish_flag = {PUBLISHED}";
 
         String conditionDiseaseSql = "SELECT item_url, condition_h1_display FROM condition_disease_sd " +
-                "WHERE primary_condition_uid = :primaryUid";
+                " WHERE primary_condition_uid = :primaryUid " +
+                " AND publish_flag = {PUBLISHED}";
 
-        relatedConditionSql = getTableVersion(version, tableMap, relatedConditionSql);
-        conditionDiseaseSql = getTableVersion(version, tableMap, conditionDiseaseSql);
+        relatedConditionSql = getPublishVersion(version, relatedConditionSql);
+        conditionDiseaseSql = getPublishVersion(version, conditionDiseaseSql);
 
         List<ConditionRelatedDataCondition> result = new ArrayList<>();
 
@@ -437,14 +453,17 @@ public class ConditionRepository extends BaseRepository {
     private List<ConditionRelatedDataTreatment> getRelatedTreatments(Version version,String uid)
     {
         String methodName = "getRelatedTreatments";
-        String relatedTreatmentSql = "SELECT test_treatment_sd_uid FROM condition_disease_sd_related_treatment" +
-                " WHERE condition_disease_sd_uid = :uid;";
+        String relatedTreatmentSql = "SELECT test_treatment_sd_uid FROM condition_disease_sd_related_treatment cdsdrt " +
+                " LEFT JOIN condition_disease_sd cd ON cd.uid = cdsdrt.condition_disease_sd_uid " +
+                " WHERE cdsdrt.condition_disease_sd_uid = :uid " +
+                " AND cd.publish_flag = {PUBLISHED} ";
 
         String treatmentSql = "SELECT item_url, treatment_h1_display FROM test_treatment_sd " +
-                "WHERE  primary_treatment_uid = :primaryUid";
+                " WHERE  primary_treatment_uid = :primaryUid " +
+                " AND publish_flag = {PUBLISHED}";
 
-        relatedTreatmentSql = getTableVersion(version, tableMap, relatedTreatmentSql);
-        treatmentSql = getTableVersion(version, tableMap, treatmentSql);
+        relatedTreatmentSql = getPublishVersion(version, relatedTreatmentSql);
+        treatmentSql = getPublishVersion(version, treatmentSql);
 
         List<ConditionRelatedDataTreatment> result = new ArrayList<>();
 

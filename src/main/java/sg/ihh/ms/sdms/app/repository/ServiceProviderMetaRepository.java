@@ -6,17 +6,12 @@ import org.springframework.stereotype.Repository;
 import sg.ihh.ms.sdms.app.model.ServiceProviderMeta;
 import sg.ihh.ms.sdms.app.model.Version;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Repository
 public class ServiceProviderMetaRepository extends BaseRepository{
     public ServiceProviderMetaRepository() {
         log = getLogger(this.getClass());
-
-        tableMap = new HashMap<>();
-        tableMap.put(Version.DRAFT.getKey(), "service_provider_metadata");
-        tableMap.put(Version.PUBLISHED.getKey(), "service_provider_metadata_ro");
     }
     public List<ServiceProviderMeta> list(Version version, List<String> languageList) {
         final String methodName = "list";
@@ -25,6 +20,7 @@ public class ServiceProviderMetaRepository extends BaseRepository{
                 "B.hospital AS hospital, A.display_order AS display_order, A.publish_flag AS publish_flag, " +
                 "A.created_dt AS created_dt, A.modified_dt AS modified_dt FROM service_provider_metadata A" +
                 " LEFT JOIN hospital B ON A.hospital_uid = B.uid ;";
+
         List<ServiceProviderMeta> result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             result = query.mapToBean(ServiceProviderMeta.class).list();

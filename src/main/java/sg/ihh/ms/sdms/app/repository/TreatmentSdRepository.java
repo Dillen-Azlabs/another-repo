@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import sg.ihh.ms.sdms.app.model.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -14,20 +13,17 @@ public class TreatmentSdRepository extends BaseRepository{
 
     public TreatmentSdRepository() {
         log = getLogger(this.getClass());
-
-        tableMap = new HashMap<>();
-        tableMap.put(Version.DRAFT.getKey(), "test_treatment_sd");
-        tableMap.put(Version.PUBLISHED.getKey(), "test_treatment_sd_ro");
-
     }
+
     public TreatmentCta getTreatmentCta(Version version, List<String> languageList, String treatmentItemUrl) {
         final String methodName = "getTreatmentCta";
         start(methodName);
 
         String sql = "SELECT tts.* FROM test_treatment_sd tts " +
-                " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url ";
+                " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url " +
+                " AND tts.publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        sql = getPublishVersion(version, sql);
 
         TreatmentCta result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
