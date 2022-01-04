@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import sg.ihh.ms.sdms.app.model.ChildSpecialty;
 import sg.ihh.ms.sdms.app.model.Version;
 import sg.ihh.ms.sdms.app.processor.ControlledListProcessor;
-import sg.ihh.ms.sdms.app.repository.model.ChildSpecialtyRepository;
+import sg.ihh.ms.sdms.app.repository.ChildSpecialtyRepository;
 import sg.ihh.ms.sdms.app.rest.model.ChildSpecialtyListResponse;
 
 import javax.validation.constraints.NotNull;

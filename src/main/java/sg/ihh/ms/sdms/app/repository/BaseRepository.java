@@ -22,7 +22,7 @@ public class BaseRepository {
 
     protected Logger log;
 
-    protected Map<String, String> tableMap;
+    protected String tableName;
 
     public BaseRepository() {
         // Empty Constructor
@@ -96,24 +96,23 @@ public class BaseRepository {
         return statement;
     }
 
-    protected String getTableVersion(Version version, Map<String, String> tableMap, String sql) {
+    protected String getPublishVersion(Version version, String sql) {
 
-        String table;
-        if (tableMap.containsKey(version.getKey())) {
-            table = tableMap.get(version.getKey());
-        } else {
-            table = tableMap.get(Version.DRAFT.getKey());
-        }
-        return sql.replace("{TABLE}", table);
+        // if PUBLISHED, search for publish_flag = 1, else search for publish_flag = 0
+        return sql.replace("{PUBLISHED}", version.equals(Version.PUBLISHED) ? "1" : "0");
     }
 
     protected <T> List<T> list(Version version, List<String> languageList, Class<T> clazz) {
         final String methodName = "list";
         start(methodName);
 
-        String sql = "SELECT * FROM {TABLE} WHERE language_code IN(<languageList>);";
+        String sql = "SELECT * FROM {TABLE} WHERE language_code IN(<languageList>) AND publish_flag = {PUBLISHED}";
 
-        sql = getTableVersion(version, tableMap, sql);
+        // replacing table name
+        sql = sql.replace("{TABLE}", tableName);
+
+        // if PUBLISHED, search for publish_flag = 1, else search for publish_flag = 0
+        sql = sql.replace("{PUBLISHED}", version.equals(Version.PUBLISHED) ? "1" : "0");
 
         List<T> result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {

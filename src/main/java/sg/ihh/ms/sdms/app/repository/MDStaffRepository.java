@@ -1,7 +1,6 @@
 package sg.ihh.ms.sdms.app.repository;
 
 import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.mapper.JoinRow;
 import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
 import sg.ihh.ms.sdms.app.model.*;
@@ -20,10 +19,6 @@ public class MDStaffRepository extends BaseRepository {
 
     public MDStaffRepository() {
         log = getLogger(this.getClass());
-
-        tableMap = new HashMap<>();
-        tableMap.put(Version.DRAFT.getKey(), "medical_professional");
-        tableMap.put(Version.PUBLISHED.getKey(), "medical_professional_ro");
     }
 
     public List<MDStaffProvider> list() {
