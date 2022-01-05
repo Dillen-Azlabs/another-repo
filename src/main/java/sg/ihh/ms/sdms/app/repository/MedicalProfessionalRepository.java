@@ -380,8 +380,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         String sql = "SELECT mpt.* FROM medical_professional_testimonial mpt " +
                 " LEFT JOIN medical_professional mp ON mp.uid = mpt.medical_professional_uid " +
                 " LEFT JOIN medical_professional_testimonial_country mptc ON mpt.uid = mptc.medical_professional_testimonial_uid " +
-                " LEFT JOIN country c ON mptc.country_uid = c.uid " +
-                " WHERE mpt.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country = :country" +
+                " LEFT JOIN country_of_residence c ON mptc.cor_uid = c.uid " +
+                " WHERE mpt.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :country" +
                 " AND mp.publish_flag = {PUBLISHED} ";
 
                 sql = getPublishVersion(version, sql);
@@ -407,9 +407,9 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "getTestimonialCountries";
         start(methodName);
 
-        String sql = "SELECT c.country FROM medical_professional_testimonial mpt " +
+        String sql = "SELECT c.cor FROM medical_professional_testimonial mpt " +
                 " LEFT JOIN medical_professional_testimonial_country mptc ON mpt.uid = mptc.medical_professional_testimonial_uid " +
-                " LEFT JOIN country c ON mptc.country_uid = c.uid " +
+                " LEFT JOIN country_of_residence c ON mptc.cor_uid = c.uid " +
                 " WHERE mpt.uid = :uid";
 
          List<String> result = null;
