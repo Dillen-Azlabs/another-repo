@@ -289,7 +289,7 @@ public class ConditionRepository extends BaseRepository {
         final String methodName = "getConditionSdFaq";
         start(methodName);
 
-        String sql = "SELECT cd.*, cdsf.question,cdsf.answer FROM condition_disease_sd cd " +
+        String sql = "SELECT cdsf.question, cdsf.answer, cdsf.display_order FROM condition_disease_sd cd " +
                 " LEFT JOIN condition_disease_sd_faq cdsf ON cd.uid = cdsf.condition_disease_sd_uid  " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url" +
                 " AND cd.publish_flag = {PUBLISHED}";

@@ -385,7 +385,7 @@ public class SpecialtySdRepository extends BaseRepository{
         final String methodName = "getSpecialtySdFaq";
         start(methodName);
 
-        String sql = "SELECT ss.*, ssf.question, ssf.answer FROM specialty_sd ss " +
+        String sql = "SELECT ssf.question, ssf.answer, ssf.display_order FROM specialty_sd ss " +
                 " LEFT JOIN specialty_sd_faq ssf ON ss.uid = ssf.specialty_sd_uid  " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url " +
                 " AND ss.publish_flag = {PUBLISHED}";
