@@ -428,7 +428,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "getClinics";
         start(methodName);
 
-        String sql = "SELECT mpc.uid, mpc.language_code, mpc.is_primary_clinic, mpc.created_dt, mpc.modified_dt, " +
+        String sql = "SELECT c.uid, mpc.language_code, mpc.is_primary_clinic, mpc.created_dt, mpc.modified_dt, " +
                 " mpc.publish_flag, mpc.display_order, mpc.status, mpc.publish_date, c.name, c.address_1, " +
                 " c.address_2, c.city, c.state, c.postal_code, c.phone_numbers, c.fax_numbers " +
                 " FROM medical_professional_clinic mpc " +
