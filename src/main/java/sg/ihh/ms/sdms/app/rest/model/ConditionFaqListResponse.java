@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.http.HttpStatus;
 import sg.ihh.ms.sdms.app.model.ConditionFaq;
-import sg.ihh.ms.sdms.app.model.ConditionSdFaq;
-
-import java.util.List;
 
 @JsonPropertyOrder({"code", "message", "condition"})
 public class ConditionFaqListResponse extends BaseResponse{
-    @JsonProperty("conditions")
+    @JsonProperty("condition")
     private ConditionFaq conditionFaq;
 
     public ConditionFaqListResponse(ConditionFaq conditionFaq) {
