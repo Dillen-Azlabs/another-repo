@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class TreatmentWhatToExpect extends BaseModel{
 
     @JsonProperty("howToPrepare")
-    private boolean howPrepare;
+    private String howPrepare;
     @JsonProperty("howToPrepareVideoUrl")
-    private boolean howPrepareVideoUrl;
+    private String howPrepareVideoUrl;
     @JsonProperty("whatToExpect")
     private String whatExpect;
     @JsonProperty("whatToExpectVideoUrl")
@@ -21,19 +21,19 @@ public class TreatmentWhatToExpect extends BaseModel{
         //Empty Constructor
     }
 
-    public boolean isHowPrepare() {
+    public String getHowPrepare() {
         return howPrepare;
     }
 
-    public void setHowPrepare(boolean howPrepare) {
+    public void setHowPrepare(String howPrepare) {
         this.howPrepare = howPrepare;
     }
 
-    public boolean isHowPrepareVideoUrl() {
+    public String getHowPrepareVideoUrl() {
         return howPrepareVideoUrl;
     }
 
-    public void setHowPrepareVideoUrl(boolean howPrepareVideoUrl) {
+    public void setHowPrepareVideoUrl(String howPrepareVideoUrl) {
         this.howPrepareVideoUrl = howPrepareVideoUrl;
     }
 
