@@ -346,7 +346,7 @@ public class SpecialtySdRepository extends BaseRepository{
         String methodName = "getSpecialty";
         String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt,additional_resource FROM specialty_sd " +
                 "WHERE language_code IN(<languageList>) AND item_url = :item_url" +
-                " AND ss.publish_flag = {PUBLISHED}";
+                " AND publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
