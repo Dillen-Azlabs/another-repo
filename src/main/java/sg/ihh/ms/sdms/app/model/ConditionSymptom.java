@@ -15,7 +15,7 @@ public class ConditionSymptom extends BaseModel{
     @JsonProperty("symptomsVideoUrl")
     private String symptomVideoUrl;
     @JsonProperty("noteHighlight")
-    private boolean noteHighlight;
+    private String noteHighlight;
     @JsonProperty("causes")
     private String cause;
     @JsonProperty("causesVideoUrl")
@@ -67,11 +67,11 @@ public class ConditionSymptom extends BaseModel{
         this.symptomVideoUrl = symptomVideoUrl;
     }
 
-    public boolean isNoteHighlight() {
+    public String getNoteHighlight() {
         return noteHighlight;
     }
 
-    public void setNoteHighlight(boolean noteHighlight) {
+    public void setNoteHighlight(String noteHighlight) {
         this.noteHighlight = noteHighlight;
     }
 
