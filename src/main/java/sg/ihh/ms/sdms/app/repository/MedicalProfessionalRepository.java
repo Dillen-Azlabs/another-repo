@@ -265,8 +265,34 @@ public class MedicalProfessionalRepository extends BaseRepository {
             portfolio.setAchievements(getMedicalProfessionalAchievement(version, languageList, medicalProfessionalItemUrl, countryOfResidence));
             portfolio.setExperiences(getMedicalProfessionalExperience(version, languageList, medicalProfessionalItemUrl, countryOfResidence));
             portfolio.setAwards(getMedicalProfessionalAward(version, languageList, medicalProfessionalItemUrl, countryOfResidence));
+            // setting the array of items
+            portfolio.setAssociatedTreatments(getAssociatedTreatment(version, languageList, medicalProfessionalItemUrl));
         }
 
+        completed(methodName);
+        return result;
+    }
+    public List<String> getAssociatedTreatment(Version version, List<String> languageList, String medicalProfessionalItemUrl) {
+        final String methodName = "getAssociatedTreatment";
+        start(methodName);
+
+        String sql = "SELECT at.treatment FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_assoc_treatment mpat ON mp.uid = mpat.medical_professional_uid " +
+                " LEFT JOIN associated_treatment at ON at.uid = mpat.associated_treatment_uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
+                " AND mp.publish_flag = {PUBLISHED} " +
+                " GROUP BY at.treatment";
+
+        sql = getPublishVersion(version, sql);
+
+        List<String> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
+            result = query.mapTo(String.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
         completed(methodName);
         return result;
     }
