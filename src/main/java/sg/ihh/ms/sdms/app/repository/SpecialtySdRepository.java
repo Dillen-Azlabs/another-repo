@@ -341,7 +341,7 @@ public class SpecialtySdRepository extends BaseRepository{
         completed(methodName);
         return result;
     }
-    private SpecialtyFaq getSpecialty(Version version, List<String> languageList,String specialtyItemUrl)
+    private SpecialtyFaq getSpecialty(Version version, List<String> languageList,String specialtyItemUrl, String hospitalCode)
     {
         String methodName = "getSpecialty";
         String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt,additional_resource FROM specialty_sd " +
@@ -358,6 +358,11 @@ public class SpecialtySdRepository extends BaseRepository{
         catch (Exception ex) {
             log.error(methodName, ex);
         }
+        if (result != null) {
+            Map<String, Object> metadataFaq = getMetadataFaq(version, languageList, specialtyItemUrl, hospitalCode);
+            result.setFaqTitle((String) metadataFaq.get("faq_title"));
+            result.setFaqDesc((String) metadataFaq.get("faq_desc"));
+        }
         return result;
     }
 
@@ -365,18 +370,14 @@ public class SpecialtySdRepository extends BaseRepository{
         final String methodName = "getFaq";
         start(methodName);
 
-        SpecialtyFaq specialtyFaq = getSpecialty(version, languageList, specialtyItemUrl);
+        SpecialtyFaq specialtyFaq = getSpecialty(version, languageList, specialtyItemUrl, hospitalCode);
 
         if (specialtyFaq != null) {
             List<SpecialtySdFaq> specialtySdFaqs = getSpecialtySdFaq(version, languageList, specialtyItemUrl);
 
             specialtyFaq.setFaqs(specialtySdFaqs);
         }
-        Map<String, Object> metadataFaq = getMetadataFaq(version, languageList, specialtyItemUrl, hospitalCode);
-        SpecialtyFaq result = new SpecialtyFaq();
 
-        result.setFaqTitle((String) metadataFaq.get("faq_title"));
-        result.setFaqDesc((String) metadataFaq.get("faq_desc"));
 
         completed(methodName);
         return specialtyFaq;
