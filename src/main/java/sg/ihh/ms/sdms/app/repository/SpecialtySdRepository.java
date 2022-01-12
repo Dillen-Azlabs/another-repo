@@ -37,10 +37,10 @@ public class SpecialtySdRepository extends BaseRepository{
 
         if (isHospitalValid(hospitalCode) && result != null) {
             Map<String, Object> metadataDetails = getMetadataDetails(version, languageList, specialtyItemUrl, hospitalCode);
-            if (metadataDetails.get("hospital_main_image") != null) {
+            if (metadataDetails.get("hospital_main_image") != null && !metadataDetails.get("hospital_main_image").equals("")) {
                 result.setMainImageUrl((String) metadataDetails.get("hospital_main_image"));
             }
-            if (metadataDetails.get("hospital_main_text") != null) {
+            if (metadataDetails.get("hospital_main_text") != null && !metadataDetails.get("hospital_main_text").equals("")) {
                 result.setMainImageAltText((String) metadataDetails.get("hospital_main_text"));
             }
         }

@@ -37,10 +37,10 @@ public class ConditionRepository extends BaseRepository {
 
         if (isHospitalValid(hospitalCode)) {
             Map<String, Object> metadataDetails = getMetadataDetails(version, languageList, conditionItemUrl, hospitalCode);
-            if (metadataDetails.get("hospital_main_image") != null) {
+            if (metadataDetails.get("hospital_main_image") != null && !metadataDetails.get("hospital_main_image").equals("")){
                 result.setMainImageUrl((String) metadataDetails.get("hospital_main_image"));
             }
-            if (metadataDetails.get("hospital_main_text") != null) {
+            if (metadataDetails.get("hospital_main_text") != null && !metadataDetails.get("hospital_main_text").equals("")) {
                 result.setMainImageAltText((String) metadataDetails.get("hospital_main_text"));
             }
         }
