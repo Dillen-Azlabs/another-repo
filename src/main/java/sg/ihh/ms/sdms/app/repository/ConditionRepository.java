@@ -210,7 +210,8 @@ public class ConditionRepository extends BaseRepository {
         final String methodName = "getExpertise";
         start(methodName);
 
-        String sql = "SELECT cd.* FROM condition_disease_sd cd " +
+        String sql = "SELECT cd.*, cdsm.wcu, cdsm.doc_intro  FROM condition_disease_sd cd " +
+                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url" +
                 " AND cd.publish_flag = {PUBLISHED}";
 
@@ -231,8 +232,6 @@ public class ConditionRepository extends BaseRepository {
             Map<String, Object> metadata = getExpertiseMetadata(version, languageList, conditionItemUrl, hospitalCode);
             result.setExpertiseMetaTitle((String) metadata.get("expertise_meta_title"));
             result.setExpertiseMetaDesc((String) metadata.get("expertise_meta_desc"));
-            result.setWcu((String) metadata.get("wcu"));
-            result.setDocIntro((String) metadata.get("doc_intro"));
         }
 
         completed(methodName);
@@ -262,23 +261,43 @@ public class ConditionRepository extends BaseRepository {
         completed(methodName);
         return result;
     }
+    private ConditionFaq getCondition(Version version, List<String> languageList,String conditionItemUrl, String hospitalCode)
+    {
+        String methodName = "getCondition";
+        String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt,additional_resource FROM condition_disease_sd " +
+                "WHERE language_code IN(<languageList>) AND item_url = :item_url" +
+                " AND publish_flag = {PUBLISHED}";
 
-    public ConditionFaq getFaq(Version version, List<String> languageList, String conditionItemUrl,String hospitalCode) {
-        final String methodName = "getFaq";
+        sql = getPublishVersion(version, sql);
+
+        ConditionFaq result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", conditionItemUrl);
+            result = query.mapToBean(ConditionFaq.class).one();
+        }
+        catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        if (result != null) {
+            Map<String, Object> metadataFaq = getMetadataFaq(version, languageList, conditionItemUrl, hospitalCode);
+            result.setFaqTitle((String) metadataFaq.get("faq_title"));
+            result.setFaqDesc((String) metadataFaq.get("faq_desc"));
+        }
+        return result;
+    }
+
+
+    public ConditionFaq getConditionFaq(Version version, List<String> languageList, String conditionItemUrl,String hospitalCode) {
+        final String methodName = "getConditionFaq";
         start(methodName);
 
-        ConditionFaq conditionFaq = getConditionDiseaseFaq(version, languageList, conditionItemUrl);
+        ConditionFaq conditionFaq = getCondition(version, languageList, conditionItemUrl, hospitalCode);
 
         if (conditionFaq != null) {
             List<ConditionSdFaq> conditionSdFaqs = getConditionSdFaq(version, languageList, conditionItemUrl);
 
             conditionFaq.setFaqs(conditionSdFaqs);
         }
-        Map<String, Object> metadataFaq = getMetadataFaq(version, languageList, conditionItemUrl, hospitalCode);
-        ConditionFaq result = new ConditionFaq();
-
-        result.setFaqTitle((String) metadataFaq.get("faq_title"));
-        result.setFaqDesc((String) metadataFaq.get("faq_desc"));
 
         completed(methodName);
         return conditionFaq;
@@ -385,26 +404,6 @@ public class ConditionRepository extends BaseRepository {
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", conditionItemUrl);
             result = query.mapToBean(ConditionRelatedData.class).one();
-        }
-        catch (Exception ex) {
-            log.error(methodName, ex);
-        }
-        return result;
-    }
-
-    private ConditionFaq getConditionDiseaseFaq(Version version, List<String> languageList,String conditionItemUrl)
-    {
-        String methodName = "getConditionDiseaseFaq";
-        String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt,additional_resource FROM condition_disease_sd " +
-                "WHERE language_code IN(<languageList>) AND item_url = :item_url " +
-                " AND publish_flag = {PUBLISHED}";
-
-        sql = getPublishVersion(version, sql);
-
-        ConditionFaq result = null;
-        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", conditionItemUrl);
-            result = query.mapToBean(ConditionFaq.class).one();
         }
         catch (Exception ex) {
             log.error(methodName, ex);
