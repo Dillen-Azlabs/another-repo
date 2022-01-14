@@ -245,8 +245,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mp.*, at.treatment FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_assoc_treatment mpat ON mp.uid = mpat.medical_professional_uid " +
-                " LEFT JOIN associated_treatment at ON at.uid = mpat.associated_treatment_uid " +
+                " LEFT JOIN medical_professional_assoc_treatment mpat ON mp.uid = mpat.medical_professional_uid AND mpat.language_code = mp.language_code " +
+                " LEFT JOIN associated_treatment at ON at.uid = mpat.associated_treatment_uid AND at.language_code = mp.language_code " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url" +
                 " AND mp.publish_flag = {PUBLISHED} ";
 
@@ -277,8 +277,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT at.treatment FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_assoc_treatment mpat ON mp.uid = mpat.medical_professional_uid " +
-                " LEFT JOIN associated_treatment at ON at.uid = mpat.associated_treatment_uid " +
+                " LEFT JOIN medical_professional_assoc_treatment mpat ON mp.uid = mpat.medical_professional_uid AND mpat.language_code = mp.language_code " +
+                " LEFT JOIN associated_treatment at ON at.uid = mpat.associated_treatment_uid AND at.language_code = mp.language_code " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
                 " AND mp.publish_flag = {PUBLISHED} " +
                 " GROUP BY at.treatment";
@@ -301,10 +301,10 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "getMedicalProfessionalAchievement";
         start(methodName);
 
-        String sql = "SELECT mpa.achievement FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_achievement mpa ON mp.uid = mpa.medical_professional_uid " +
-                " LEFT JOIN medical_professional_achievement_country mpac ON mpa.uid = mpac.medical_professional_achievement_uid " +
-                " LEFT JOIN country_of_residence c ON c.uid = mpac.cor_uid " +
+        String sql = "SELECT mpa.achievement, mp.language_code FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_achievement mpa ON mp.uid = mpa.medical_professional_uid AND mpa.language_code = mp.language_code " +
+                " LEFT JOIN medical_professional_achievement_country mpac ON mpa.uid = mpac.medical_professional_achievement_uid AND mpac.language_code = mp.language_code " +
+                " LEFT JOIN country_of_residence c ON c.uid = mpac.cor_uid" +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :countryOfResidence" +
                 " AND mp.publish_flag = {PUBLISHED} ";
 
@@ -335,8 +335,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mpe.experiences FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_experience mpe ON mp.uid = mpe.medical_professional_uid " +
-                " LEFT JOIN medical_professional_experience_country mpec ON mpe.uid = mpec.medical_professional_experience_uid " +
+                " LEFT JOIN medical_professional_experience mpe ON mp.uid = mpe.medical_professional_uid  AND mpe.language_code = mp.language_code" +
+                " LEFT JOIN medical_professional_experience_country mpec ON mpe.uid = mpec.medical_professional_experience_uid AND mpec.language_code = mp.language_code " +
                 " LEFT JOIN country_of_residence c ON c.uid = mpec.cor_uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :countryOfResidence" +
                 " AND mp.publish_flag = {PUBLISHED} ";
@@ -367,8 +367,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mpa.award FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_award mpa ON mp.uid = mpa.medical_professional_uid " +
-                " LEFT JOIN medical_professional_award_country mpac ON mpa.uid = mpac.medical_professional_award_uid " +
+                " LEFT JOIN medical_professional_award mpa ON mp.uid = mpa.medical_professional_uid AND mpa.language_code = mp.language_code " +
+                " LEFT JOIN medical_professional_award_country mpac ON mpa.uid = mpac.medical_professional_award_uid AND mpac.language_code =  mp.language_code " +
                 " LEFT JOIN country_of_residence c ON c.uid = mpac.cor_uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :countryOfResidence" +
                 " AND mp.publish_flag = {PUBLISHED} ";
