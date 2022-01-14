@@ -20,8 +20,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mp.*, mpt.profession AS type FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_type mpt ON mp.medical_professional_type_uid = mpt.uid " +
-                " LEFT JOIN media_coverage mc ON mp.uid = mc.related_specialist_uid " +
+                " LEFT JOIN medical_professional_type mpt ON mp.medical_professional_type_uid = mpt.uid AND mp.language_code = mpt.language_code " +
+                " LEFT JOIN media_coverage mc ON mp.uid = mc.related_specialist_uid AND mp.language_code = mc.language_code " +
                 " WHERE mp.language_code IN(<languageList>) " +
                 " AND mp.publish_flag = {PUBLISHED}";
 
@@ -119,7 +119,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mpmd.meta_title, mpmd.meta_description FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_metadata mpmd ON mp.uid = mpmd.medical_professional_uid " +
+                " LEFT JOIN medical_professional_metadata mpmd ON mp.uid = mpmd.medical_professional_uid AND mp.language_code = mpmd.language_code " +
                 " LEFT JOIN hospital h ON mpmd.hospital_uid = h.uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND h.hospital = :hospital " +
                 " AND mp.publish_flag = {PUBLISHED} " +
@@ -171,7 +171,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
 
         String sql = "SELECT i.insurance FROM medical_professional mp " +
                 " LEFT JOIN medical_professional_insurance mpi ON mp.uid = mpi.medical_professional_uid AND mp.language_code = mpi.language_code " +
-                " LEFT JOIN insurance_panel i ON i.uid = mpi.insurance_uid AND i.language_code = mpi.language_code " +
+                " LEFT JOIN insurance_panel i ON i.uid = mpi.insurance_uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
                 " AND mp.publish_flag = {PUBLISHED} " +
                 " GROUP BY i.insurance";
@@ -195,7 +195,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT s.layman_term FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_specialty mps ON mp.uid = mps.medical_professional_uid " +
+                " LEFT JOIN medical_professional_specialty mps ON mp.uid = mps.medical_professional_uid AND mp.language_code = mps.language_code " +
                 " LEFT JOIN specialization s ON s.specialty_uid = mps.specialty_uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
                 " AND mp.publish_flag = {PUBLISHED} " +
@@ -220,8 +220,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT spmd.meta_cta_value AS meta_cta, sp.layman_term FROM medical_professional mp " +
-                " LEFT JOIN service_provider sp ON sp.type_uid = mp.service_provider_uid " +
-                " LEFT JOIN service_provider_metadata spmd ON sp.uid = spmd.service_provider_uid " +
+                " LEFT JOIN service_provider sp ON sp.type_uid = mp.service_provider_uid AND sp.language_code = mp.language_code " +
+                " LEFT JOIN service_provider_metadata spmd ON sp.uid = spmd.service_provider_uid AND sp.language_code = spmd.language_code " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
                 " AND mp.publish_flag = {PUBLISHED} " +
                 " GROUP BY spmd.meta_cta_value";
@@ -246,7 +246,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
 
         String sql = "SELECT mp.*, at.treatment FROM medical_professional mp " +
                 " LEFT JOIN medical_professional_assoc_treatment mpat ON mp.uid = mpat.medical_professional_uid AND mp.language_code = mpat.language_code " +
-                " LEFT JOIN associated_treatment at ON at.uid = mpat.associated_treatment_uid AND at.language_code = mpat.language_code" +
+                " LEFT JOIN associated_treatment at ON at.uid = mpat.associated_treatment_uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url" +
                 " AND mp.publish_flag = {PUBLISHED} ";
 
@@ -277,8 +277,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT at.treatment FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_assoc_treatment mpat ON mp.uid = mpat.medical_professional_uid AND mp.language_code = mpat.language_code" +
-                " LEFT JOIN associated_treatment at ON at.uid = mpat.associated_treatment_uid AND at.language_code = mpat.language_code" +
+                " LEFT JOIN medical_professional_assoc_treatment mpat ON mp.uid = mpat.medical_professional_uid AND mp.language_code = mpat.language_code " +
+                " LEFT JOIN associated_treatment at ON at.uid = mpat.associated_treatment_uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
                 " AND mp.publish_flag = {PUBLISHED} " +
                 " GROUP BY at.treatment";
@@ -328,8 +328,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mpe.experiences FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_experience mpe ON mp.uid = mpe.medical_professional_uid " +
-                " LEFT JOIN medical_professional_experience_country mpec ON mpe.uid = mpec.medical_professional_experience_uid " +
+                " LEFT JOIN medical_professional_experience mpe ON mp.uid = mpe.medical_professional_uid AND mp.language_code = mpe.language_code " +
+                " LEFT JOIN medical_professional_experience_country mpec ON mpe.uid = mpec.medical_professional_experience_uid AND mpe.language_code = mpec.language_code " +
                 " LEFT JOIN country_of_residence c ON c.uid = mpec.cor_uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :countryOfResidence" +
                 " AND mp.publish_flag = {PUBLISHED} ";
@@ -354,8 +354,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mpa.award FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_award mpa ON mp.uid = mpa.medical_professional_uid " +
-                " LEFT JOIN medical_professional_award_country mpac ON mpa.uid = mpac.medical_professional_award_uid " +
+                " LEFT JOIN medical_professional_award mpa ON mp.uid = mpa.medical_professional_uid AND mp.language_code = mpa.language_code " +
+                " LEFT JOIN medical_professional_award_country mpac ON mpa.uid = mpac.medical_professional_award_uid AND mpa.language_code = mpac.language_code " +
                 " LEFT JOIN country_of_residence c ON c.uid = mpac.cor_uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :countryOfResidence" +
                 " AND mp.publish_flag = {PUBLISHED} ";
@@ -380,7 +380,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mc.*, l.language FROM media_coverage mc " +
-                " LEFT JOIN medical_professional mp ON mp.uid = mc.related_specialist_uid " +
+                " LEFT JOIN medical_professional mp ON mp.uid = mc.related_specialist_uid AND mp.language_code = mc.language_code " +
                 " LEFT JOIN language l ON l.uid = mc.language_uid " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
                 " AND l.language = :language AND mp.publish_flag = {PUBLISHED} ";
@@ -404,8 +404,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mpt.*,c.cor FROM medical_professional_testimonial mpt " +
-                " LEFT JOIN medical_professional mp ON mp.uid = mpt.medical_professional_uid " +
-                " LEFT JOIN medical_professional_testimonial_country mptc ON mpt.uid = mptc.medical_professional_testimonial_uid " +
+                " LEFT JOIN medical_professional mp ON mp.uid = mpt.medical_professional_uid AND mp.language_code = mpt.language_code " +
+                " LEFT JOIN medical_professional_testimonial_country mptc ON mpt.uid = mptc.medical_professional_testimonial_uid AND mpt.language_code = mptc.language_code " +
                 " LEFT JOIN country_of_residence c ON mptc.cor_uid = c.uid" +
                 " WHERE mpt.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :country" +
                 " AND mp.publish_flag = {PUBLISHED} ";
@@ -434,7 +434,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT c.cor FROM medical_professional_testimonial mpt " +
-                " LEFT JOIN medical_professional_testimonial_country mptc ON mpt.uid = mptc.medical_professional_testimonial_uid " +
+                " LEFT JOIN medical_professional_testimonial_country mptc ON mpt.uid = mptc.medical_professional_testimonial_uid AND mpt.language_code = mptc.language_code " +
                 " LEFT JOIN country_of_residence c ON mptc.cor_uid = c.uid " +
                 " WHERE mpt.uid = :uid";
 
@@ -458,7 +458,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
                 " mpc.publish_flag, mpc.display_order, mpc.status, mpc.publish_date, c.name, c.address_1, " +
                 " c.address_2, c.city, c.state, c.postal_code, c.phone_numbers, c.fax_numbers " +
                 " FROM medical_professional_clinic mpc " +
-                " LEFT JOIN medical_professional mp ON mp.uid = mpc.medical_professional_uid " +
+                " LEFT JOIN medical_professional mp ON mp.uid = mpc.medical_professional_uid AND mp.language_code = mpc.language_code " +
                 " LEFT JOIN clinic c ON mpc.clinic_uid = c.uid " +
                 " WHERE mpc.language_code IN(<languageList>) AND mp.item_url = :item_url" +
                 " AND mp.publish_flag = {PUBLISHED} ";
