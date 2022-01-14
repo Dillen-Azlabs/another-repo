@@ -405,8 +405,7 @@ public class MedicalProfessionalRepository extends BaseRepository {
 
         String sql = "SELECT mpt.*,c.cor FROM medical_professional_testimonial mpt " +
                 " LEFT JOIN medical_professional mp ON mp.uid = mpt.medical_professional_uid AND mp.language_code = mpt.language_code " +
-                " LEFT JOIN medical_professional_testimonial_country mptc ON mpt.uid = mptc.medical_professional_testimonial_uid AND mpt.language_code = mptc.language_code " +
-                " LEFT JOIN country_of_residence c ON mptc.cor_uid = c.uid" +
+                " LEFT JOIN country_of_residence c ON mpt.patient_location_uid = c.uid" +
                 " WHERE mpt.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.cor = :country" +
                 " AND mp.publish_flag = {PUBLISHED} ";
 
