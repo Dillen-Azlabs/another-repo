@@ -422,25 +422,25 @@ public class MedicalProfessionalRepository extends BaseRepository {
         }
 
         for (Testimonial testimonial : result) {
-            testimonial.setCountries(getTestimonialCountries(testimonial.getUid()));
+            testimonial.setCountries(getTestimonialCountries(testimonial.getUid(), languageList));
         }
 
         completed(methodName);
         return result;
     }
 
-    public List<String> getTestimonialCountries(String uid) {
+    public List<String> getTestimonialCountries(String uid, List<String> languageList) {
         final String methodName = "getTestimonialCountries";
         start(methodName);
 
         String sql = "SELECT c.cor FROM medical_professional_testimonial mpt " +
                 " LEFT JOIN medical_professional_testimonial_country mptc ON mpt.uid = mptc.medical_professional_testimonial_uid AND mpt.language_code = mptc.language_code " +
                 " LEFT JOIN country_of_residence c ON mptc.cor_uid = c.uid " +
-                " WHERE mpt.uid = :uid";
+                " WHERE mpt.uid = :uid AND mpt.language_code IN(<languageList>) ";
 
          List<String> result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bind("uid", uid);
+            query.bind("uid", uid).bindList("languageList", languageList);
             result = query.mapTo(String.class).list();
 
         } catch (Exception ex) {
