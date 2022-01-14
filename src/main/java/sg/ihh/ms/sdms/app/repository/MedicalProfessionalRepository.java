@@ -312,8 +312,15 @@ public class MedicalProfessionalRepository extends BaseRepository {
 
         String result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+
             query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("countryOfResidence", countryOfResidence);
-            result = query.mapTo(String.class).one();
+            List<String> list = query.mapTo(String.class).list();
+
+            if (list.size() <= 1) {
+                for (String str : list) {
+                    result = str;
+                }
+            }
 
         } catch (Exception ex) {
             log.error(methodName, ex);
@@ -339,7 +346,13 @@ public class MedicalProfessionalRepository extends BaseRepository {
         String result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("countryOfResidence", countryOfResidence);
-            result = query.mapTo(String.class).one();
+            List<String> list = query.mapTo(String.class).list();
+
+            if (list.size() <= 1) {
+                for (String str : list) {
+                    result = str;
+                }
+            }
 
         } catch (Exception ex) {
             log.error(methodName, ex);
@@ -365,7 +378,13 @@ public class MedicalProfessionalRepository extends BaseRepository {
         String result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl).bind("countryOfResidence", countryOfResidence);
-            result = query.mapTo(String.class).one();
+            List<String> list = query.mapTo(String.class).list();
+
+            if (list.size() <= 1) {
+                for (String str : list) {
+                    result = str;
+                }
+            }
 
         } catch (Exception ex) {
             log.error(methodName, ex);
