@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class ConditionRepository extends BaseRepository {
@@ -232,8 +233,76 @@ public class ConditionRepository extends BaseRepository {
             Map<String, Object> metadata = getExpertiseMetadata(version, languageList, conditionItemUrl, hospitalCode);
             result.setExpertiseMetaTitle((String) metadata.get("expertise_meta_title"));
             result.setExpertiseMetaDesc((String) metadata.get("expertise_meta_desc"));
+            result.setWcu((String) metadata.get("wcu"));
+            result.setDocIntro((String) metadata.get("doc_intro"));
+            List<String> specialties = new ArrayList<>();
+            List<String> specialty = getSpecialty(version, languageList,result.getUid());
+            List<String> childSpecialty  = getChildSpecialty(version, languageList,result.getUid());
+            if (!specialty.isEmpty()) {
+
+                specialty = specialty.stream()
+                        .distinct()
+                        .collect(Collectors.toList());
+                specialties.addAll(specialty);
+            }
+            if (!childSpecialty.isEmpty()) {
+
+                childSpecialty = childSpecialty.stream()
+                        .distinct()
+                        .collect(Collectors.toList());
+                specialties.addAll(childSpecialty);
+            }
+            result.setSpecialties(specialties);
         }
 
+        completed(methodName);
+        return result;
+    }
+
+    private List<String> getSpecialty(Version version, List<String> languageList,String conditionDiseaseUid)
+    {
+        final String methodName = "getSpecialty";
+        start(methodName);
+
+        String sql = "SELECT s.specialty FROM specialty s " +
+                "INNER JOIN condition_disease_sd cds ON cds.language_code = s.language_code " +
+                "INNER JOIN condition_disease_sd_other_specialty cdsos ON cdsos.condition_disease_sd_uid = cds.uid AND cdsos.specialty_uid = s.uid " +
+                "WHERE cdsos.language_code IN(<languageList>) AND cdsos.publish_flag = {PUBLISHED} AND cds.uid  = :uid;";
+
+       sql = getPublishVersion(version, sql);
+
+        List<String> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("uid", conditionDiseaseUid);
+            result = query.mapTo(String.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
+    private List<String> getChildSpecialty(Version version, List<String> languageList,String conditionDiseaseUid)
+    {
+        final String methodName = "getChildSpecialty";
+        start(methodName);
+
+        String sql = "SELECT cs.child_specialty from child_specialty cs " +
+                "INNER JOIN condition_disease_sd cds ON cds.language_code = cs.language_code " +
+                "INNER JOIN condition_disease_sd_other_child_specialty cdsocs ON cdsocs.condition_disease_sd_uid = cds.uid AND cdsocs.child_specialty_uid = cs.uid " +
+                "WHERE cdsocs.language_code IN(<languageList>) AND cdsocs.publish_flag = {PUBLISHED} AND cds.uid  = :uid;";
+
+         sql = getPublishVersion(version, sql);
+
+        List<String> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("uid", conditionDiseaseUid);
+            result = query.mapTo(String.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
         completed(methodName);
         return result;
     }
