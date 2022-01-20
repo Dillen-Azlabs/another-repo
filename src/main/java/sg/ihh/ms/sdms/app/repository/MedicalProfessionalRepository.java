@@ -69,9 +69,10 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "getDetails";
         start(methodName);
 
-        String sql = "SELECT mp.*, mpt.profession AS med_pro_type, g.gender, s.specialty, COUNT(mc.title) > 0 AS media_coverage FROM medical_professional mp " +
+        String sql = "SELECT mp.*, mpt.profession AS med_pro_type, g.gender, s.specialty, COUNT(mc.title) > 0 AS media_coverage, spt.type as service_provider_type FROM medical_professional mp " +
                         " LEFT JOIN medical_professional_specialty mps ON mp.uid = mps.medical_professional_uid AND mp.language_code = mps.language_code " +
                         " LEFT JOIN specialty s ON s.uid = mps.specialty_uid " +
+                        " LEFT JOIN  service_provider_type spt ON spt.uid = mp.service_provider_uid"+
                         " LEFT JOIN gender g ON g.uid = mp.gender_uid " +
                         " LEFT JOIN media_coverage mc ON mp.uid = mc.related_specialist_uid AND mp.language_code = mc.language_code " +
                         " LEFT JOIN medical_professional_type mpt ON mpt.uid = mp.medical_professional_type_uid " +
