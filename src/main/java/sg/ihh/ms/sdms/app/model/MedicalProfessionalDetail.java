@@ -8,7 +8,7 @@ import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
 import java.util.List;
 
-@JsonPropertyOrder({"uid", "languageCode", "displayName", "itemUrl", "salutation", "mcrNumber", "isMedicalReviewer", "profileImageUrl", "profileImageAltText", "designation", "specialty", "languageSpoken", "gender", "insurancePanel", "videoUrl", "quote", "qnaUrl", "qnaLinkText", "hasMediaCoverage", "shortBio", "socialSummary", "laymanTerm", "metaCta", "metaTitle", "metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "displayName", "itemUrl", "salutation", "mcrNumber", "isMedicalReviewer", "profileImageUrl", "profileImageAltText", "designation", "specialty", "serviceProviderType", "languageSpoken", "gender", "insurancePanel", "videoUrl", "quote", "qnaUrl", "qnaLinkText", "hasMediaCoverage", "shortBio", "socialSummary", "laymanTerm", "metaCta", "metaTitle", "metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class MedicalProfessionalDetail extends BaseModel {
 
     @JsonIgnore
@@ -59,6 +59,8 @@ public class MedicalProfessionalDetail extends BaseModel {
     private String metaTitle;
     @JsonProperty("metaDescription")
     private String metaDescription;
+    @JsonProperty("serviceProviderType")
+    private String serviceProviderType;
 
 
     public MedicalProfessionalDetail() {
@@ -259,4 +261,13 @@ public class MedicalProfessionalDetail extends BaseModel {
     public void setMetaCta(String metaCta) {
         this.metaCta = metaCta;
     }
+
+    public String getServiceProviderType() {
+        return serviceProviderType;
+    }
+
+    public void setServiceProviderType(String serviceProviderType) {
+        this.serviceProviderType = serviceProviderType;
+    }
+
 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
-@JsonPropertyOrder({"uid", "languageCode", "displayName", "itemUrl", "mcrNumber", "type", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "displayName", "itemUrl", "mcrNumber", "type", "serviceProviderType", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class MedicalProfessionalBasic extends BaseModel {
 
     @JsonProperty("displayName")
@@ -16,6 +16,8 @@ public class MedicalProfessionalBasic extends BaseModel {
     private String mcrNumber;
     @JsonProperty("type")
     private String type;
+    @JsonProperty("serviceProviderType")
+    private String serviceProviderType;
 
     public MedicalProfessionalBasic() {
         // Empty Constructor
@@ -51,5 +53,13 @@ public class MedicalProfessionalBasic extends BaseModel {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getServiceProviderType() {
+        return serviceProviderType;
+    }
+
+    public void setServiceProviderType(String serviceProviderType) {
+        this.serviceProviderType = serviceProviderType;
     }
 }
