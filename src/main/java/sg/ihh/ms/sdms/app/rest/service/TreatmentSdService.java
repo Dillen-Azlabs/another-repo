@@ -7,16 +7,20 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sg.ihh.ms.sdms.app.model.SpecialtyExpertise;
 import sg.ihh.ms.sdms.app.model.SpecialtyDetail;
 import sg.ihh.ms.sdms.app.model.TreatmentCta;
+import sg.ihh.ms.sdms.app.model.TreatmentExpertise;
 import sg.ihh.ms.sdms.app.model.TreatmentDetail;
 import sg.ihh.ms.sdms.app.model.TreatmentOverview;
 import sg.ihh.ms.sdms.app.model.TreatmentWhatToExpect;
 import sg.ihh.ms.sdms.app.model.Version;
 import sg.ihh.ms.sdms.app.processor.StructuredDataProcessor;
 import sg.ihh.ms.sdms.app.repository.TreatmentSdRepository;
+import sg.ihh.ms.sdms.app.rest.model.SpecialtyExpertiseListResponse;
 import sg.ihh.ms.sdms.app.rest.model.SpecialtyDetailListResponse;
 import sg.ihh.ms.sdms.app.rest.model.TreatmentCtaListResponse;
+import sg.ihh.ms.sdms.app.rest.model.TreatmentExpertiseListResponse;
 import sg.ihh.ms.sdms.app.rest.model.TreatmentDetailListResponse;
 import sg.ihh.ms.sdms.app.rest.model.TreatmentOverviewListResponse;
 import sg.ihh.ms.sdms.app.rest.model.TreatmentWhatToExpectListResponse;
@@ -56,6 +60,27 @@ public class TreatmentSdService extends BaseService{
         completed(methodName);
         return response;
     }
+    //START - Treatment Expertise Block
+    @RequestMapping(path = "expertise", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public TreatmentExpertiseListResponse getTreatmentExpertise(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("treatmentUrl") String treatmentUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getTreatmentExpertise";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        TreatmentExpertise result = repository.getTreatmentExpertise(Version.getVersion(version), languageList, treatmentUrl, hospitalCode);
+
+        TreatmentExpertiseListResponse response = new TreatmentExpertiseListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Treatment Expertise Block
     @RequestMapping(path = "details", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public TreatmentDetailListResponse getTreatmentDetail(
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
