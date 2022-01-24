@@ -3,6 +3,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
+import java.util.List;
+
 @JsonPropertyOrder({"uid", "languageCode", "whyChooseUs", "doctorIntro", "expertiseMetaTitle","expertiseMetaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class ConditionExpertise extends BaseModel{
 
@@ -14,6 +16,8 @@ public class ConditionExpertise extends BaseModel{
     private String expertiseMetaTitle;
     @JsonProperty("expertiseMetaDescription")
     private String expertiseMetaDesc;
+    @JsonProperty("specialties")
+    private List<String> specialties;
 
     public ConditionExpertise() {
         //Empty Constructor
@@ -49,6 +53,14 @@ public class ConditionExpertise extends BaseModel{
     @ColumnName("expertise_meta_desc")
     public void setExpertiseMetaDesc(String expertiseMetaDesc) {
         this.expertiseMetaDesc = expertiseMetaDesc;
+    }
+
+    public List<String> getSpecialties() {
+        return specialties;
+    }
+
+    public void setSpecialties(List<String> specialties) {
+        this.specialties = specialties;
     }
 }
 

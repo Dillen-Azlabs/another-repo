@@ -5,13 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
+import java.util.List;
+
 @JsonPropertyOrder({"uid", "languageCode", "displayName", "associatedTreatments", "achievements", "experiences", "accreditation", "education", "publications", "awards", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class Portfolio extends BaseModel {
 
     @JsonProperty("displayName")
     private String displayName;
     @JsonProperty("associatedTreatments")
-    private String associatedTreatments;
+    private List<String> associatedTreatments;
     @JsonProperty("achievements")
     private String achievements;
     @JsonProperty("experiences")
@@ -38,12 +40,11 @@ public class Portfolio extends BaseModel {
         this.displayName = displayName;
     }
 
-    public String getAssociatedTreatments() {
+    public List<String> getAssociatedTreatments() {
         return associatedTreatments;
     }
 
-    @ColumnName("treatment")
-    public void setAssociatedTreatments(String associatedTreatments) {
+    public void setAssociatedTreatments(List<String> associatedTreatments) {
         this.associatedTreatments = associatedTreatments;
     }
 

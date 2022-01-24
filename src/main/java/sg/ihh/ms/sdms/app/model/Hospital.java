@@ -9,8 +9,6 @@ public class Hospital extends BaseModel {
 
     @JsonProperty("hospital")
     private String hospital;
-    @JsonProperty("hospitalCode")
-    private String hospitalCode;
 
     public Hospital() {
         // Empty Constructor
@@ -23,13 +21,5 @@ public class Hospital extends BaseModel {
     @ColumnName("hospital")
     public void setHospital(String hospital) {
         this.hospital = hospital;
-    }
-
-    public String getHospitalCode() {
-        return hospitalCode;
-    }
-
-    public void setHospitalCode(String hospitalCode) {
-        this.hospitalCode = hospitalCode;
     }
 }

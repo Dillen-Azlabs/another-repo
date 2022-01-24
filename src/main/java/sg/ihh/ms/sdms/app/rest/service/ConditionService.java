@@ -3,7 +3,6 @@ package sg.ihh.ms.sdms.app.rest.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -175,7 +174,7 @@ public class ConditionService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        ConditionFaq result = repository.getFaq(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
+        ConditionFaq result = repository.getConditionFaq(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
 
 //        result = cfProcessor.processList(result, languageCode);
 

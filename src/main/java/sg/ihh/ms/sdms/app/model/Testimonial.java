@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"uid", "languageCode", "testimonial", "patientName", "patientAlias", "thumbnailUrl", "thumbnailAltText", "keyQuote", "expiryDate", "countries", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "testimonial", "patientName", "patientAlias", "patientLocation", "thumbnailUrl", "thumbnailAltText", "keyQuote", "expiryDate", "countries", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class Testimonial extends BaseModel {
 
     @JsonProperty("testimonial")
@@ -15,6 +15,8 @@ public class Testimonial extends BaseModel {
     private String patientName;
     @JsonProperty("patientAlias")
     private String patientAlias;
+    @JsonProperty("patientLocation")
+    private String cor;
     @JsonProperty("thumbnailUrl")
     private String thumbnailUrl;
     @JsonProperty("thumbnailAltText")
@@ -50,6 +52,14 @@ public class Testimonial extends BaseModel {
 
     public void setPatientAlias(String patientAlias) {
         this.patientAlias = patientAlias;
+    }
+
+    public String getCor() {
+        return cor;
+    }
+
+    public void setCor(String cor) {
+        this.cor = cor;
     }
 
     public String getThumbnailUrl() {

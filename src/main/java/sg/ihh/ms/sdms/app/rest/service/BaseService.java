@@ -43,7 +43,7 @@ public class BaseService {
 
     protected List<String> getLanguageList(String languageCode) {
         List<String> list = new ArrayList<>();
-        list.add(defaultLanguageCode);
+        //list.add(defaultLanguageCode);
         list.add(languageCode);
         return list;
     }

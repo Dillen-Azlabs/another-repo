@@ -199,4 +199,24 @@ public class SpecialtySdService extends BaseService{
         completed(methodName);
         return response;
     }
+    @RequestMapping(path = "relatedData", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public SpecialtyRelatedDataListResponse getSpecialtyRelatedData(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("specialtyUrl") String specialtyUrl) {
+        final String methodName = "getSpecialtyRelatedData";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        SpecialtyRelatedData result = repository.getSpecialtyRelatedData(Version.getVersion(version), languageList, specialtyUrl);
+
+        //result = crdProcessor.processList(result, languageCode);
+
+        SpecialtyRelatedDataListResponse response = new SpecialtyRelatedDataListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
 }
