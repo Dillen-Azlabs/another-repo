@@ -8,12 +8,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sg.ihh.ms.sdms.app.model.SpecialtyDetail;
 import sg.ihh.ms.sdms.app.model.TreatmentCta;
+import sg.ihh.ms.sdms.app.model.TreatmentDetail;
 import sg.ihh.ms.sdms.app.model.TreatmentOverview;
 import sg.ihh.ms.sdms.app.model.Version;
 import sg.ihh.ms.sdms.app.processor.StructuredDataProcessor;
 import sg.ihh.ms.sdms.app.repository.TreatmentSdRepository;
+import sg.ihh.ms.sdms.app.rest.model.SpecialtyDetailListResponse;
 import sg.ihh.ms.sdms.app.rest.model.TreatmentCtaListResponse;
+import sg.ihh.ms.sdms.app.rest.model.TreatmentDetailListResponse;
 import sg.ihh.ms.sdms.app.rest.model.TreatmentOverviewListResponse;
 
 
@@ -47,6 +51,25 @@ public class TreatmentSdService extends BaseService{
         TreatmentCta result = repository.getTreatmentCta(Version.getVersion(version), languageList, treatmentUrl);
 
         TreatmentCtaListResponse response = new TreatmentCtaListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    @RequestMapping(path = "details", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public TreatmentDetailListResponse getTreatmentDetail(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("treatmentUrl") String treatmentUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getTreatmentDetail";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        TreatmentDetail result = repository.getTreatmentDetail(Version.getVersion(version), languageList, treatmentUrl,hospitalCode);
+
+        TreatmentDetailListResponse response = new TreatmentDetailListResponse(result);
 
         completed(methodName);
         return response;
