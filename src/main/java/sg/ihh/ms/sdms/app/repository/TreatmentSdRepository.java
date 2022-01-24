@@ -43,6 +43,63 @@ public class TreatmentSdRepository extends BaseRepository{
         completed(methodName);
         return result;
     }
+    //START - Treatment FAQ Block
+    public TreatmentFaq getTreatmentFaq(Version version, List<String> languageList, String treatmentItemUrl) {
+        final String methodName = "getTreatmentFaq";
+        start(methodName);
+
+        TreatmentFaq treatmentFaq = getTreatmentSd(version, languageList, treatmentItemUrl);
+
+        if (treatmentFaq != null) {
+            List<TreatmentSdFaq> treatmentSdFaqs = getTreatmentSdFaq(version, languageList, treatmentItemUrl);
+
+            treatmentFaq.setFaqs(treatmentSdFaqs);
+        }
+
+        completed(methodName);
+        return treatmentFaq;
+    }
+    private TreatmentFaq getTreatmentSd(Version version, List<String> languageList, String treatmentItemUrl) {
+        String methodName = "getTreatmentSd";
+        String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt,additional_resource FROM test_treatment_sd " +
+                "WHERE language_code IN(<languageList>) AND item_url = :item_url " +
+                " AND publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        TreatmentFaq result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", treatmentItemUrl);
+            result = query.mapToBean(TreatmentFaq.class).one();
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        return result;
+    }
+    private List<TreatmentSdFaq> getTreatmentSdFaq(Version version, List<String> languageList, String treatmentItemUrl) {
+        final String methodName = "getTreatmentSdFaq";
+        start(methodName);
+
+        String sql = "SELECT ttsf.question, ttsf.answer, ttsf.display_order FROM test_treatment_sd tts " +
+                " LEFT JOIN test_treatment_sd_faq ttsf ON tts.uid = ttsf.test_treatment_sd_uid AND tts.language_code = ttsf.language_code " +
+                " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url" +
+                " AND tts.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<TreatmentSdFaq> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", treatmentItemUrl);
+            result = query.mapToBean(TreatmentSdFaq.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+    //END - Treatment FAQ Block
     //START - Treatment What to Expect Block
     public TreatmentWhatToExpect getTreatmentWhatToExpect(Version version, List<String> languageList, String treatmentItemUrl) {
         final String methodName = "getTreatmentWhatToExpect";
