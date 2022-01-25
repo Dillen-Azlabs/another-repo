@@ -7,9 +7,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sg.ihh.ms.sdms.app.model.ConditionRelatedData;
 import sg.ihh.ms.sdms.app.model.SpecialtyExpertise;
 import sg.ihh.ms.sdms.app.model.SpecialtyDetail;
 import sg.ihh.ms.sdms.app.model.TreatmentCta;
+import sg.ihh.ms.sdms.app.model.TreatmentRelatedData;
 import sg.ihh.ms.sdms.app.model.TreatmentFaq;
 import sg.ihh.ms.sdms.app.model.TreatmentExpertise;
 import sg.ihh.ms.sdms.app.model.TreatmentDetail;
@@ -21,6 +23,7 @@ import sg.ihh.ms.sdms.app.repository.TreatmentSdRepository;
 import sg.ihh.ms.sdms.app.rest.model.SpecialtyExpertiseListResponse;
 import sg.ihh.ms.sdms.app.rest.model.SpecialtyDetailListResponse;
 import sg.ihh.ms.sdms.app.rest.model.TreatmentCtaListResponse;
+import sg.ihh.ms.sdms.app.rest.model.TreatmentRelatedDataListResponse;
 import sg.ihh.ms.sdms.app.rest.model.TreatmentFaqListResponse;
 import sg.ihh.ms.sdms.app.rest.model.TreatmentExpertiseListResponse;
 import sg.ihh.ms.sdms.app.rest.model.TreatmentDetailListResponse;
@@ -58,6 +61,26 @@ public class TreatmentSdService extends BaseService{
         TreatmentCta result = repository.getTreatmentCta(Version.getVersion(version), languageList, treatmentUrl);
 
         TreatmentCtaListResponse response = new TreatmentCtaListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+
+    @RequestMapping(path = "relatedData", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public TreatmentRelatedDataListResponse getTreatmentRelatedData(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("treatmentUrl") String treatmentUrl) {
+        final String methodName = "getTreatmentRelatedData";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        TreatmentRelatedData result = repository.getTreatmentRelatedData(Version.getVersion(version), languageList, treatmentUrl);
+
+
+        TreatmentRelatedDataListResponse response = new TreatmentRelatedDataListResponse(result);
 
         completed(methodName);
         return response;
