@@ -5,10 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import sg.ihh.ms.sdms.app.model.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class SpecialtySdRepository extends BaseRepository{
@@ -504,10 +501,11 @@ public class SpecialtySdRepository extends BaseRepository{
         try (Handle h = getHandle()) {
 
             List<String> specialtyUid = new ArrayList<>();
+            List<SpecialtyRelatedDataCondition> list = new ArrayList<>();
 
             Query q1 = h.createQuery(query1);
             q1.bind("uid", uid);
-            result.addAll(q1.mapToBean(SpecialtyRelatedDataCondition.class).list());
+            list.addAll(q1.mapToBean(SpecialtyRelatedDataCondition.class).list());
 
             Query q2 = h.createQuery(query2);
             q2.bind("uid", uid);
@@ -516,9 +514,12 @@ public class SpecialtySdRepository extends BaseRepository{
                 for (String primaryUid : specialtyUid) {
                     Query q3 = h.createQuery(query3);
                     q3.bind("uid", primaryUid);
-                    result.addAll(q3.mapToBean(SpecialtyRelatedDataCondition.class).list());
+                    list.addAll(q3.mapToBean(SpecialtyRelatedDataCondition.class).list());
                 }
             }
+
+            Set<SpecialtyRelatedDataCondition> resultSet = new HashSet<>(list);
+            result.addAll(resultSet);
         }
         catch (Exception ex) {
             log.error(methodName, ex);
@@ -538,11 +539,13 @@ public class SpecialtySdRepository extends BaseRepository{
           Return the pair of (item_url, treatment_h1_display). Ensure publish_flag is DRAFT.
           */
 
-        String query1 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd  WHERE primary_specialty_uid = :uid";
+        String query1 = "SELECT item_url, treatment_h1_display FROM test_treatment_primary_specialty ttps " +
+                "INNER JOIN test_treatment_sd tts  ON tts.primary_treatment_uid = ttps.test_treatment_uid  " +
+                " WHERE ttps.specialty_uid = :uid";
 
-        String query2 = "SELECT test_treatment_sd_uid FROM test_treatment_sd_other_specialty WHERE specialty_uid = :uid";
+        String query2 = "SELECT test_treatment_uid FROM test_treatment_other_specialty WHERE specialty_uid = :uid";
 
-        String query3 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd WHERE uid =:uid";
+        String query3 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd WHERE primary_treatment_uid =:uid";
 
         query1 = getPublishVersion(version, query1);
         query2 = getPublishVersion(version, query2);
@@ -553,22 +556,25 @@ public class SpecialtySdRepository extends BaseRepository{
         try (Handle h = getHandle()) {
 
             List<String> conditionUid = new ArrayList<>();
-
+            List<SpecialtyRelatedDataTreatment> list = new ArrayList<>();
             Query q1 = h.createQuery(query1);
             q1.bind("uid", uid);
-            result.addAll(q1.mapToBean(SpecialtyRelatedDataTreatment.class).list());
+            list.addAll(q1.mapToBean(SpecialtyRelatedDataTreatment.class).list());
 
             Query q2 = h.createQuery(query2);
             q2.bind("uid", uid);
-            conditionUid = q1.mapTo(String.class).list();
+            conditionUid = q2.mapTo(String.class).list();
 
             if (!conditionUid.isEmpty()) {
                 for (String primaryUid : conditionUid) {
                     Query q3 = h.createQuery(query3);
                     q3.bind("uid", primaryUid);
-                    result.addAll(q3.mapToBean(SpecialtyRelatedDataTreatment.class).list());
+                    list.addAll(q3.mapToBean(SpecialtyRelatedDataTreatment.class).list());
                 }
             }
+
+            Set<SpecialtyRelatedDataTreatment> resultSet = new HashSet<>(list);
+            result.addAll(resultSet);
         }
         catch (Exception ex) {
             log.error(methodName, ex);
