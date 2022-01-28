@@ -43,6 +43,7 @@ public class TreatmentSdRepository extends BaseRepository{
         completed(methodName);
         return result;
     }
+    //START - Treatment Related Data Block
     public TreatmentRelatedData getTreatmentRelatedData(Version version, List<String> languageList, String treatmentItemUrl) {
         final String methodName = "getTreatmentRelatedData";
         start(methodName);
@@ -50,7 +51,7 @@ public class TreatmentSdRepository extends BaseRepository{
         TreatmentRelatedData treatmentRelatedData = getTreatment(version, languageList, treatmentItemUrl);
 
         if (treatmentRelatedData != null) {
-            List<TreatmentRelatedDataCondition> relatedConditions = getRelatedCondition(version,treatmentRelatedData.getPrimaryTreatmentUid());
+            List<TreatmentRelatedDataCondition> relatedConditions = getRelatedCondition(version,getPrimaryTreatment(version, languageList, treatmentItemUrl));
             List<TreatmentRelatedDataTreatment> relatedTreatments = getRelatedDataTreatments(version, treatmentRelatedData.getUid());
 
             treatmentRelatedData.setRelatedConditions(relatedConditions);
@@ -64,7 +65,7 @@ public class TreatmentSdRepository extends BaseRepository{
     private TreatmentRelatedData getTreatment(Version version, List<String> languageList,String treatmentItemUrl)
     {
         String methodName = "getTreatment";
-        String sql = "SELECT uid,primary_treatment_uid, language_code, publish_flag, created_dt, modified_dt FROM test_treatment_sd " +
+        String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt FROM test_treatment_sd " +
                 "WHERE language_code IN(<languageList>) AND item_url = :item_url" +
                 " AND publish_flag = {PUBLISHED}";
 
@@ -74,6 +75,25 @@ public class TreatmentSdRepository extends BaseRepository{
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", treatmentItemUrl);
             result = query.mapToBean(TreatmentRelatedData.class).one();
+        }
+        catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        return result;
+    }
+    private String getPrimaryTreatment(Version version, List<String> languageList,String treatmentItemUrl)
+    {
+        String methodName = "getPrimaryTreatment";
+        String sql = "SELECT primary_treatment_uid FROM test_treatment_sd " +
+                "WHERE language_code IN(<languageList>) AND item_url = :item_url" +
+                " AND publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        String result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", treatmentItemUrl);
+            result = query.mapTo(String.class).one();
         }
         catch (Exception ex) {
             log.error(methodName, ex);
@@ -154,6 +174,7 @@ public class TreatmentSdRepository extends BaseRepository{
         }
         return result;
     }
+    //END - Treatment Related Data Block
     //START - Treatment FAQ Block
     public TreatmentFaq getTreatmentFaq(Version version, List<String> languageList, String treatmentItemUrl) {
         final String methodName = "getTreatmentFaq";

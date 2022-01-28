@@ -8,8 +8,7 @@ import java.util.List;
 @JsonPropertyOrder({"uid", "languageCode", "relatedConditions", "relatedTreatments", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class TreatmentRelatedData extends BaseModel {
 
-    @JsonProperty("primaryTreatmentUid")
-    private String primaryTreatmentUid;
+
     @JsonProperty("relatedConditions")
     private List<TreatmentRelatedDataCondition> relatedConditions;
     @JsonProperty("relatedTreatments")
@@ -20,13 +19,6 @@ public class TreatmentRelatedData extends BaseModel {
         //Empty Constructor
     }
 
-    public String getPrimaryTreatmentUid() {
-        return primaryTreatmentUid;
-    }
-
-    public void setPrimaryTreatmentUid(String primaryTreatmentUid) {
-        this.primaryTreatmentUid = primaryTreatmentUid;
-    }
 
     public List<TreatmentRelatedDataCondition> getRelatedConditions() {
         return relatedConditions;
