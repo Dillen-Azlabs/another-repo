@@ -104,13 +104,13 @@ public class TreatmentSdRepository extends BaseRepository{
     {
         String methodName = "getRelatedCondition";
 
-        String relatedConditionSql = "SELECT condition_disease_uid FROM condition_disease_sd_related_treatment cdsdrt" +
+        String relatedConditionSql = "SELECT condition_disease_sd_uid FROM condition_disease_sd_related_treatment cdsdrt" +
                 " LEFT JOIN test_treatment_sd tts ON tts.primary_treatment_uid = cdsdrt.test_treatment_sd_uid " +
                 " WHERE cdsdrt.test_treatment_sd_uid =:primaryTreatmentUid " +
                 " AND tts.publish_flag = {PUBLISHED}";
 
         String conditionSql = "SELECT item_url, condition_h1_display FROM condition_disease_sd " +
-                " WHERE  primary_condition_uid = :primaryConditionUid " +
+                " WHERE  uid = :ConditionSdUid " +
                 " AND publish_flag = {PUBLISHED}";
 
         relatedConditionSql = getPublishVersion(version, relatedConditionSql);
@@ -125,9 +125,9 @@ public class TreatmentSdRepository extends BaseRepository{
             query1.bind("primaryTreatmentUid", primaryTreatmentUid);
             treatmentUid = query1.mapTo(String.class).list();
             if (!treatmentUid.isEmpty()) {
-                for (String primaryConditionUid : treatmentUid) {
+                for (String ConditionSdUid : treatmentUid) {
                     Query query2 = h.createQuery(conditionSql);
-                    query2.bind("primaryConditionUid", primaryConditionUid);
+                    query2.bind("ConditionSdUid", ConditionSdUid);
                     result = query2.mapToBean(TreatmentRelatedDataCondition.class).list();
                 }
             }
