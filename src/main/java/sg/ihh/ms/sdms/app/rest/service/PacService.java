@@ -34,30 +34,32 @@ public class PacService extends BaseService {
         log = getLogger(this.getClass());
     }
 
-    @RequestMapping(path = "countr", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public PacListResponse getPacByCountry(
-            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
-                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
-            @RequestParam("languageCode") String languageCode,
-            @RequestParam("country") String country) {
+     @RequestMapping(path = "country", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public PacListResponse getPacByCountry(@RequestParam Map<String, String> requestParams) {
         final String methodName = "getPacByCountry";
         start(methodName);
 
-        // Language Code
-        List<String> languageList = getLanguageList(languageCode);
+        PacListResponse pacListResponse = null;
+        if (requestParams.containsKey("version") && requestParams.containsKey("languageCode")) {
+            String version = requestParams.get("version");
+            String languageCode = requestParams.get("languageCode");
 
-        List<Pac> result = repository.searchByCountry(Version.getVersion(version), languageList, country);
-
-        result = processor.processList(result, languageCode);
-
-        PacListResponse response = new PacListResponse(result);
-
-        response.setCountry(country);
-
+            List<String> languageList = getLanguageList(languageCode);
+            List<Pac> result = new ArrayList<>();
+            if (requestParams.containsKey("country")) {
+                String country = requestParams.get("country");
+                result = repository.searchByCountry(Version.getVersion(version), languageList, country);
+            } else {
+                result = repository.list(Version.getVersion(version), languageList);
+            }
+            result = processor.processList(result, languageCode);
+            pacListResponse = new PacListResponse(result);
+        }
         completed(methodName);
-        return response;
+        return pacListResponse;
     }
-
+}
+/*
     @RequestMapping(path = "country", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public PacListResponse getPacByCountry(@RequestParam  Map<String,String> allParams) {
 
@@ -141,4 +143,4 @@ class PacParam {
     public void setCountry(String country) {
         this.country = country;
     }
-}
+}*/
