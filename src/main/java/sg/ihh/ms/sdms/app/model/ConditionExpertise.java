@@ -5,7 +5,7 @@ import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
 import java.util.List;
 
-@JsonPropertyOrder({"uid", "languageCode", "whyChooseUs", "doctorIntro", "expertiseMetaTitle","expertiseMetaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "whyChooseUs", "doctorIntro", "specialties", "expertiseMetaTitle","expertiseMetaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class ConditionExpertise extends BaseModel{
 
     @JsonProperty("whyChooseUs")
