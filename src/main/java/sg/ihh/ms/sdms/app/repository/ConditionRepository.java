@@ -207,7 +207,39 @@ public class ConditionRepository extends BaseRepository {
         return result;
     }
 
-    public ConditionExpertise getExpertise(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
+    public ConditionExpertise getConditionExpertise(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
+        final String methodName = "getConditionExpertise";
+        start(methodName);
+
+        ConditionExpertise conditionExpertise = getConditionDiseaseSd(version, languageList, conditionItemUrl, hospitalCode);
+
+        if (conditionExpertise != null) {
+            Map<String, Object> metadata = getExpertiseMetadata(version, languageList, conditionItemUrl, hospitalCode);
+            conditionExpertise.setExpertiseMetaTitle((String) metadata.get("expertise_meta_title"));
+            conditionExpertise.setExpertiseMetaDesc((String) metadata.get("expertise_meta_desc"));
+            List<String> specialties = new ArrayList<>();
+            List<String> specialty = getSpecialty(version, languageList,conditionExpertise.getUid());
+            List<String> childSpecialty  = getChildSpecialty(version, languageList,conditionExpertise.getUid());
+            if (!specialty.isEmpty()) {
+
+                specialty = specialty.stream()
+                        .distinct()
+                        .collect(Collectors.toList());
+                specialties.addAll(specialty);
+            }
+            if (!childSpecialty.isEmpty()) {
+
+                childSpecialty = childSpecialty.stream()
+                        .distinct()
+                        .collect(Collectors.toList());
+                specialties.addAll(childSpecialty);
+            }
+            conditionExpertise.setSpecialties(specialties);
+        }
+        completed(methodName);
+        return conditionExpertise;
+    }
+    public ConditionExpertise getConditionDiseaseSd(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
         final String methodName = "getExpertise";
         start(methodName);
 
@@ -226,35 +258,6 @@ public class ConditionRepository extends BaseRepository {
         } catch (Exception ex) {
             log.error(methodName, ex);
         }
-
-        // these 2 fields need to set separately as they should be null when hospitalCode dont match.
-        // the other fields should still display if the hospitalCode doesn't match
-        if (result != null) {
-            Map<String, Object> metadata = getExpertiseMetadata(version, languageList, conditionItemUrl, hospitalCode);
-            result.setExpertiseMetaTitle((String) metadata.get("expertise_meta_title"));
-            result.setExpertiseMetaDesc((String) metadata.get("expertise_meta_desc"));
-            result.setWcu((String) metadata.get("wcu"));
-            result.setDocIntro((String) metadata.get("doc_intro"));
-            List<String> specialties = new ArrayList<>();
-            List<String> specialty = getSpecialty(version, languageList,result.getUid());
-            List<String> childSpecialty  = getChildSpecialty(version, languageList,result.getUid());
-            if (!specialty.isEmpty()) {
-
-                specialty = specialty.stream()
-                        .distinct()
-                        .collect(Collectors.toList());
-                specialties.addAll(specialty);
-            }
-            if (!childSpecialty.isEmpty()) {
-
-                childSpecialty = childSpecialty.stream()
-                        .distinct()
-                        .collect(Collectors.toList());
-                specialties.addAll(childSpecialty);
-            }
-            result.setSpecialties(specialties);
-        }
-
         completed(methodName);
         return result;
     }
@@ -311,7 +314,7 @@ public class ConditionRepository extends BaseRepository {
         final String methodName = "getExpertiseMetadata";
         start(methodName);
 
-        String sql = "SELECT cdsm.wcu, cdsm.doc_intro, cdsm.expertise_meta_title, cdsm.expertise_meta_desc FROM condition_disease_sd cd " +
+        String sql = "SELECT cdsm.expertise_meta_title, cdsm.expertise_meta_desc FROM condition_disease_sd cd " +
                 " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
                 " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +

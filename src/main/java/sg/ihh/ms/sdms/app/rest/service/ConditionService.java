@@ -151,7 +151,7 @@ public class ConditionService extends BaseService{
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        ConditionExpertise result = repository.getExpertise(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
+        ConditionExpertise result = repository.getConditionExpertise(Version.getVersion(version), languageList, conditionUrl,hospitalCode);
 
 //        result = ceProcessor.processList(result, languageCode);
 
