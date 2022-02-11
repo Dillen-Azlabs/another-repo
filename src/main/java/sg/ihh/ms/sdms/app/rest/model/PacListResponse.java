@@ -33,6 +33,7 @@ public class PacListResponse extends BaseResponse {
         this.list = list;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public List<Pac> getList() {
         return list;
     }
