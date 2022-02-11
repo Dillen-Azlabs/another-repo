@@ -1,6 +1,5 @@
 package sg.ihh.ms.sdms.app.rest.service;
 
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -13,10 +12,6 @@ import sg.ihh.ms.sdms.app.processor.StructuredDataProcessor;
 import sg.ihh.ms.sdms.app.repository.PacRepository;
 import sg.ihh.ms.sdms.app.rest.model.PacListResponse;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Pattern;
 import java.util.*;
 
@@ -43,7 +38,7 @@ public class PacService extends BaseService {
         List<Pac> result = new ArrayList<>();
         PacListResponse pacListResponse = new PacListResponse(result);
 
-        if (requestParams.containsKey("version") && requestParams.containsKey("languageCode")) {
+        if (requestParams.containsKey("languageCode")) {
             String languageCode = requestParams.get("languageCode");
             List<String> languageList = getLanguageList(languageCode);
 
@@ -51,6 +46,12 @@ public class PacService extends BaseService {
                 String country = requestParams.get("country");
                 result = repository.searchByCountry(Version.getVersion(version), languageList, country);
 
+            if (country.isEmpty()){
+                result = repository.list(Version.getVersion(version), languageList);
+                pacListResponse = new PacListResponse(result);
+                pacListResponse.setCountry(null);
+                return  pacListResponse;
+            }
             } else {
                 result = repository.list(Version.getVersion(version), languageList);
             }
