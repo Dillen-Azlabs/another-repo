@@ -211,12 +211,16 @@ public class ConditionRepository extends BaseRepository {
         final String methodName = "getConditionExpertise";
         start(methodName);
 
-        ConditionExpertise conditionExpertise = getConditionDiseaseSd(version, languageList, conditionItemUrl, hospitalCode);
+        ConditionExpertise conditionExpertise = getConditionDiseaseSd(version, languageList, conditionItemUrl);
+        Map<String, Object> metadataWcu = getExpertiseOurDoc(version, languageList, conditionItemUrl);
+        conditionExpertise.setWcu((String) metadataWcu.get("wcu"));
+        conditionExpertise.setDocIntro((String) metadataWcu.get("doc_intro"));
 
         if (conditionExpertise != null) {
             Map<String, Object> metadata = getExpertiseMetadata(version, languageList, conditionItemUrl, hospitalCode);
             conditionExpertise.setExpertiseMetaTitle((String) metadata.get("expertise_meta_title"));
             conditionExpertise.setExpertiseMetaDesc((String) metadata.get("expertise_meta_desc"));
+
             List<String> specialties = new ArrayList<>();
             List<String> specialty = getSpecialty(version, languageList,conditionExpertise.getUid());
             List<String> childSpecialty  = getChildSpecialty(version, languageList,conditionExpertise.getUid());
@@ -239,14 +243,13 @@ public class ConditionRepository extends BaseRepository {
         completed(methodName);
         return conditionExpertise;
     }
-    public ConditionExpertise getConditionDiseaseSd(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
-        final String methodName = "getExpertise";
+    public ConditionExpertise getConditionDiseaseSd(Version version, List<String> languageList, String conditionItemUrl) {
+        final String methodName = "getConditionDiseaseSd";
         start(methodName);
 
-        String sql = "SELECT cd.*, cdsm.wcu, cdsm.doc_intro  FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
-                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url" +
-                " AND cd.publish_flag = {PUBLISHED}";
+        String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt FROM condition_disease_sd  " +
+                " WHERE language_code IN(<languageList>) AND item_url = :item_url" +
+                " AND publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
@@ -272,7 +275,7 @@ public class ConditionRepository extends BaseRepository {
                 "INNER JOIN condition_disease_sd_other_specialty cdsos ON cdsos.condition_disease_sd_uid = cds.uid AND cdsos.specialty_uid = s.uid " +
                 "WHERE cdsos.language_code IN(<languageList>) AND cdsos.publish_flag = {PUBLISHED} AND cds.uid  = :uid;";
 
-       sql = getPublishVersion(version, sql);
+        sql = getPublishVersion(version, sql);
 
         List<String> result = new ArrayList<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -296,7 +299,7 @@ public class ConditionRepository extends BaseRepository {
                 "INNER JOIN condition_disease_sd_other_child_specialty cdsocs ON cdsocs.condition_disease_sd_uid = cds.uid AND cdsocs.child_specialty_uid = cs.uid " +
                 "WHERE cdsocs.language_code IN(<languageList>) AND cdsocs.publish_flag = {PUBLISHED} AND cds.uid  = :uid;";
 
-         sql = getPublishVersion(version, sql);
+        sql = getPublishVersion(version, sql);
 
         List<String> result = new ArrayList<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
@@ -309,7 +312,28 @@ public class ConditionRepository extends BaseRepository {
         completed(methodName);
         return result;
     }
+    public Map<String, Object> getExpertiseOurDoc(Version version, List<String> languageList, String conditionItemUrl) {
+        final String methodName = "getExpertiseOurDoc";
+        start(methodName);
 
+        String sql = "SELECT cd.*, cdsm.wcu, cdsm.doc_intro FROM condition_disease_sd cd " +
+                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
+                " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url" +
+                " AND cd.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        Map<String, Object> result = new HashMap<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", conditionItemUrl);
+            result = query.mapToMap().one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
     public Map<String, Object> getExpertiseMetadata(Version version, List<String> languageList, String conditionItemUrl, String hospitalCode) {
         final String methodName = "getExpertiseMetadata";
         start(methodName);
