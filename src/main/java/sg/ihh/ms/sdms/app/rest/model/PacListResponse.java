@@ -33,6 +33,7 @@ public class PacListResponse extends BaseResponse {
         this.list = list;
     }
 
+
     public List<Pac> getList() {
         return list;
     }

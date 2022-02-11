@@ -13,6 +13,7 @@ public class PacRepository extends BaseRepository {
 
     public PacRepository() {
         log = getLogger(this.getClass());
+        tableName = "patient_assistance_centre";
     }
 
     public List<Pac> list(Version version, List<String> languageList) {
