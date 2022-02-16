@@ -277,9 +277,8 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT s.specialty FROM specialty s " +
-                "INNER JOIN condition_disease_sd cds ON cds.language_code = s.language_code " +
-                "INNER JOIN condition_disease_sd_other_specialty cdsos ON cdsos.condition_disease_sd_uid = cds.uid AND cds.primary_specialty_uid = s.uid " +
-                "WHERE cdsos.language_code IN(<languageList>) AND cdsos.publish_flag = {PUBLISHED} AND cds.uid  = :uid";
+                "LEFT JOIN condition_disease_sd cds ON cds.language_code = s.language_code AND cds.primary_specialty_uid  = s.uid " +
+                "WHERE cds.language_code IN(<languageList>) AND cds.publish_flag = {PUBLISHED} AND cds.uid  = :uid";
 
         sql = getPublishVersion(version, sql);
 
