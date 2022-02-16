@@ -221,8 +221,16 @@ public class ConditionRepository extends BaseRepository {
             conditionExpertise.setDocIntro((String) metadata.get("doc_intro"));
 
             List<String> specialties = new ArrayList<>();
+            List<String> primarySpecialty = getPrimarySpecialty(version, languageList,conditionExpertise.getUid());
             List<String> specialty = getSpecialty(version, languageList,conditionExpertise.getUid());
             List<String> childSpecialty  = getChildSpecialty(version, languageList,conditionExpertise.getUid());
+            if (!primarySpecialty.isEmpty()) {
+
+                primarySpecialty = primarySpecialty.stream()
+                        .distinct()
+                        .collect(Collectors.toList());
+                specialties.addAll(primarySpecialty);
+            }
             if (!specialty.isEmpty()) {
 
                 specialty = specialty.stream()
@@ -263,7 +271,28 @@ public class ConditionRepository extends BaseRepository {
         completed(methodName);
         return result;
     }
+    private List<String> getPrimarySpecialty(Version version, List<String> languageList,String conditionDiseaseUid)
+    {
+        final String methodName = "getPrimarySpecialty";
+        start(methodName);
 
+        String sql = "SELECT s.specialty FROM specialty s " +
+                "LEFT JOIN condition_disease_sd cds ON cds.language_code = s.language_code AND cds.primary_specialty_uid  = s.uid " +
+                "WHERE cds.language_code IN(<languageList>) AND cds.publish_flag = {PUBLISHED} AND cds.uid  = :uid";
+
+        sql = getPublishVersion(version, sql);
+
+        List<String> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("uid", conditionDiseaseUid);
+            result = query.mapTo(String.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
     private List<String> getSpecialty(Version version, List<String> languageList,String conditionDiseaseUid)
     {
         final String methodName = "getSpecialty";
