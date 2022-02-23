@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sg.ihh.ms.sdms.app.model.ContentHubMainBasicDetail;
+import sg.ihh.ms.sdms.app.model.ContentHubMainCta;
 import sg.ihh.ms.sdms.app.model.Version;
 import sg.ihh.ms.sdms.app.processor.StructuredDataProcessor;
 import sg.ihh.ms.sdms.app.repository.ContentHubMainSdRepository;
 import sg.ihh.ms.sdms.app.rest.model.ContentHubMainBasicDetailListResponse;
+import sg.ihh.ms.sdms.app.rest.model.ContentHubMainCtaListResponse;
 
 import javax.validation.constraints.Pattern;
 import java.util.List;
@@ -51,4 +53,26 @@ public class ContentHubMainSdService extends BaseService{
         return response;
     }
     //END - Content Hub Main Basic Detail Block
+
+    //START - Content Hub Main CTA  Block
+    @RequestMapping(path = "cta", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ContentHubMainCtaListResponse getContentHubMainCta(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("contentHubMUrl") String contentHubMUrl) {
+        final String methodName = "getContentHubMainCta";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        ContentHubMainCta result = repository.getContentHubMainCta(Version.getVersion(version), languageList, contentHubMUrl);
+
+        ContentHubMainCtaListResponse response = new ContentHubMainCtaListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Content Hub Main CTA  Block
+
 }
