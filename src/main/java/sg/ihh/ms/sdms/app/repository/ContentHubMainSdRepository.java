@@ -5,8 +5,10 @@ import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
 import sg.ihh.ms.sdms.app.model.ContentHubMainBasicDetail;
 import sg.ihh.ms.sdms.app.model.ContentHubMainCta;
+import sg.ihh.ms.sdms.app.model.ContentHubMainBodySection;
 import sg.ihh.ms.sdms.app.model.Version;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,4 +106,29 @@ public class ContentHubMainSdRepository extends BaseRepository {
     }
     //END - Content Hub Main CTA  Block
 
+
+    //START - Content Hub Main Body Section Block
+    public List<ContentHubMainBodySection> getContentHubMainBodySection(Version version, List<String> languageList, String contentHubMUrl, int sectionNumber) {
+        final String methodName = "getContentHubMainBodySection";
+        start(methodName);
+
+        String sql = "SELECT chms.*, chmsb.content1,chmsb.video_url , chmsb.content2, chmsb.did_you_know_highlight FROM content_hub_main_sd chms " +
+                "LEFT JOIN content_hub_main_sd_body chmsb  ON chms.uid = chmsb.content_hub_main_sd_uid " +
+                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url  AND chmsb.section  = :section " +
+                "AND chms.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<ContentHubMainBodySection> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", contentHubMUrl).bind("section", sectionNumber);
+            result = query.mapToBean(ContentHubMainBodySection.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Content Hub Main Body Section Block
 }
