@@ -3,8 +3,13 @@ package sg.ihh.ms.sdms.app.repository;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
+import sg.ihh.ms.sdms.app.model.ContentHubMainBasicDetail;
+import sg.ihh.ms.sdms.app.model.ContentHubMainIconContent;
+import sg.ihh.ms.sdms.app.model.ContentHubMainCta;
+import sg.ihh.ms.sdms.app.model.Version;
 import sg.ihh.ms.sdms.app.model.*;
 
+import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +82,31 @@ public class ContentHubMainSdRepository extends BaseRepository {
         return result;
     }
     //END - Content Hub Main Basic Detail Block
+
+    //START - Content Hub Main CTA  Block
+    public ContentHubMainCta getContentHubMainCta(Version version, List<String> languageList, String contentHubMUrl) {
+        final String methodName = "getContentHubMainCta";
+        start(methodName);
+
+        String sql = "SELECT chms.* FROM content_hub_main_sd chms " +
+                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url " +
+                "AND chms.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        ContentHubMainCta result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", contentHubMUrl);
+            result = query.mapToBean(ContentHubMainCta.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+    //END - Content Hub Main CTA  Block
 
     //START - Content Hub Main Award Block
 
@@ -188,7 +218,6 @@ public class ContentHubMainSdRepository extends BaseRepository {
 
     //END - Content Hub Main Award Block
 
-
     //START - Content Hub Main Body Section Block
     public List<ContentHubMainBodySection> getContentHubMainBodySection(Version version, List<String> languageList, String contentHubMUrl, int sectionNumber) {
         final String methodName = "getContentHubMainBodySection";
@@ -213,4 +242,30 @@ public class ContentHubMainSdRepository extends BaseRepository {
         return result;
     }
     //END - Content Hub Main Body Section Block
+
+    //START - Content Hub Main Icon Content Block
+    public List<ContentHubMainIconContent> getContentHubMainIconContent(Version version, List<String> languageList, String contentHubMUrl) {
+        final String methodName = "getContentHubMainIconContent";
+        start(methodName);
+
+        String sql = "SELECT chms.*,chmsic.icon_image, chmsic.header, chmsic.anchor_id FROM content_hub_main_sd chms " +
+                "LEFT JOIN content_hub_main_sd_icon_content chmsic  ON chms.uid = chmsic.content_hub_main_sd_uid " +
+                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url " +
+                "AND chms.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<ContentHubMainIconContent> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", contentHubMUrl);
+            result = query.mapToBean(ContentHubMainIconContent.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Content Hub Main Icon Content Block
+
 }
