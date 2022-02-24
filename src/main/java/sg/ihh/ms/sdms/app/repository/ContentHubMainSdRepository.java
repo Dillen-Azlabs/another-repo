@@ -3,13 +3,8 @@ package sg.ihh.ms.sdms.app.repository;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
-import sg.ihh.ms.sdms.app.model.ContentHubMainBasicDetail;
-import sg.ihh.ms.sdms.app.model.ContentHubMainIconContent;
-import sg.ihh.ms.sdms.app.model.ContentHubMainCta;
-import sg.ihh.ms.sdms.app.model.Version;
 import sg.ihh.ms.sdms.app.model.*;
 
-import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +78,66 @@ public class ContentHubMainSdRepository extends BaseRepository {
     }
     //END - Content Hub Main Basic Detail Block
 
+    //START - Content Hub Main Care Area & Specialist Block
+    public ContentHubMainCareAreaSpecialist getContentHubMainCareAreaSpecialist(Version version, List<String> languageList, String contentHubMUrl, String hospitalCode) {
+        final String methodName = "getContentHubMainCareAreaSpecialist";
+        start(methodName);
+
+        String sql = "SELECT uid, language_code, publish_flag, created_dt, modified_dt FROM content_hub_main_sd " +
+                "WHERE language_code IN(<languageList>) AND item_url = :item_url" +
+                " AND publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        ContentHubMainCareAreaSpecialist result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", contentHubMUrl);
+            result = query.mapToBean(ContentHubMainCareAreaSpecialist.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        if (result != null) {
+            Map<String, Object> ContentHubMainmetadata = getContentHubMainMetadata(version, languageList, contentHubMUrl, hospitalCode);
+            result.setCareAreaOverview((String) ContentHubMainmetadata.get("care_area_overview"));
+            result.setSpecialistsHeading((String) ContentHubMainmetadata.get("specialists_heading"));
+            result.setSpecialistsCount((String) ContentHubMainmetadata.get("specialists_count"));
+            result.setSpecialistsLabel((String) ContentHubMainmetadata.get("specialists_label"));
+            result.setSpecialistsDescription((String) ContentHubMainmetadata.get("specialists_description"));
+            result.setSpecialistsButtonLabel((String) ContentHubMainmetadata.get("specialists_button_label"));
+            result.setSpecialistsButtonUrl((String) ContentHubMainmetadata.get("specialists_button_url"));
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    public Map<String, Object> getContentHubMainMetadata(Version version, List<String> languageList, String contentHubMUrl, String hospitalCode) {
+        final String methodName = "getContentHubMainMetadata";
+        start(methodName);
+
+        String sql = "SELECT chms.*, chmsm.care_area_overview, chmsm.specialists_heading, chmsm.specialists_count, chmsm.specialists_label, chmsm.specialists_description, chmsm.specialists_button_label, chmsm.specialists_button_url FROM content_hub_main_sd chms " +
+                "LEFT JOIN content_hub_main_sd_metadata chmsm  ON chms.uid = chmsm.content_hub_main_sd_uid " +
+                "LEFT JOIN hospital h ON chmsm.hospital_uid  = h.uid " +
+                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url AND h.hospital = :hospital " +
+                "AND chms.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        Map<String, Object> result = new HashMap<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", contentHubMUrl).bind("hospital", hospitalCode);
+            result = query.mapToMap().one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
+    //END - Content Hub Main Care Area & Specialist Block
+
     //START - Content Hub Main CTA  Block
     public ContentHubMainCta getContentHubMainCta(Version version, List<String> languageList, String contentHubMUrl) {
         final String methodName = "getContentHubMainCta";
@@ -109,7 +164,6 @@ public class ContentHubMainSdRepository extends BaseRepository {
     //END - Content Hub Main CTA  Block
 
     //START - Content Hub Main Award Block
-
     public List<ContentHubMainAward> list(Version version, List<String> languageList,String contentHubMUrl, String country) {
         final String methodName = "list";
         start(methodName);
