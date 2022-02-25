@@ -7,10 +7,10 @@ import sg.ihh.ms.sdms.app.model.ContentHubMainBodySection;
 
 import java.util.List;
 
-@JsonPropertyOrder({"code", "message", "count", "bodySection"})
+@JsonPropertyOrder({"code", "message", "count", "bodySections"})
 public class ContentHubMainBodySectionListResponse extends BaseResponse {
 
-    @JsonProperty("bodySection")
+    @JsonProperty("bodySections")
     private List<ContentHubMainBodySection> list;
     @JsonProperty("count")
     private int count;

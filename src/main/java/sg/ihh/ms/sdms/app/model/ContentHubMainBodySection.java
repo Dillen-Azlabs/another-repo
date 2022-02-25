@@ -12,8 +12,6 @@ public class ContentHubMainBodySection extends BaseModel{
     private String videoUrl;
     @JsonProperty("content2")
     private String content2;
-    @JsonProperty("addCTAUrl")
-    private boolean addCTAUrl;
     @JsonProperty("didYouKnowHighlight")
     private String didYouKnowHighlight;
 
@@ -43,14 +41,6 @@ public class ContentHubMainBodySection extends BaseModel{
 
     public void setContent2(String content2) {
         this.content2 = content2;
-    }
-
-    public boolean isAddCTAUrl() {
-        return addCTAUrl;
-    }
-
-    public void setAddCTAUrl(boolean addCTAUrl) {
-        this.addCTAUrl = addCTAUrl;
     }
 
     public String getDidYouKnowHighlight() {
