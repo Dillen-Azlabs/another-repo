@@ -211,6 +211,36 @@ public class ContentHubMainSdRepository extends BaseRepository {
         catch (Exception ex) {
             log.error(methodName, ex);
         }
+        for (ContentHubMainAwardItem contentHubMainAwardItem : result) {
+            contentHubMainAwardItem.setDisplayOrder(getContentHubMainSectionList(version,languageList,contentHubMUrl,country));
+        }
+        return result;
+    }
+    public String getContentHubMainSectionList(Version version, List<String> languageList, String contentHubMUrl, String country) {
+        final String methodName = "getContentHubMainSection";
+        start(methodName);
+
+        String sql = "SELECT chmsas.display_order FROM content_hub_main_sd chms " +
+                "LEFT JOIN content_hub_main_sd_awards chmsa  ON chms.uid = chmsa.content_hub_main_sd_uid " +
+                "LEFT JOIN content_hub_main_sd_award_section chmsas  ON chms.uid = chmsas.content_hub_main_sd_uid  " +
+                "LEFT JOIN content_hub_main_sd_awards_country chmsac ON chmsa.uid = chmsac.content_hub_main_sd_awards_uid " +
+                "LEFT JOIN content_hub_main_sd_awards_hospital chmsah ON chmsa.uid = chmsah.content_hub_main_sd_awards_uid " +
+                "LEFT JOIN country_of_residence c ON c.uid = chmsac.cor_uid " +
+                "LEFT JOIN hospital h ON chmsah.hospital_uid  = h.uid " +
+                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url  AND c.cor  = :countryOfResidence " +
+                "AND chms.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        String result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", contentHubMUrl).bind("countryOfResidence", country);
+            result = query.mapTo(String.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
         return result;
     }
     public List<ContentHubMainAward> getContentHubMainAward(Version version, List<String> languageList,String contentHubMUrl, String hospitalCode, String country) {
@@ -267,6 +297,37 @@ public class ContentHubMainSdRepository extends BaseRepository {
         catch (Exception ex) {
             log.error(methodName, ex);
         }
+        for (ContentHubMainAwardItem contentHubMainAwardItem : result) {
+            contentHubMainAwardItem.setDisplayOrder(getContentHubMainSection(version,languageList,contentHubMUrl,hospitalCode,country));
+        }
+        return result;
+    }
+
+    public String getContentHubMainSection(Version version, List<String> languageList, String contentHubMUrl, String hospitalCode, String country) {
+        final String methodName = "getContentHubMainSection";
+        start(methodName);
+
+        String sql = "SELECT chmsas.display_order FROM content_hub_main_sd chms " +
+                "LEFT JOIN content_hub_main_sd_awards chmsa  ON chms.uid = chmsa.content_hub_main_sd_uid " +
+                "LEFT JOIN content_hub_main_sd_award_section chmsas  ON chms.uid = chmsas.content_hub_main_sd_uid  " +
+                "LEFT JOIN content_hub_main_sd_awards_country chmsac ON chmsa.uid = chmsac.content_hub_main_sd_awards_uid " +
+                "LEFT JOIN content_hub_main_sd_awards_hospital chmsah ON chmsa.uid = chmsah.content_hub_main_sd_awards_uid " +
+                "LEFT JOIN country_of_residence c ON c.uid = chmsac.cor_uid " +
+                "LEFT JOIN hospital h ON chmsah.hospital_uid  = h.uid " +
+                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url AND h.hospital = :hospital AND c.cor  = :countryOfResidence " +
+                "AND chms.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        String result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", contentHubMUrl).bind("hospital", hospitalCode).bind("countryOfResidence", country);
+            result = query.mapTo(String.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
         return result;
     }
 

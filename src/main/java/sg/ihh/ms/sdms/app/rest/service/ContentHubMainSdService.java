@@ -7,9 +7,16 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sg.ihh.ms.sdms.app.model.ContentHubMainAward;
+import sg.ihh.ms.sdms.app.model.ContentHubMainBasicDetail;
+import sg.ihh.ms.sdms.app.model.ContentHubMainCta;
+import sg.ihh.ms.sdms.app.model.ContentHubMainBodySection;
+import sg.ihh.ms.sdms.app.model.Version;
 import sg.ihh.ms.sdms.app.model.*;
 import sg.ihh.ms.sdms.app.processor.StructuredDataProcessor;
 import sg.ihh.ms.sdms.app.repository.ContentHubMainSdRepository;
+import sg.ihh.ms.sdms.app.rest.model.ContentHubMainAwardListResponse;
+import sg.ihh.ms.sdms.app.rest.model.ContentHubMainBasicDetailListResponse;
 import sg.ihh.ms.sdms.app.rest.model.*;
 
 
@@ -157,8 +164,8 @@ public class ContentHubMainSdService extends BaseService {
         completed(methodName);
         return contentHubMainAwardListResponse;
     }
-
     //END - Content Hub Main Award Block
+
     //START - Content Hub Main Body Section Block
     @RequestMapping(path = "bodySections", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ContentHubMainBodySectionListResponse getContentHubMainBodySection(
