@@ -18,6 +18,11 @@ import sg.ihh.ms.sdms.app.repository.ContentHubMainSdRepository;
 import sg.ihh.ms.sdms.app.rest.model.ContentHubMainAwardListResponse;
 import sg.ihh.ms.sdms.app.rest.model.ContentHubMainBasicDetailListResponse;
 import sg.ihh.ms.sdms.app.rest.model.*;
+import sg.ihh.ms.sdms.app.rest.model.ContentHubMainAwardListResponse;
+import sg.ihh.ms.sdms.app.rest.model.ContentHubMainBasicDetailListResponse;
+import sg.ihh.ms.sdms.app.rest.model.ContentHubMainIconContentListResponse;
+import sg.ihh.ms.sdms.app.rest.model.ContentHubMainCtaListResponse;
+import sg.ihh.ms.sdms.app.rest.model.*;
 
 
 import javax.validation.constraints.Pattern;
@@ -35,6 +40,9 @@ public class ContentHubMainSdService extends BaseService {
 
     @Autowired
     private StructuredDataProcessor<ContentHubMainBasicDetail> bdprocessor;
+
+    @Autowired
+    private StructuredDataProcessor<ContentHubMainBodySection> bsprocessor;
 
     @Autowired
     private StructuredDataProcessor<ContentHubMainIconContent> icprocessor;
@@ -86,7 +94,6 @@ public class ContentHubMainSdService extends BaseService {
         completed(methodName);
         return response;
     }
-    //END - Content Hub Main Care Area & Specialist Block
 
     //START - Content Hub Main CTA  Block
     @RequestMapping(path = "cta", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -115,7 +122,7 @@ public class ContentHubMainSdService extends BaseService {
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
                     message = "Allowed Values : DRAFT, PUBLISHED") String version,
             @RequestParam("languageCode") String languageCode,
-            @RequestParam("contentHubMUrl") String contentHubMUrl) {
+            @RequestParam("contentHubMUrl") String contentHubMUrl){
         final String methodName = "getContentHubMainBodySection";
         start(methodName);
 
@@ -131,7 +138,7 @@ public class ContentHubMainSdService extends BaseService {
         completed(methodName);
         return response;
     }
-    //END - Content Hub Main Icon Content Bloc
+    //END - Content Hub Main Icon Content Block
 
     //START - Content Hub Main Award Block
     @RequestMapping(path = "award", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -190,6 +197,30 @@ public class ContentHubMainSdService extends BaseService {
         return response;
     }
     //END - Content Hub Main Body Section Block
+
+    //START - Content Hub Main Accordion Block
+    @RequestMapping(path = "accordion", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ContentHubMainAccordionlListResponse getContentHubMainAccordion(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("contentHubMUrl") String contentHubMUrl){
+        final String methodName = "getContentHubMainAccordion";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<ContentHubMainAccordion> result = repository.getContentHubMainAccordion(Version.getVersion(version), languageList, contentHubMUrl);
+
+        ContentHubMainAccordionlListResponse response = new ContentHubMainAccordionlListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Content Hub Main Accordion Block
+
+
 }
 
 
