@@ -3,7 +3,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
-@JsonPropertyOrder({"uid", "languageCode", "treatmentH1Display", "itemUrl", "mainImageUrl", "mainImageAltText", "hideHeroImage", "summary", "socialSummary","metaTitle","metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "treatmentH1Display", "itemUrl", "mainImageUrl", "mainImageAltText", "hideHeroImage", "summary", "socialSummary", "faqCount","metaTitle","metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class TreatmentDetail extends BaseModel{
 
     @JsonProperty("treatmentH1Display")
@@ -20,6 +20,8 @@ public class TreatmentDetail extends BaseModel{
     private String summary;
     @JsonProperty("socialSummary")
     private String socialSummary;
+    @JsonProperty("faqCount")
+    private int faqCount;
     @JsonProperty("metaTitle")
     private String metaTitle;
     @JsonProperty("metaDescription")
@@ -83,6 +85,14 @@ public class TreatmentDetail extends BaseModel{
 
     public void setSocialSummary(String socialSummary) {
         this.socialSummary = socialSummary;
+    }
+
+    public int getFaqCount() {
+        return faqCount;
+    }
+
+    public void setFaqCount(int faqCount) {
+        this.faqCount = faqCount;
     }
 
     public String getMetaTitle() {
