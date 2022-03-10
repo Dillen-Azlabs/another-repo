@@ -67,7 +67,7 @@ public class Pac extends BaseModel {
         return helplineTelephoneNumber;
     }
 
-    @ColumnName("helpline_telephone_number")
+    @ColumnName("helpline_number")
     public void setHelplineTelephoneNumber(String helplineTelephoneNumber) {
         this.helplineTelephoneNumber = helplineTelephoneNumber;
     }
