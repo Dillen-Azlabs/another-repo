@@ -3,7 +3,7 @@ package sg.ihh.ms.sdms.app.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"uid", "languageCode", "relatedMPageDisplay", "pageTitleH1Display", "itemUrl", "mainImageUrl", "mainImageAltText", "hideHeroImage", "summary", "socialSummary","metaTitle","metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "relatedMPageDisplay", "pageTitleH1Display", "itemUrl", "mainImageUrl", "mainImageAltText", "hideHeroImage", "overview", "summary", "socialSummary","metaTitle","metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class ContentHubSubBasicDetail extends BaseModel{
 
     @JsonProperty("relatedMPageDisplay")
@@ -16,6 +16,8 @@ public class ContentHubSubBasicDetail extends BaseModel{
     private String mainImage;
     @JsonProperty("mainImageAltText")
     private String mainImageAltText;
+    @JsonProperty("overview")
+    private String overview;
     @JsonProperty("summary")
     private String summary;
     @JsonProperty("socialSummary")
@@ -67,6 +69,14 @@ public class ContentHubSubBasicDetail extends BaseModel{
 
     public void setMainImageAltText(String mainImageAltText) {
         this.mainImageAltText = mainImageAltText;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
     }
 
     public String getSummary() {
