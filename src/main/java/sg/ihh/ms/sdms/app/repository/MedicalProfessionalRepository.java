@@ -69,13 +69,14 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "getDetails";
         start(methodName);
 
-        String sql = "SELECT mp.*, mpt.profession AS med_pro_type, g.gender, s.specialty, COUNT(mc.title) > 0 AS media_coverage, spt.type as service_provider_type FROM medical_professional mp " +
+        String sql =    " SELECT mp.*, mpt.profession AS med_pro_type, g.gender, s.specialty, COUNT(mc.title) > 0 AS media_coverage, spt.type as service_provider_type FROM medical_professional mp " +
                         " LEFT JOIN medical_professional_specialty mps ON mp.uid = mps.medical_professional_uid AND mp.language_code = mps.language_code " +
                         " LEFT JOIN specialty s ON s.uid = mps.specialty_uid " +
-                        " LEFT JOIN  service_provider_type spt ON spt.uid = mp.service_provider_uid"+
+                        " LEFT JOIN service_provider_type spt ON spt.uid = mp.service_provider_uid " +
                         " LEFT JOIN gender g ON g.uid = mp.gender_uid " +
-                        " LEFT JOIN media_coverage mc ON mp.uid = mc.related_specialist_uid AND mp.language_code = mc.language_code " +
-                        " LEFT JOIN medical_professional_type mpt ON mpt.uid = mp.medical_professional_type_uid " +
+                        " LEFT JOIN media_coverage_related_specialist mcrs  ON mp.uid = mcrs.medical_professional_uid " +
+                        " LEFT JOIN media_coverage mc ON mc.uid = mcrs.media_coverage_uid " +
+                        " LEFT JOIN medical_professional_type mpt ON mpt.uid = mp.medical_professional_type_uid  " +
                         " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
                         " AND mp.publish_flag = {PUBLISHED} " +
                         " GROUP BY mp.uid, mp.language_code, g.gender, s.specialty";
@@ -381,8 +382,9 @@ public class MedicalProfessionalRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT mc.*, l.language FROM media_coverage mc " +
-                " LEFT JOIN medical_professional mp ON mp.uid = mc.related_specialist_uid AND mp.language_code = mc.language_code " +
-                " LEFT JOIN language l ON l.uid = mc.language_uid " +
+                " LEFT JOIN media_coverage_related_specialist mcrs  ON mc.uid = mcrs.media_coverage_uid  AND mcrs.language_code = mc.language_code " +
+                " LEFT JOIN medical_professional mp ON mp.uid = mcrs.medical_professional_uid AND mp.language_code = mc.language_code " +
+                " LEFT JOIN language l ON l.uid = mc.language_uid  " +
                 " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
                 " AND l.language = :language AND mp.publish_flag = {PUBLISHED} ";
 
