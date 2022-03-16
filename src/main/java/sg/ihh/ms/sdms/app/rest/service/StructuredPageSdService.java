@@ -93,4 +93,120 @@ public class StructuredPageSdService extends BaseService {
         return response;
     }
     //END - Structured Page Body Section Block
+
+    //START - Structured Page Award Block
+    @RequestMapping(path = "award", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredPageAwardListResponse getAward(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredPageUrl") String structuredPageUrl,
+            @RequestParam("sectionNumber") @Range(min = 1, max = 3,
+                    message = "Allowed Values : 1, 2, 3") int sectionNumber,
+            @RequestParam("country") String country,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getAward";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredPageAward> result = repository.getStructuredPageAward(Version.getVersion(version), languageList, structuredPageUrl,sectionNumber, hospitalCode, country);
+
+
+        StructuredPageAwardListResponse response = new StructuredPageAwardListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Page Award Block
+
+    //START - Structured Page Why Choose Us Block
+    @RequestMapping(path = "whyChooseUs", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredPageWhyChooseUsListResponse getStructuredPageWcu(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredPageUrl") String structuredPageUrl,
+            @RequestParam("hospitalCode") String hospitalCode){
+        final String methodName = "getStructuredPageWcu";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredPageWhyChooseUs> result = repository.getStructuredPageWcu(Version.getVersion(version), languageList, structuredPageUrl, hospitalCode);
+
+        StructuredPageWhyChooseUsListResponse response = new StructuredPageWhyChooseUsListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Page Why Choose Us Block
+
+    //START - Structured Page Card Carousel Block
+    @RequestMapping(path = "card", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredPageCardCarouselListResponse getStructuredPageCardCarousel(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredPageUrl") String structuredPageUrl){
+        final String methodName = "getStructuredPageCardCarousel";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredPageCardCarousel> result = repository.getStructuredPageCardCarousel(Version.getVersion(version), languageList, structuredPageUrl);
+
+        StructuredPageCardCarouselListResponse response = new StructuredPageCardCarouselListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Page Card Carousel Block
+
+    //START - Structured Page Faq Block
+    @RequestMapping(path = "faq", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredPageFaqListResponse getStructuredPageFaq(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredPageUrl") String structuredPageUrl){
+        final String methodName = "getStructuredPageFaq";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredPageFaq> result = repository.getStructuredPageFaq(Version.getVersion(version), languageList, structuredPageUrl);
+
+        StructuredPageFaqListResponse response = new StructuredPageFaqListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Page Faq Block
+
+    //START - Structured Page Photo Gallery Block
+    @RequestMapping(path = "photoGallery", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredPagePhotoGalleryListResponse getStructuredPagePhotoGallery(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredPageUrl") String structuredPageUrl){
+        final String methodName = "getStructuredPagePhotoGallery";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredPagePhotoGallery> result = repository.getStructuredPagePhotoGallery(Version.getVersion(version), languageList, structuredPageUrl);
+
+        StructuredPagePhotoGalleryListResponse response = new StructuredPagePhotoGalleryListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Page Photo Gallery Block
 }
