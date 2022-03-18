@@ -7,25 +7,25 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class StructuredPageCtaSection extends BaseModel{
 
     @JsonProperty("imageUrl")
-    private String ctaSection1Image;
+    private String imageUrl;
     @JsonProperty("heading")
-    private String ctaSection1Heading;
+    private String heading;
     @JsonProperty("subHeading")
-    private String ctaSection1SubHeading;
+    private String subHeading;
     @JsonProperty("description")
-    private String ctaSection1Description;
+    private String description;
     @JsonProperty("button1Label")
-    private String ctaSection1Button1Label;
+    private String button1Label;
     @JsonProperty("button1Url")
-    private String ctaSection1Button1Url;
+    private String button1Url;
     @JsonProperty("button1inNewTab")
-    private String ctaSection1Button1Newtab;
+    private String button1inNewTab;
     @JsonProperty("button2Label")
-    private String ctaSection1Button2Label;
+    private String button2Label;
     @JsonProperty("button2Url")
-    private String ctaSection1Button2Url;
+    private String button2Url;
     @JsonProperty("button2inNewTab")
-    private String ctaSection1Button2Newtab;
+    private String button2inNewTab;
 
 
 
@@ -33,83 +33,83 @@ public class StructuredPageCtaSection extends BaseModel{
         //Empty Constructor
     }
 
-    public String getCtaSection1Image() {
-        return ctaSection1Image;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setCtaSection1Image(String ctaSection1Image) {
-        this.ctaSection1Image = ctaSection1Image;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public String getCtaSection1Heading() {
-        return ctaSection1Heading;
+    public String getHeading() {
+        return heading;
     }
 
-    public void setCtaSection1Heading(String ctaSection1Heading) {
-        this.ctaSection1Heading = ctaSection1Heading;
+    public void setHeading(String heading) {
+        this.heading = heading;
     }
 
-    public String getCtaSection1SubHeading() {
-        return ctaSection1SubHeading;
+    public String getSubHeading() {
+        return subHeading;
     }
 
-    public void setCtaSection1SubHeading(String ctaSection1SubHeading) {
-        this.ctaSection1SubHeading = ctaSection1SubHeading;
+    public void setSubHeading(String subHeading) {
+        this.subHeading = subHeading;
     }
 
-    public String getCtaSection1Description() {
-        return ctaSection1Description;
+    public String getDescription() {
+        return description;
     }
 
-    public void setCtaSection1Description(String ctaSection1Description) {
-        this.ctaSection1Description = ctaSection1Description;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getCtaSection1Button1Label() {
-        return ctaSection1Button1Label;
+    public String getButton1Label() {
+        return button1Label;
     }
 
-    public void setCtaSection1Button1Label(String ctaSection1Button1Label) {
-        this.ctaSection1Button1Label = ctaSection1Button1Label;
+    public void setButton1Label(String button1Label) {
+        this.button1Label = button1Label;
     }
 
-    public String getCtaSection1Button1Url() {
-        return ctaSection1Button1Url;
+    public String getButton1Url() {
+        return button1Url;
     }
 
-    public void setCtaSection1Button1Url(String ctaSection1Button1Url) {
-        this.ctaSection1Button1Url = ctaSection1Button1Url;
+    public void setButton1Url(String button1Url) {
+        this.button1Url = button1Url;
     }
 
-    public String getCtaSection1Button1Newtab() {
-        return ctaSection1Button1Newtab;
+    public String getButton1inNewTab() {
+        return button1inNewTab;
     }
 
-    public void setCtaSection1Button1Newtab(String ctaSection1Button1Newtab) {
-        this.ctaSection1Button1Newtab = ctaSection1Button1Newtab;
+    public void setButton1inNewTab(String button1inNewTab) {
+        this.button1inNewTab = button1inNewTab;
     }
 
-    public String getCtaSection1Button2Label() {
-        return ctaSection1Button2Label;
+    public String getButton2Label() {
+        return button2Label;
     }
 
-    public void setCtaSection1Button2Label(String ctaSection1Button2Label) {
-        this.ctaSection1Button2Label = ctaSection1Button2Label;
+    public void setButton2Label(String button2Label) {
+        this.button2Label = button2Label;
     }
 
-    public String getCtaSection1Button2Url() {
-        return ctaSection1Button2Url;
+    public String getButton2Url() {
+        return button2Url;
     }
 
-    public void setCtaSection1Button2Url(String ctaSection1Button2Url) {
-        this.ctaSection1Button2Url = ctaSection1Button2Url;
+    public void setButton2Url(String button2Url) {
+        this.button2Url = button2Url;
     }
 
-    public String getCtaSection1Button2Newtab() {
-        return ctaSection1Button2Newtab;
+    public String getButton2inNewTab() {
+        return button2inNewTab;
     }
 
-    public void setCtaSection1Button2Newtab(String ctaSection1Button2Newtab) {
-        this.ctaSection1Button2Newtab = ctaSection1Button2Newtab;
+    public void setButton2inNewTab(String button2inNewTab) {
+        this.button2inNewTab = button2inNewTab;
     }
 }

@@ -474,12 +474,18 @@ spsm.cta_section_1_image as imageUrl, dst
                 "spsm.created_dt, spsm.modified_dt, spsm.publish_flag, spsm.display_order, spsm.status, spsm.publish_date, " ;
         if(sectionNumber == 1)
         {
-            String section1 = "spsm.cta_section_1_image ,spsm.cta_section_1_heading, spsm.cta_section_1_sub_heading, spsm.cta_section_1_description, spsm.cta_section_1_button_1_label, spsm.cta_section_1_button_1_url, spsm.cta_section_1_button_1_newtab, spsm.cta_section_1_button_2_label, spsm.cta_section_1_button_2_url, spsm.cta_section_1_button_2_newtab " ;
+            String section1 = "spsm.cta_section_1_image as imageUrl ,spsm.cta_section_1_heading as heading, spsm.cta_section_1_sub_heading as subHeading, " +
+                    "spsm.cta_section_1_description as description, spsm.cta_section_1_button_1_label as button1Label, spsm.cta_section_1_button_1_url as button1Url, " +
+                    "spsm.cta_section_1_button_1_newtab as button1inNewTab, spsm.cta_section_1_button_2_label as button2Label, spsm.cta_section_1_button_2_url as button2Url," +
+                    " spsm.cta_section_1_button_2_newtab as button2inNewTab " ;
             sql += section1;
         }
         else if( sectionNumber==2)
         {
-            String section2 = "spsm.cta_section_2_image, spsm.cta_section_2_heading, spsm.cta_section_2_sub_heading, spsm.cta_section_2_description, spsm.cta_section_2_button_1_label, spsm.cta_section_2_button_1_url, spsm.cta_section_2_button_1_newtab, spsm.cta_section_2_button_2_label, spsm.cta_section_2_button_2_url, spsm.cta_section_2_button_2_newtab ";
+            String section2 = "spsm.cta_section_2_image as imageUrl, spsm.cta_section_2_heading as heading, spsm.cta_section_2_sub_heading as subHeading, " +
+                    "spsm.cta_section_2_description as description, spsm.cta_section_2_button_1_label as button1Label, spsm.cta_section_2_button_1_url as button1Url, " +
+                    "spsm.cta_section_2_button_1_newtab as button1inNewTab, spsm.cta_section_2_button_2_label as button2Label, spsm.cta_section_2_button_2_url as button2Url, " +
+                    "spsm.cta_section_2_button_2_newtab as button2inNewTab ";
             sql += section2;
         }
 
