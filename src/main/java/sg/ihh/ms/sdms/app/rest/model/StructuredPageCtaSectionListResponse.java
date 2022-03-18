@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.http.HttpStatus;
 import sg.ihh.ms.sdms.app.model.StructuredPageCtaSection;
 
-@JsonPropertyOrder({"code", "message", "structuredPages"})
+@JsonPropertyOrder({"code", "message", "structuredPage"})
 public class StructuredPageCtaSectionListResponse extends BaseResponse{
 
-    @JsonProperty("structuredPages")
+    @JsonProperty("structuredPage")
     private StructuredPageCtaSection structuredPageCtaSection;
 
     public StructuredPageCtaSectionListResponse(StructuredPageCtaSection structuredPageCtaSection) {
