@@ -413,4 +413,105 @@ public class StructuredPageSdRepository extends BaseRepository {
         return result;
     }
     //END - Structured Page Photo Gallery Block
+
+    //START - Structured Page CTA Section Block
+//    public StructuredPageCtaSection getStructuredPageCtaSection(Version version, List<String> languageList, String structuredPageUrl, String hospitalCode, int sectionNumber) {
+//        final String methodName = "getStructuredPageCtaSection";
+//        start(methodName);
+//
+//        String sql = "SELECT spsm.* FROM structured_page_sd sps " +
+//                "LEFT JOIN structured_page_sd_metadata spsm ON sps.uid = spsm.structured_page_sd_uid  " +
+//                "LEFT JOIN hospital h ON spsm.hospital_uid = h.uid " +
+//                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital " +
+//                "AND sps.publish_flag = {PUBLISHED}";
+//
+//        String sqlc = "SELECT uid, language_code, structured_page_sd_uid, hospital_main_image, hospital_main_image_alt_text, overview, why_choose_us, social_summary, meta_title, meta_description, hospital_uid, created_dt, modified_dt, publish_flag, display_order, status, publish_date " ;
+//        if(sectionNumber == 1)
+//        {
+//           String section1 = " ,cta_section_1_image as imageUrl, cta_section_1_heading as heading, cta_section_1_sub_heading as subHeading, cta_section_1_description as description, cta_section_1_button_1_label, cta_section_1_button_1_url, cta_section_1_button_1_newtab, cta_section_1_button_2_label, cta_section_1_button_2_url, cta_section_1_button_2_newtab ";
+//           sqlc += section1;
+//        }
+//        else if( sectionNumber==2)
+//        {
+//            String section2 = " ,cta_section_2_image as imageUrl, cta_section_2_heading, cta_section_2_sub_heading, cta_section_2_description, cta_section_2_button_1_label, cta_section_2_button_1_url, cta_section_2_button_1_newtab, cta_section_2_button_2_label, cta_section_2_button_2_url, cta_section_2_button_2_newtab ";
+//            sqlc += section2;
+//        }
+//        sqlc = sqlc + "FROM sdmsDB.structured_page_sd_metadata;";
+//
+//        sql = getPublishVersion(version, sql);
+//
+//        StructuredPageCtaSection result = null;
+//        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+//            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl).bind("hospital", hospitalCode);
+//            result = query.mapToBean(StructuredPageCtaSection.class).one();
+//
+//        } catch (Exception ex) {
+//            log.error(methodName, ex);
+//        }
+//
+//        completed(methodName);
+//        return result;
+//    }
+    public StructuredPageCtaSection getStructuredPageCtaSection(Version version, List<String> languageList, String structuredPageUrl, String hospitalCode, int sectionNumber) {
+        final String methodName = "getStructuredPageCtaSection";
+        start(methodName);
+
+
+    /*
+1.
+    String sql = "SELECT spsm.* FROM structured_page_sd sps " +
+            "LEFT JOIN structured_page_sd_metadata spsm ON sps.uid = spsm.structured_page_sd_uid  " +
+            "LEFT JOIN hospital h ON spsm.hospital_uid = h.uid " +
+            "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital " +
+            "AND sps.publish_flag = {PUBLISHED}";
+*/
+
+/* query ini cuma ambil data dari structured_page_sd_metadata, rubah query untuk output sesuai spek
+contoh :
+spsm.cta_section_1_image as imageUrl, dst
+*/
+        String sql = "SELECT spsm.uid, spsm.language_code, spsm.structured_page_sd_uid," +
+                "spsm.created_dt, spsm.modified_dt, spsm.publish_flag, spsm.display_order, spsm.status, spsm.publish_date, " ;
+        if(sectionNumber == 1)
+        {
+            String section1 = "spsm.cta_section_1_image as imageUrl ,spsm.cta_section_1_heading as heading, spsm.cta_section_1_sub_heading as subHeading, " +
+                    "spsm.cta_section_1_description as description, spsm.cta_section_1_button_1_label as button1Label, spsm.cta_section_1_button_1_url as button1Url, " +
+                    "spsm.cta_section_1_button_1_newtab as button1inNewTab, spsm.cta_section_1_button_2_label as button2Label, spsm.cta_section_1_button_2_url as button2Url," +
+                    " spsm.cta_section_1_button_2_newtab as button2inNewTab " ;
+            sql += section1;
+        }
+        else if( sectionNumber==2)
+        {
+            String section2 = "spsm.cta_section_2_image as imageUrl, spsm.cta_section_2_heading as heading, spsm.cta_section_2_sub_heading as subHeading, " +
+                    "spsm.cta_section_2_description as description, spsm.cta_section_2_button_1_label as button1Label, spsm.cta_section_2_button_1_url as button1Url, " +
+                    "spsm.cta_section_2_button_1_newtab as button1inNewTab, spsm.cta_section_2_button_2_label as button2Label, spsm.cta_section_2_button_2_url as button2Url, " +
+                    "spsm.cta_section_2_button_2_newtab as button2inNewTab ";
+            sql += section2;
+        }
+
+    /*
+    mungkin where clause nya kyk gini
+*/
+        sql = sql + " FROM structured_page_sd sps " +
+                "LEFT JOIN structured_page_sd_metadata spsm ON sps.uid = spsm.structured_page_sd_uid  " +
+                "LEFT JOIN hospital h ON spsm.hospital_uid = h.uid " +
+                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital " +
+                "AND sps.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+        StructuredPageCtaSection result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl).bind("hospital", hospitalCode);
+            result = query.mapToBean(StructuredPageCtaSection.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+
+    //END - Structured Page CTA Section Block
 }

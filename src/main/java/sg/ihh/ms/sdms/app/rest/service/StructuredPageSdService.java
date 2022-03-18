@@ -209,4 +209,30 @@ public class StructuredPageSdService extends BaseService {
         return response;
     }
     //END - Structured Page Photo Gallery Block
+
+    //START - Structured Page CTA Section Block
+    @RequestMapping(path = "ctaSection", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredPageCtaSectionListResponse getStructuredPageCtaSection(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredPageUrl") String structuredPageUrl,
+            @RequestParam("hospitalCode") String hospitalCode,
+            @RequestParam("sectionNumber")@Range(min = 1, max = 3,
+                    message = "Allowed Values : 1, 2") int sectionNumber) {
+        final String methodName = "getStructuredPageCtaSection";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        StructuredPageCtaSection result = repository.getStructuredPageCtaSection(Version.getVersion(version), languageList, structuredPageUrl,hospitalCode, sectionNumber);
+
+        StructuredPageCtaSectionListResponse response = new StructuredPageCtaSectionListResponse(result);
+
+        completed(methodName);
+        return response;
+
+        
+    }
+    //END - Structured Page CTA Section Block
 }
