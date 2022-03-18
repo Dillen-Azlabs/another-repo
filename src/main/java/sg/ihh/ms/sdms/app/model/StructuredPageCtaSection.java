@@ -19,13 +19,13 @@ public class StructuredPageCtaSection extends BaseModel{
     @JsonProperty("button1Url")
     private String button1Url;
     @JsonProperty("button1inNewTab")
-    private String button1inNewTab;
+    private boolean button1inNewTab;
     @JsonProperty("button2Label")
     private String button2Label;
     @JsonProperty("button2Url")
     private String button2Url;
     @JsonProperty("button2inNewTab")
-    private String button2inNewTab;
+    private boolean button2inNewTab;
 
 
 
@@ -81,11 +81,11 @@ public class StructuredPageCtaSection extends BaseModel{
         this.button1Url = button1Url;
     }
 
-    public String getButton1inNewTab() {
+    public boolean isButton1inNewTab() {
         return button1inNewTab;
     }
 
-    public void setButton1inNewTab(String button1inNewTab) {
+    public void setButton1inNewTab(boolean button1inNewTab) {
         this.button1inNewTab = button1inNewTab;
     }
 
@@ -105,11 +105,11 @@ public class StructuredPageCtaSection extends BaseModel{
         this.button2Url = button2Url;
     }
 
-    public String getButton2inNewTab() {
+    public boolean isButton2inNewTab() {
         return button2inNewTab;
     }
 
-    public void setButton2inNewTab(String button2inNewTab) {
+    public void setButton2inNewTab(boolean button2inNewTab) {
         this.button2inNewTab = button2inNewTab;
     }
 }
