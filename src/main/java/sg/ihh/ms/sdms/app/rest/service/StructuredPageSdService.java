@@ -231,8 +231,6 @@ public class StructuredPageSdService extends BaseService {
 
         completed(methodName);
         return response;
-
-        
     }
     //END - Structured Page CTA Section Block
 }
