@@ -201,7 +201,7 @@ public class StructuredPageSdService extends BaseService {
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<StructuredPagePhotoGallery> result = repository.getStructuredPagePhotoGallery(Version.getVersion(version), languageList, structuredPageUrl);
+        StructuredPagePhotoGallery result = repository.getStructuredPagePhotoGallery(Version.getVersion(version), languageList, structuredPageUrl);
 
         StructuredPagePhotoGalleryListResponse response = new StructuredPagePhotoGalleryListResponse(result);
 
