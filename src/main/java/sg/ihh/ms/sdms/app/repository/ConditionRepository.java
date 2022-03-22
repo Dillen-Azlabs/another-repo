@@ -345,7 +345,7 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cdsm.expertise_meta_title, cdsm.expertise_meta_desc,cdsm.wcu, cdsm.doc_intro FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid  " +
+                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid AND cdsm.language_code = cd.language_code" +
                 " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +
                 " AND cd.publish_flag = {PUBLISHED}";
@@ -411,7 +411,7 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cdsf.question, cdsf.answer, cdsf.display_order FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_faq cdsf ON cd.uid = cdsf.condition_disease_sd_uid  " +
+                " LEFT JOIN condition_disease_sd_faq cdsf ON cd.uid = cdsf.condition_disease_sd_uid AND cdsf.language_code = cd.language_code" +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url" +
                 " AND cd.publish_flag = {PUBLISHED}";
 
