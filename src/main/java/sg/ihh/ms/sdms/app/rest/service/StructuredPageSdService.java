@@ -157,7 +157,7 @@ public class StructuredPageSdService extends BaseService {
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<StructuredPageCardCarousel> result = repository.getStructuredPageCardCarousel(Version.getVersion(version), languageList, structuredPageUrl);
+        StructuredPageCardCarousel result = repository.getStructuredPageCardCarousel(Version.getVersion(version), languageList, structuredPageUrl);
 
         StructuredPageCardCarouselListResponse response = new StructuredPageCardCarouselListResponse(result);
 
@@ -232,7 +232,74 @@ public class StructuredPageSdService extends BaseService {
         completed(methodName);
         return response;
 
-        
+
     }
     //END - Structured Page CTA Section Block
+
+    //START - Structured Page Accordion Block
+    @RequestMapping(path = "accordion", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredPageAccordionListResponse getStructuredPageAccordion(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredPageUrl") String structuredPageUrl){
+        final String methodName = "getStructuredPageAccordion";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredPageAccordion> result = repository.getStructuredPageAccordion(Version.getVersion(version), languageList, structuredPageUrl);
+
+        StructuredPageAccordionListResponse response = new StructuredPageAccordionListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Page Accordion Block
+
+    //START - Structured Page Media Section Block
+    @RequestMapping(path = "mediaSection", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredPageMediaSectionListResponse getStructuredPageMediaSection(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredPageUrl") String structuredPageUrl){
+        final String methodName = "getStructuredPageMediaSection";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        StructuredPageMediaSection result = repository.getStructuredPageMediaSection(Version.getVersion(version), languageList, structuredPageUrl);
+
+        StructuredPageMediaSectionListResponse response = new StructuredPageMediaSectionListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Page Media Section Block
+
+    //START - Structured Page Tab Block
+    @RequestMapping(path = "tab", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredPageTabListResponse getStructuredPageTab(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredPageUrl") String structuredPageUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getStructuredPageTab";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        StructuredPageTab result = repository.getStructuredPageTab(Version.getVersion(version), languageList, structuredPageUrl, hospitalCode);
+
+        StructuredPageTabListResponse response = new StructuredPageTabListResponse(result);
+
+        completed(methodName);
+        return response;
+
+    }
+    //END - Structured Page Tab Block
 }

@@ -257,28 +257,41 @@ public class StructuredPageSdRepository extends BaseRepository {
     //END - Structured Page Why Choose Us Block
 
     //START - Structured Page Card Carousel Block
-    public List<StructuredPageCardCarousel> getStructuredPageCardCarousel(Version version, List<String> languageList, String structuredPageUrl) {
+    public StructuredPageCardCarousel getStructuredPageCardCarousel(Version version, List<String> languageList, String structuredPageUrl) {
         final String methodName = "getStructuredPageCardCarousel";
         start(methodName);
 
-        String sql = "SELECT spsc.* FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_card spsc  ON sps.uid = spsc.structured_page_sd_uid  " +
+        StructuredPageCardCarousel structuredPageCardCarousel = getStructuredPageCard(version, languageList, structuredPageUrl);
+
+        if (structuredPageCardCarousel != null) {
+            List<StructuredPageCardCarouselItem> structuredPageCardCarouselItems = getStructuredPageCardCarouselItem(version, languageList, structuredPageUrl);
+
+            structuredPageCardCarousel.setCarouselItems(structuredPageCardCarouselItems);
+        }
+
+        completed(methodName);
+        return structuredPageCardCarousel;
+    }
+    public StructuredPageCardCarousel getStructuredPageCard(Version version, List<String> languageList, String structuredPageUrl) {
+        final String methodName = "getStructuredPage";
+        start(methodName);
+
+        String sql = "SELECT Count (DISTINCT sps.uid),sps.*, spsa.section_intro  FROM structured_page_sd sps " +
+                "LEFT JOIN structured_page_sd_accordion spsa ON sps.uid =spsa.structured_page_sd_uid " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
-        List<StructuredPageCardCarousel> result = new ArrayList<>();
+        StructuredPageCardCarousel result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
-            result = query.mapToBean(StructuredPageCardCarousel.class).list();
+            result = query.mapToBean(StructuredPageCardCarousel.class).one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
         }
-        for (StructuredPageCardCarousel structuredPageCardCarousel : result) {
-            structuredPageCardCarousel.setCarouselItems(getStructuredPageCardCarouselItem(version,languageList,structuredPageUrl));
-        }
+
         completed(methodName);
         return result;
     }
@@ -286,28 +299,28 @@ public class StructuredPageSdRepository extends BaseRepository {
     private List<StructuredPageCardCarouselItem> getStructuredPageCardCarouselItem(Version version,List<String> languageList, String structuredPageUrl)
     {
         String methodName = "getStructuredPageCardCarouselItem";
-        String relatedConditionSql = "SELECT sps.uid  FROM structured_page_sd sps " +
+        String structuredPageSql = "SELECT sps.uid  FROM structured_page_sd sps " +
                 " WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
-        String conditionDiseaseSql = "SELECT spsc.* FROM structured_page_sd_card spsc  " +
+        String structuredPageCardSql = "SELECT spsc.* FROM structured_page_sd_card spsc  " +
                 " WHERE spsc.structured_page_sd_uid = :sdUid " +
                 " AND publish_flag = {PUBLISHED}";
 
-        relatedConditionSql = getPublishVersion(version, relatedConditionSql);
-        conditionDiseaseSql = getPublishVersion(version, conditionDiseaseSql);
+        structuredPageSql = getPublishVersion(version, structuredPageSql);
+        structuredPageCardSql = getPublishVersion(version, structuredPageCardSql);
 
         List<StructuredPageCardCarouselItem> result = new ArrayList<>();
 
         try (Handle h = getHandle()) {
 
             List<String> structuredPageUid = new ArrayList<>();
-            Query query1 = h.createQuery(relatedConditionSql);
+            Query query1 = h.createQuery(structuredPageSql);
             query1.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
             structuredPageUid = query1.mapTo(String.class).list();
             if (!structuredPageUid.isEmpty()) {
                 for (String sdUid : structuredPageUid) {
-                    Query query2 = h.createQuery(conditionDiseaseSql);
+                    Query query2 = h.createQuery(structuredPageCardSql);
                     query2.bind("sdUid", sdUid);
                     result = query2.mapToBean(StructuredPageCardCarouselItem.class).list();
                 }
@@ -458,4 +471,172 @@ public class StructuredPageSdRepository extends BaseRepository {
         return result;
     }
     //END - Structured Page CTA Section Block
+
+    //START - Structured Page Accordion Block
+    public List<StructuredPageAccordion> getStructuredPageAccordion(Version version, List<String> languageList, String structuredPageUrl) {
+        final String methodName = "getStructuredPageAccordion";
+        start(methodName);
+
+        String sql = "SELECT spsa.* FROM structured_page_sd sps " +
+                "LEFT JOIN structured_page_sd_accordion spsa  ON sps.uid = spsa.structured_page_sd_uid " +
+                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
+                "AND sps.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<StructuredPageAccordion> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
+            result = query.mapToBean(StructuredPageAccordion.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Structured Page Accordion Block
+
+    //START - Structured Page Media Section Block
+    public StructuredPageMediaSection getStructuredPageMediaSection(Version version, List<String> languageList, String structuredPageUrl) {
+        final String methodName = "getStructuredPageMediaSection";
+        start(methodName);
+
+        StructuredPageMediaSection structuredPageMediaSection = getStructuredPageMedia(version, languageList, structuredPageUrl);
+
+        if (structuredPageMediaSection != null) {
+            List<StructuredPageMediaSectionItem> structuredPageMediaSectionItems = getStructuredPageMediaSectionItem(version, languageList, structuredPageUrl);
+
+            structuredPageMediaSection.setMediaCardItems(structuredPageMediaSectionItems);
+        }
+
+        completed(methodName);
+        return structuredPageMediaSection;
+    }
+    public StructuredPageMediaSection getStructuredPageMedia(Version version, List<String> languageList,String structuredPageUrl) {
+        final String methodName = "getStructuredPageMediaSection";
+        start(methodName);
+
+        String sql = "SELECT sps.* FROM structured_page_sd sps  " +
+                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
+                "AND sps.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        StructuredPageMediaSection result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
+            result = query.mapToBean(StructuredPageMediaSection.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
+    private List<StructuredPageMediaSectionItem> getStructuredPageMediaSectionItem(Version version, List<String> languageList,String structuredPageUrl)
+    {
+        String methodName = "getStructuredPageMediaSectionItem";
+
+        String sql = "SELECT spsmc.* FROM structured_page_sd sps " +
+                "LEFT JOIN structured_page_sd_media_card spsmc ON sps.uid = spsmc.structured_page_sd_uid  " +
+                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
+                "AND sps.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<StructuredPageMediaSectionItem> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
+            result = query.mapToBean(StructuredPageMediaSectionItem.class).list();
+        }
+        catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        return result;
+    }
+    //END - Structured Page Media Section Block
+
+    //START - Structured Page Tab  Block
+    public StructuredPageTab getStructuredPageTab(Version version, List<String> languageList, String structuredPageUrl, String hospitalCode) {
+        final String methodName = "getStructuredPageTab";
+        start(methodName);
+
+        StructuredPageTab structuredPageTab = getStructuredPage(version, languageList, structuredPageUrl);
+
+        if (structuredPageTab != null) {
+            List<StructuredPageTabItem> structuredPageTabsItems = getStructuredPageTabItem(version, languageList, structuredPageUrl, hospitalCode);
+
+            structuredPageTab.setTabItems(structuredPageTabsItems);
+        }
+
+
+        completed(methodName);
+        return structuredPageTab;
+    }
+    public StructuredPageTab getStructuredPage(Version version, List<String> languageList, String structuredPageUrl) {
+        final String methodName = "getStructuredPageTab";
+        start(methodName);
+
+        String sql = "SELECT sps.*, spsts.tab_section_intro as sectionIntro  FROM structured_page_sd sps " +
+                "LEFT JOIN structured_page_sd_tab_section spsts ON sps.uid = spsts.structured_page_sd_uid   " +
+                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
+                "AND sps.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        StructuredPageTab result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
+            result = query.mapToBean(StructuredPageTab.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    private List<StructuredPageTabItem> getStructuredPageTabItem(Version version,List<String> languageList, String structuredPageUrl, String hospitalCode)
+    {
+        String methodName = "getStructuredPageTabItem";
+        String q1 = "SELECT sps.uid  FROM structured_page_sd sps " +
+                " WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
+                "AND sps.publish_flag = {PUBLISHED}";
+
+        String q2 = "SELECT spst.* FROM structured_page_sd sps " +
+                "LEFT JOIN structured_page_sd_tab spst ON sps.uid = spst.structured_page_sd_uid " +
+                "LEFT JOIN structured_page_sd_tab_hospital spsth ON spst.uid = spsth.structured_page_sd_tab_uid " +
+                "LEFT JOIN hospital h ON spsth.hospital_uid  = h.uid   " +
+                " WHERE spst.structured_page_sd_uid = :spsUid AND h.hospital = :hospital" +
+                " AND sps.publish_flag = {PUBLISHED}";
+
+        q1 = getPublishVersion(version, q1);
+        q2 = getPublishVersion(version, q2);
+
+        List<StructuredPageTabItem> result = new ArrayList<>();
+
+        try (Handle h = getHandle()) {
+
+            List<String> structuredPageUid = new ArrayList<>();
+            Query query1 = h.createQuery(q1);
+            query1.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
+            structuredPageUid = query1.mapTo(String.class).list();
+            if (!structuredPageUid.isEmpty()) {
+                for (String spsUid : structuredPageUid) {
+                    Query query2 = h.createQuery(q2);
+                    query2.bind("spsUid", spsUid).bind("hospital", hospitalCode);
+                    result = query2.mapToBean(StructuredPageTabItem.class).list();
+                }
+            }
+
+        }
+        catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        return result;
+    }
+    //END - Structured Page Tab  Block
 }
