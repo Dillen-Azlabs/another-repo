@@ -157,7 +157,7 @@ public class StructuredPageSdRepository extends BaseRepository {
         final String methodName = "getStructuredPageAward";
         start(methodName);
 
-        String sql = "SELECT spsa.*, spsas.award_intro FROM structured_page_sd sps " +
+        String sql = "SELECT DISTINCT spsa.*, spsas.award_intro FROM structured_page_sd sps " +
                 "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid " +
                 "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid " +
                 "LEFT JOIN structured_page_sd_awards_country spsac  ON spsa.uid = spsac.structured_page_sd_awards_uid  " +
@@ -360,11 +360,26 @@ public class StructuredPageSdRepository extends BaseRepository {
     //END - Structured Page Faq Block
 
     //START - Structured Page Photo Gallery Block
-    public List<StructuredPagePhotoGallery> getStructuredPagePhotoGallery(Version version, List<String> languageList, String structuredPageUrl) {
+    public StructuredPagePhotoGallery getStructuredPagePhotoGallery(Version version, List<String> languageList, String structuredPageUrl) {
+        final String methodName = "getStructuredPageCardCarousel";
+        start(methodName);
+
+        StructuredPagePhotoGallery structuredPagePhotoGallery = getStructuredPagePhoto(version, languageList, structuredPageUrl);
+
+        if (structuredPagePhotoGallery != null) {
+            List<StructuredPagePhotoGalleryItem> structuredPagePhotoGalleryItems = getStructuredPagePhotoGalleryItem(version, languageList, structuredPageUrl);
+
+            structuredPagePhotoGallery.setMediaCardItems(structuredPagePhotoGalleryItems);
+        }
+
+        completed(methodName);
+        return structuredPagePhotoGallery;
+    }
+    public StructuredPagePhotoGallery getStructuredPagePhoto(Version version, List<String> languageList, String structuredPageUrl) {
         final String methodName = "getStructuredPagePhotoGallery";
         start(methodName);
 
-        String sql = "SELECT spspg.*, spsmc.section_intro FROM structured_page_sd sps " +
+        String sql = "SELECT  Count (DISTINCT sps.uid),spspg.*, spsmc.section_intro FROM structured_page_sd sps " +
                 "LEFT JOIN structured_page_sd_photo_gallery spspg  ON sps.uid = spspg.structured_page_sd_uid " +
                 "LEFT JOIN structured_page_sd_media_card spsmc  ON sps.uid = spsmc.structured_page_sd_uid  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
@@ -372,16 +387,13 @@ public class StructuredPageSdRepository extends BaseRepository {
 
         sql = getPublishVersion(version, sql);
 
-        List<StructuredPagePhotoGallery> result = new ArrayList<>();
+        StructuredPagePhotoGallery result = new StructuredPagePhotoGallery();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
-            result = query.mapToBean(StructuredPagePhotoGallery.class).list();
+            result = query.mapToBean(StructuredPagePhotoGallery.class).one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
-        }
-        for (StructuredPagePhotoGallery structuredPagePhotoGallery : result) {
-            structuredPagePhotoGallery.setMediaCardItems(getStructuredPagePhotoGalleryItem(version,languageList,structuredPageUrl));
         }
         completed(methodName);
         return result;
