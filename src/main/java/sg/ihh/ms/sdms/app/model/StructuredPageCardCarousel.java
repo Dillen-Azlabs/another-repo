@@ -5,13 +5,23 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"uid", "languageCode","sectionIntro","carouselItems", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode","sectionIntro","carouselItems", "publishFlag", "createdDt", "modifiedDt"})
 public class StructuredPageCardCarousel extends BaseModel {
 
+    @JsonProperty("uid")
+    private String uid;
+    @JsonProperty("languageCode")
+    private String languageCode;
     @JsonProperty("sectionIntro")
     private String sectionIntro;
     @JsonProperty("carouselItems")
     private List<StructuredPageCardCarouselItem> carouselItems;
+    @JsonProperty("publishFlag")
+    private String publishFlag;
+    @JsonProperty("createdDt")
+    private String createdDt;
+    @JsonProperty("modifiedDt")
+    private String modifiedDt;
 
     public StructuredPageCardCarousel() {
         // Empty Constructor

@@ -5,9 +5,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"uid", "languageCode", "contentImageUrl", "contentImageTitle","contentImageDescription","contentImageButton1Label","contentImageButton1Url","contentImage1OpenInNewTab","contentImageButton2Label","contentImageButton2Url","contentImage2OpenInNewTab","mediaCardItems", "order", "publishFlag", "createdDt", "modifiedDt"})
-public class StructuredPageMediaSection extends BaseModel {
+@JsonPropertyOrder({"uid", "languageCode", "contentImageUrl", "contentImageTitle","contentImageDescription","contentImageButton1Label","contentImageButton1Url","contentImage1OpenInNewTab","contentImageButton2Label","contentImageButton2Url","contentImage2OpenInNewTab","mediaCardItems", "publishFlag", "createdDt", "modifiedDt"})
+public class StructuredPageMediaSection {
 
+    @JsonProperty("uid")
+    private String uid;
+    @JsonProperty("languageCode")
+    private String languageCode;
     @JsonProperty("contentImageUrl")
     private String contentImage;
     @JsonProperty("contentImageTitle")
@@ -28,9 +32,31 @@ public class StructuredPageMediaSection extends BaseModel {
     private boolean contentImageButton2NewTab;
     @JsonProperty("mediaCardItems")
     private List<StructuredPageMediaSectionItem> mediaCardItems;
+    @JsonProperty("publishFlag")
+    private String publishFlag;
+    @JsonProperty("createdDt")
+    private String createdDt;
+    @JsonProperty("modifiedDt")
+    private String modifiedDt;
 
     public StructuredPageMediaSection() {
         // Empty Constructor
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getLanguageCode() {
+        return languageCode;
+    }
+
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
     }
 
     public String getContentImage() {
@@ -111,5 +137,29 @@ public class StructuredPageMediaSection extends BaseModel {
 
     public void setMediaCardItems(List<StructuredPageMediaSectionItem> mediaCardItems) {
         this.mediaCardItems = mediaCardItems;
+    }
+
+    public String getPublishFlag() {
+        return publishFlag;
+    }
+
+    public void setPublishFlag(String publishFlag) {
+        this.publishFlag = publishFlag;
+    }
+
+    public String getCreatedDt() {
+        return createdDt;
+    }
+
+    public void setCreatedDt(String createdDt) {
+        this.createdDt = createdDt;
+    }
+
+    public String getModifiedDt() {
+        return modifiedDt;
+    }
+
+    public void setModifiedDt(String modifiedDt) {
+        this.modifiedDt = modifiedDt;
     }
 }

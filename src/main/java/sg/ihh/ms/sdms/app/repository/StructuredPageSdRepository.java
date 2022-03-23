@@ -380,7 +380,7 @@ public class StructuredPageSdRepository extends BaseRepository {
         final String methodName = "getStructuredPagePhotoGallery";
         start(methodName);
 
-        String sql = "SELECT  Count (DISTINCT sps.uid),spspg.*, spsmc.section_intro FROM structured_page_sd sps " +
+        String sql = "SELECT  Count (DISTINCT sps.uid),spspg.*, sps.photo_section_intro FROM structured_page_sd sps " +
                 "LEFT JOIN structured_page_sd_photo_gallery spspg  ON sps.uid = spspg.structured_page_sd_uid " +
                 "LEFT JOIN structured_page_sd_media_card spsmc  ON sps.uid = spsmc.structured_page_sd_uid  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
@@ -407,9 +407,8 @@ public class StructuredPageSdRepository extends BaseRepository {
                 " WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
-        String q2 = "SELECT spspg.*,spsmc.title FROM structured_page_sd sps " +
+        String q2 = "SELECT spspg.* FROM structured_page_sd sps " +
                 "LEFT JOIN structured_page_sd_photo_gallery spspg  ON sps.uid = spspg.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_media_card spsmc  ON sps.uid = spsmc.structured_page_sd_uid  " +
                 " WHERE spspg.structured_page_sd_uid = :spsUid " +
                 " AND sps.publish_flag = {PUBLISHED}";
 
