@@ -369,7 +369,7 @@ public class StructuredPageSdRepository extends BaseRepository {
         if (structuredPagePhotoGallery != null) {
             List<StructuredPagePhotoGalleryItem> structuredPagePhotoGalleryItems = getStructuredPagePhotoGalleryItem(version, languageList, structuredPageUrl);
 
-            structuredPagePhotoGallery.setMediaCardItems(structuredPagePhotoGalleryItems);
+            structuredPagePhotoGallery.setGalleryItems(structuredPagePhotoGalleryItems);
         }
 
         completed(methodName);

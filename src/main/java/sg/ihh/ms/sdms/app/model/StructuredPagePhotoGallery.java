@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"uid", "languageCode", "sectionIntro", "mediaCardItems", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "sectionIntro", "galleryItems", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class StructuredPagePhotoGallery extends BaseModel {
 
     @JsonProperty("sectionIntro")
     private String sectionIntro;
-    @JsonProperty("mediaCardItems")
-    private List<StructuredPagePhotoGalleryItem> mediaCardItems;
+    @JsonProperty("galleryItems")
+    private List<StructuredPagePhotoGalleryItem> galleryItems;
 
     public StructuredPagePhotoGallery() {
         // Empty Constructor
@@ -25,11 +25,11 @@ public class StructuredPagePhotoGallery extends BaseModel {
         this.sectionIntro = sectionIntro;
     }
 
-    public List<StructuredPagePhotoGalleryItem> getMediaCardItems() {
-        return mediaCardItems;
+    public List<StructuredPagePhotoGalleryItem> getGalleryItems() {
+        return galleryItems;
     }
 
-    public void setMediaCardItems(List<StructuredPagePhotoGalleryItem> mediaCardItems) {
-        this.mediaCardItems = mediaCardItems;
+    public void setGalleryItems(List<StructuredPagePhotoGalleryItem> galleryItems) {
+        this.galleryItems = galleryItems;
     }
 }
