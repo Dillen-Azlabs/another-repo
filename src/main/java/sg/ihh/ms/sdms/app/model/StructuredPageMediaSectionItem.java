@@ -16,6 +16,8 @@ public class StructuredPageMediaSectionItem {
     private String title;
     @JsonProperty("description")
     private String description;
+    @JsonProperty("order")
+    private String displayOrder;
 
     public StructuredPageMediaSectionItem() {
         // Empty Constructor
@@ -59,5 +61,13 @@ public class StructuredPageMediaSectionItem {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(String displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }

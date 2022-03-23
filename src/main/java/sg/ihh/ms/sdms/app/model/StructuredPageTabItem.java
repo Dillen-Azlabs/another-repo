@@ -8,6 +8,8 @@ public class StructuredPageTabItem {
     private String title;
     @JsonProperty("body")
     private String body;
+    @JsonProperty("order")
+    private String displayOrder;
 
     public StructuredPageTabItem() {
         // Empty Constructor
@@ -27,5 +29,13 @@ public class StructuredPageTabItem {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public String getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(String displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }
