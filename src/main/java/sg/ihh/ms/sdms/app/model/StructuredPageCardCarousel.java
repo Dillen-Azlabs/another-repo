@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.List;
 
 @JsonPropertyOrder({"uid", "languageCode","sectionIntro","carouselItems", "publishFlag", "createdDt", "modifiedDt"})
-public class StructuredPageCardCarousel extends BaseModel {
+public class StructuredPageCardCarousel  {
 
     @JsonProperty("uid")
     private String uid;
@@ -27,6 +27,22 @@ public class StructuredPageCardCarousel extends BaseModel {
         // Empty Constructor
     }
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getLanguageCode() {
+        return languageCode;
+    }
+
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
+
     public String getSectionIntro() {
         return sectionIntro;
     }
@@ -41,5 +57,29 @@ public class StructuredPageCardCarousel extends BaseModel {
 
     public void setCarouselItems(List<StructuredPageCardCarouselItem> carouselItems) {
         this.carouselItems = carouselItems;
+    }
+
+    public String getPublishFlag() {
+        return publishFlag;
+    }
+
+    public void setPublishFlag(String publishFlag) {
+        this.publishFlag = publishFlag;
+    }
+
+    public String getCreatedDt() {
+        return createdDt;
+    }
+
+    public void setCreatedDt(String createdDt) {
+        this.createdDt = createdDt;
+    }
+
+    public String getModifiedDt() {
+        return modifiedDt;
+    }
+
+    public void setModifiedDt(String modifiedDt) {
+        this.modifiedDt = modifiedDt;
     }
 }
