@@ -8,10 +8,10 @@ public class StructuredPagePhotoGalleryItem {
     private String image;
     @JsonProperty("altText")
     private String imageAltText;
-    @JsonProperty("title")
-    private String title;
     @JsonProperty("caption")
     private String caption;
+    @JsonProperty("order")
+    private String displayOrder;
 
     public StructuredPagePhotoGalleryItem() {
         // Empty Constructor
@@ -33,19 +33,19 @@ public class StructuredPagePhotoGalleryItem {
         this.imageAltText = imageAltText;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getCaption() {
         return caption;
     }
 
     public void setCaption(String caption) {
         this.caption = caption;
+    }
+
+    public String getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(String displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }
