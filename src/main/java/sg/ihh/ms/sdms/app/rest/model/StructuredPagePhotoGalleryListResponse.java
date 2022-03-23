@@ -8,10 +8,10 @@ import sg.ihh.ms.sdms.app.model.StructuredPagePhotoGallery;
 
 import java.util.List;
 
-@JsonPropertyOrder({"code", "message", "galleryItems"})
+@JsonPropertyOrder({"code", "message", "photoGallery"})
 public class StructuredPagePhotoGalleryListResponse extends BaseResponse {
 
-    @JsonProperty("galleryItems")
+    @JsonProperty("photoGallery")
     private StructuredPagePhotoGallery structuredPagePhotoGallery;
 
     public StructuredPagePhotoGalleryListResponse(StructuredPagePhotoGallery structuredPagePhotoGallery) {
