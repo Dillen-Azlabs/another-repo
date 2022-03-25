@@ -464,23 +464,24 @@ public class TreatmentSdRepository extends BaseRepository{
         final String methodName = "getFaqSize";
         start(methodName);
 
-        String sql = "SELECT tts.*, ttsf.uid FROM test_treatment_sd tts " +
+        String sql = "SELECT COUNT( ttsf.uid) FROM test_treatment_sd tts " +
                 "LEFT JOIN test_treatment_sd_faq ttsf  ON tts.uid = ttsf.test_treatment_sd_uid " +
                 " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url "+
                 " AND tts.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
-        List<String> result = new ArrayList<>();
+        int result = 0;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", treatmentItemUrl);
-            result = query.mapTo(String.class).list();
+            result = query.mapTo(Integer.class).one();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
         }
         completed(methodName);
-        return result.size();
+
+        return result;
     }
     //END - Treatment Detail Block
 }
