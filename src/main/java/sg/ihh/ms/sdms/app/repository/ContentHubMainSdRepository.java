@@ -390,7 +390,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
         final String methodName = "getContentHubMainIconContent";
         start(methodName);
 
-        String sql = "SELECT chms.*,chmsic.icon_image, chmsic.header, chmsic.anchor_id FROM content_hub_main_sd chms " +
+        String sql = "SELECT chms.*,chmsic.icon_image, chmsic.header, chmsic.anchor_id, chmsic.content FROM content_hub_main_sd chms " +
                 "LEFT JOIN content_hub_main_sd_icon_content chmsic  ON chms.uid = chmsic.content_hub_main_sd_uid " +
                 "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url " +
                 "AND chms.publish_flag = {PUBLISHED}";
