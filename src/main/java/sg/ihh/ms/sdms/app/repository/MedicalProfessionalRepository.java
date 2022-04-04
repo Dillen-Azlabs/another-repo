@@ -427,12 +427,31 @@ public class MedicalProfessionalRepository extends BaseRepository {
 
         for (Testimonial testimonial : result) {
             testimonial.setCountries(getTestimonialCountries(testimonial.getUid(), languageList));
+            testimonial.setImages(getTestimonialImages(testimonial.getUid(), languageList));
         }
 
         completed(methodName);
         return result;
     }
+    public List<TestimonialImage> getTestimonialImages(String uid, List<String> languageList) {
+        final String methodName = "getTestimonialImages";
+        start(methodName);
 
+        String sql = " SELECT mpti.image_url, mpti.image_alt_text  FROM medical_professional_testimonial mpt " +
+                " LEFT JOIN medical_professional_testimonial_image mpti ON mpt.uid = mpti.medical_professional_testimonial_uid AND mpt.language_code = mpti.language_code" +
+                " WHERE mpt.uid = :uid AND mpt.language_code IN(<languageList>) ";
+
+        List<TestimonialImage> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bind("uid", uid).bindList("languageList", languageList);
+            result = query.mapToBean(TestimonialImage.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
     public List<String> getTestimonialCountries(String uid, List<String> languageList) {
         final String methodName = "getTestimonialCountries";
         start(methodName);

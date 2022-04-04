@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"uid", "languageCode", "testimonial", "patientName", "patientAlias", "patientLocation", "thumbnailUrl", "thumbnailAltText", "keyQuote", "expiryDate", "countries", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "testimonial", "patientName", "patientAlias", "patientLocation","images", "thumbnailUrl", "thumbnailAltText", "keyQuote", "expiryDate", "countries", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class Testimonial extends BaseModel {
 
     @JsonProperty("testimonial")
@@ -17,10 +17,8 @@ public class Testimonial extends BaseModel {
     private String patientAlias;
     @JsonProperty("patientLocation")
     private String cor;
-    @JsonProperty("thumbnailUrl")
-    private String thumbnailUrl;
-    @JsonProperty("thumbnailAltText")
-    private String thumbnailAltText;
+    @JsonProperty("images")
+    private List<TestimonialImage> images;
     @JsonProperty("keyQuote")
     private String keyQuote;
     @JsonProperty("countries")
@@ -62,20 +60,12 @@ public class Testimonial extends BaseModel {
         this.cor = cor;
     }
 
-    public String getThumbnailUrl() {
-        return thumbnailUrl;
+    public List<TestimonialImage> getImages() {
+        return images;
     }
 
-    public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
-    }
-
-    public String getThumbnailAltText() {
-        return thumbnailAltText;
-    }
-
-    public void setThumbnailAltText(String thumbnailAltText) {
-        this.thumbnailAltText = thumbnailAltText;
+    public void setImages(List<TestimonialImage> images) {
+        this.images = images;
     }
 
     public String getKeyQuote() {
