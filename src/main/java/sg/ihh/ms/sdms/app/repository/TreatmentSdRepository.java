@@ -404,7 +404,6 @@ public class TreatmentSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT tts.* FROM test_treatment_sd tts " +
-                " LEFT JOIN test_treatment_sd_metadata ttsm ON tts.uid = ttsm.test_treatment_sd_uid  " +
                 " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url "+
                 " AND tts.publish_flag = {PUBLISHED}";
 
@@ -441,7 +440,7 @@ public class TreatmentSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ttsm.hospital_main_image,ttsm.hospital_main_text,ttsm.meta_title,ttsm.meta_desc FROM test_treatment_sd tts " +
-                " LEFT JOIN test_treatment_sd_metadata ttsm ON tts.uid = ttsm.test_treatment_sd_uid  " +
+                " LEFT JOIN test_treatment_sd_metadata ttsm ON tts.uid = ttsm.test_treatment_sd_uid AND ttsm.language_code = tts.language_code " +
                 "LEFT JOIN hospital h ON ttsm.hospital_uid = h.uid"+
                 " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url AND h.hospital = :hospital"+
                 " AND tts.publish_flag = {PUBLISHED}";
