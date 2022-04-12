@@ -8,6 +8,7 @@ public class HresidenceCountryRepository extends BaseRepository {
         log = getLogger(this.getClass());
         tableName = "country_residence";
         
+        
 	}
 	
 }
