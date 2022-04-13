@@ -38,8 +38,6 @@ public class HresidenceCountryServices extends BaseService {
 	}
 	
 	
-	
-	
 	@GetMapping
     public HresidenceCountryListResponse list(
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
@@ -56,10 +54,8 @@ public class HresidenceCountryServices extends BaseService {
         list = processor.processList(list, languageCode);
         
         HresidenceCountryListResponse response = new HresidenceCountryListResponse(list);
-//
-//        completed(methodName);        return response;
+        completed(methodName);        
+        return response;
         
-		return null;
-
 	}
 }
