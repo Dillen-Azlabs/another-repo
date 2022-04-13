@@ -20,7 +20,7 @@ public class HresidenceCountry extends BaseModel{
 		return cor;
 	}
 	
-	public void setGender(String cor)
+	public void setCor(String cor)
 	{
 	    this.cor = cor;
 	}
