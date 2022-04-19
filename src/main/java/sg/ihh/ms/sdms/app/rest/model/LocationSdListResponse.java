@@ -8,9 +8,9 @@ import sg.ihh.ms.sdms.app.model.LocationSd;
 import java.util.List;
 
 
-@JsonPropertyOrder({"code", "message", "count", "location"})
+@JsonPropertyOrder({"code", "message", "count", "locations"})
 public class LocationSdListResponse extends BaseResponse {
-    @JsonProperty("location")
+    @JsonProperty("locations")
     private List<LocationSd> list;
     @JsonProperty("count")
     private int count;

@@ -17,10 +17,10 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "centreServiceS", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 @Validated
-public class CenterServiceSubService extends BaseService{
+public class CentreServiceSubService extends BaseService{
     @Autowired
     private CentreServiceSubSdRepository repository;
-    public CenterServiceSubService() {
+    public CentreServiceSubService() {
         log = getLogger(this.getClass());
     }
 
