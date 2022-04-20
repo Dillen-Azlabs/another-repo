@@ -591,11 +591,13 @@ public class StructuredPageSdRepository extends BaseRepository {
         final String methodName = "getStructuredPageTab";
         start(methodName);
 
-        String sql = " SELECT Count (DISTINCT sps.uid),spst.*, spsts.tab_section_intro as sectionIntro  FROM structured_page_sd sps " +
+
+
+        String sql = " SELECT DISTINCT sps.*, spsts.tab_section_intro as sectionIntro FROM structured_page_sd sps " +
                 " LEFT JOIN structured_page_sd_tab spst  ON sps.uid = spst.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_tab_section spsts ON sps.uid = spsts.structured_page_sd_uid " +
-                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
-                "AND sps.publish_flag = {PUBLISHED}";
+                " LEFT JOIN structured_page_sd_tab_section spsts ON sps.uid = spsts.structured_page_sd_uid " +
+                " WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
+                " AND sps.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
