@@ -97,7 +97,8 @@ public class MedicalProfessionalRepository extends BaseRepository {
             // setting the array of items
             medicalProfessionalDetail.setInsurancePanel(getMedicalProfessionalInsurance(version, languageList, medicalProfessionalItemUrl));
             medicalProfessionalDetail.setLanguageSpoken(getMedicalProfessionalSpokenLanguages(version, languageList, medicalProfessionalItemUrl));
-
+            medicalProfessionalDetail.setAvailableLanguageCode(getAvailableLanguageCode(version, languageList, medicalProfessionalItemUrl));
+            medicalProfessionalDetail.setAvailableHospital(getAvailableHospital(version, languageList, medicalProfessionalItemUrl));
             // special handling for specialists and allied health professionals (AHP)
             if (medicalProfessionalDetail.getMedProType().equals(Constant.MEDPRO_SPECIALISTS)) {
                 medicalProfessionalDetail.setMetaCta("");
@@ -167,6 +168,55 @@ public class MedicalProfessionalRepository extends BaseRepository {
         return result;
     }
 
+    public List<String> getAvailableHospital(Version version, List<String> languageList, String medicalProfessionalItemUrl){
+        final String methodName = "getAvailableHospital";
+        start(methodName);
+
+        String sql = "SELECT h.hospital FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_hospital mph ON mp.uid = mph.medical_professional_uid " +
+                " LEFT JOIN hospital h ON mph.hospital_uid  = h.uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
+                " AND mp.publish_flag = 1 " +
+                " GROUP BY h.hospital";
+
+        sql = getPublishVersion(version, sql);
+
+        List<String> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
+            result = query.mapTo(String.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
+    public List<String> getAvailableLanguageCode(Version version, List<String> languageList, String medicalProfessionalItemUrl){
+        final String methodName = "getAvailableLanguageCode";
+        start(methodName);
+
+        String sql = "SELECT l.language FROM medical_professional mp " +
+                " LEFT JOIN medical_professional_language mpl ON mp.uid = mpl.medical_professional_uid " +
+                " LEFT JOIN language l ON mpl.language_uid  = l.uid " +
+                " WHERE mp.language_code IN(<languageList>) AND mp.item_url = :item_url " +
+                " AND mp.publish_flag = 1 " +
+                " GROUP BY l.language";
+
+        sql = getPublishVersion(version, sql);
+
+        List<String> result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", medicalProfessionalItemUrl);
+            result = query.mapTo(String.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
     public List<String> getMedicalProfessionalInsurance(Version version, List<String> languageList, String medicalProfessionalItemUrl) {
         final String methodName = "getMedicalProfessionalInsurance";
         start(methodName);

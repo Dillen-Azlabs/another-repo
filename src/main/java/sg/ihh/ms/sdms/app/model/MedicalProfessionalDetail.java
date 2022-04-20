@@ -8,7 +8,7 @@ import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
 import java.util.List;
 
-@JsonPropertyOrder({"uid", "languageCode", "displayName", "itemUrl", "salutation", "mcrNumber", "isMedicalReviewer", "profileImageUrl", "profileImageAltText", "designation", "specialty", "serviceProviderType", "languageSpoken", "gender", "insurancePanel", "videoUrl", "quote", "qnaUrl", "qnaLinkText", "hasMediaCoverage", "shortBio", "socialSummary", "laymanTerm", "metaCta", "metaTitle", "metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "displayName", "itemUrl", "salutation", "mcrNumber", "isMedicalReviewer", "profileImageUrl", "profileImageAltText", "designation", "specialty", "serviceProviderType", "languageSpoken", "gender", "insurancePanel", "videoUrl", "quote", "qnaUrl", "qnaLinkText", "hasMediaCoverage", "shortBio", "socialSummary", "laymanTerm", "availableHospitals", "availableLanguageCodes", "metaCta", "metaTitle", "metaDescription", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class MedicalProfessionalDetail extends BaseModel {
 
     @JsonIgnore
@@ -53,6 +53,10 @@ public class MedicalProfessionalDetail extends BaseModel {
     private String socialSummary;
     @JsonProperty("laymanTerm")
     private String laymanTerm;
+    @JsonProperty("availableHospitals")
+    private List<String> availableHospital;
+    @JsonProperty("availableLanguageCodes")
+    private List<String> availableLanguageCode;
     @JsonProperty("metaCta")
     private String metaCta;
     @JsonProperty("metaTitle")
@@ -65,6 +69,22 @@ public class MedicalProfessionalDetail extends BaseModel {
 
     public MedicalProfessionalDetail() {
         // Empty Constructor
+    }
+
+    public List<String> getAvailableHospital() {
+        return availableHospital;
+    }
+
+    public void setAvailableHospital(List<String> availableHospital) {
+        this.availableHospital = availableHospital;
+    }
+
+    public List<String> getAvailableLanguageCode() {
+        return availableLanguageCode;
+    }
+
+    public void setAvailableLanguageCode(List<String> availableLanguageCode) {
+        this.availableLanguageCode = availableLanguageCode;
     }
 
     public String getMedProType() {
