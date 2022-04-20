@@ -7,14 +7,23 @@ import sg.ihh.ms.sdms.app.model.StructuredPageBodySection;
 
 import java.util.List;
 
-@JsonPropertyOrder({"code", "message", "bodySection"})
+@JsonPropertyOrder({"code", "message", "count", "bodySections"})
 public class StructuredPageBodySectionListResponse extends BaseResponse {
 
-    @JsonProperty("bodySection")
+    @JsonProperty("bodySections")
     private List<StructuredPageBodySection> list;
+    @JsonProperty("count")
+    private int count;
 
     public StructuredPageBodySectionListResponse(List<StructuredPageBodySection> list) {
         super(HttpStatus.OK);
+        this.count = list.size();
+        this.list = list;
+    }
+    public StructuredPageBodySectionListResponse(List<StructuredPageBodySection> list, int count) {
+        super(HttpStatus.OK);
+        this.list = list;
+        this.count = list.size();
         this.list = list;
     }
 
@@ -26,4 +35,11 @@ public class StructuredPageBodySectionListResponse extends BaseResponse {
         this.list = list;
     }
 
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 }
