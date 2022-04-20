@@ -19,7 +19,7 @@ public class LocationSdRepository  extends BaseRepository {
     }
 
     //START - Get Locations by Centre & Service
-    public List<LocationSd> getLocationByItemUrl(Version version, List<String> languageList, String itemUrl, String hospitalCode){
+    public List<LocationSd> getLocationByItemUrl(Version version, List<String> languageList, List<String> itemUrls, String hospitalCode){
         final String methodName = "getLocationByItemUrl";
         start(methodName);
         String sql ="SELECT ls.uid, ls.language_code, ls.location_title, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.publish_flag, ls.created_dt, ls.modified_dt FROM location_sd ls " +
@@ -27,7 +27,7 @@ public class LocationSdRepository  extends BaseRepository {
                 "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid " +
                 "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid " +
                 "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid " +
-                "WHERE ls.language_code IN(<languageList>) AND ls.item_url = :item_url AND h.hospital = :hospital " +
+                "WHERE ls.language_code IN(<languageList>) AND ls.item_url IN(<itemUrls>) AND h.hospital = :hospital " +
                 "AND ls.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
@@ -35,7 +35,7 @@ public class LocationSdRepository  extends BaseRepository {
         List<LocationSd> result = new ArrayList<>();
 
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", itemUrl).bind("hospital", hospitalCode);
+            query.bindList("languageList", languageList).bindList("itemUrls", itemUrls).bind("hospital", hospitalCode);
             result = query.mapToBean(LocationSd.class).list();
 
         } catch (Exception ex) {
@@ -43,15 +43,14 @@ public class LocationSdRepository  extends BaseRepository {
         }
 
         for (LocationSd locationSd : result) {
-            List<LocationSdContact> list = getLocationSdContact(version,languageList,itemUrl,hospitalCode);
-            locationSd.setContactNumbers(getLocationSdContact(version,languageList,itemUrl,hospitalCode));
+            locationSd.setContactNumbers(getLocationSdContact(version,languageList,itemUrls,hospitalCode));
         }
 
         completed(methodName);
         return result;
     }
 
-    private List<LocationSdContact> getLocationSdContact(Version version, List<String> languageList, String itemUrl, String hospitalCode){
+    private List<LocationSdContact> getLocationSdContact(Version version, List<String> languageList, List<String> itemUrls, String hospitalCode){
         final String methodName = "getLocationSdContact";
         start(methodName);
         String sql ="SELECT lsc.contact_header, lsc.contact_number, lsc.display_order  FROM location_sd ls " +
@@ -59,14 +58,14 @@ public class LocationSdRepository  extends BaseRepository {
                 "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid " +
                 "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid " +
                 "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid " +
-                "WHERE ls.language_code IN(<languageList>) AND ls.item_url = :item_url AND h.hospital = :hospital " +
+                "WHERE ls.language_code IN(<languageList>) AND ls.item_url IN(<itemUrls>) AND h.hospital = :hospital " +
                 "AND ls.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
         List<LocationSdContact> result = new ArrayList<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", itemUrl).bind("hospital", hospitalCode);
+            query.bindList("languageList", languageList).bindList("itemUrls", itemUrls).bind("hospital", hospitalCode);
             result = query.mapToBean(LocationSdContact.class).list();
 
         } catch (Exception ex) {
