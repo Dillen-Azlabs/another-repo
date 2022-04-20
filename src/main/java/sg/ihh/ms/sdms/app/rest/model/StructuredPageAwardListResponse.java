@@ -10,36 +10,20 @@ import java.util.List;
 @JsonPropertyOrder({"code", "message", "count", "awards"})
 public class StructuredPageAwardListResponse extends BaseResponse {
 
-    @JsonProperty("awards")
-    private List<StructuredPageAward> list;
-    @JsonProperty("count")
-    private int count;
+    @JsonProperty("award")
+    private StructuredPageAward list;
 
-    public StructuredPageAwardListResponse(List<StructuredPageAward> list) {
+    public StructuredPageAwardListResponse(StructuredPageAward list) {
         super(HttpStatus.OK);
-        this.count = list.size();
         this.list = list;
     }
 
-    public StructuredPageAwardListResponse(List<StructuredPageAward> list, int count) {
-        super(HttpStatus.OK);
-        this.count = count;
-        this.list = list;
-    }
-
-    public List<StructuredPageAward> getList() {
+    public StructuredPageAward getList() {
         return list;
     }
 
-    public void setList(List<StructuredPageAward> list) {
+    public void setList(StructuredPageAward list) {
         this.list = list;
     }
 
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
 }
