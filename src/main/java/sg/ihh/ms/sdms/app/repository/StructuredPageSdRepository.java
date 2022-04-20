@@ -153,11 +153,40 @@ public class StructuredPageSdRepository extends BaseRepository {
     //END - Content Hub Main Body Section Block
 
     //START - Structured Page Award Block
-    public List<StructuredPageAward> getStructuredPageAward(Version version, List<String> languageList,String structuredPageUrl,int sectionNumber, String hospitalCode, String country) {
+    public StructuredPageAward getStructuredPageAward(Version version, List<String> languageList,String structuredPageUrl,int sectionNumber, String hospitalCode, String country) {
         final String methodName = "getStructuredPageAward";
         start(methodName);
 
-        String sql = "SELECT DISTINCT spsa.*, spsas.award_intro FROM structured_page_sd sps " +
+        String sql = "SELECT spsa.*, spsas.award_intro FROM structured_page_sd sps " +
+                "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid " +
+                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid " +
+                "LEFT JOIN structured_page_sd_awards_country spsac  ON spsa.uid = spsac.structured_page_sd_awards_uid  " +
+                "LEFT JOIN structured_page_sd_awards_hospital spsah ON spsa.uid = spsah.structured_page_sd_awards_uid " +
+                "LEFT JOIN country_of_residence c ON c.uid = spsac.cor_uid " +
+                "LEFT JOIN hospital h ON spsah.hospital_uid = h.uid " +
+                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsas.`section` = :section AND c.cor  = :countryOfResidence " +
+                "AND sps.publish_flag = {PUBLISHED} " +
+                "GROUP BY sps.uid";
+
+        sql = getPublishVersion(version, sql);
+
+        StructuredPageAward result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl).bind("section",sectionNumber).bind("hospital", hospitalCode).bind("countryOfResidence", country);
+            result = query.mapToBean(StructuredPageAward.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        result.setAwardItem(getStructuredPageAwardItem(version,languageList,structuredPageUrl,sectionNumber,hospitalCode,country));
+
+        completed(methodName);
+        return result;
+    }
+    private List<StructuredPageAwardItem> getStructuredPageAwardItem(Version version, List<String> languageList, String structuredPageUrl,int sectionNumber, String hospitalCode, String country){
+        final String methodName = "getStructuredPageAwardItem";
+        start(methodName);
+        String sql ="SELECT DISTINCT spsa.heading, spsa.icon, spsa.description, spsa.display_order FROM structured_page_sd sps " +
                 "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid " +
                 "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid " +
                 "LEFT JOIN structured_page_sd_awards_country spsac  ON spsa.uid = spsac.structured_page_sd_awards_uid  " +
@@ -169,63 +198,18 @@ public class StructuredPageSdRepository extends BaseRepository {
 
         sql = getPublishVersion(version, sql);
 
-        List<StructuredPageAward> result = null;
+        List<StructuredPageAwardItem> result = new ArrayList<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", structuredPageUrl).bind("section",sectionNumber).bind("hospital", hospitalCode).bind("countryOfResidence", country);
-            result = query.mapToBean(StructuredPageAward.class).list();
+            result = query.mapToBean(StructuredPageAwardItem.class).list();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
         }
-        for (StructuredPageAward structuredPageAward : result) {
-            structuredPageAward.setAwardItem(getStructuredPageAwardItem(version,languageList,structuredPageUrl,sectionNumber,hospitalCode,country));
-        }
+
+
         completed(methodName);
-        return result;
-    }
-    private List<StructuredPageAwardItem> getStructuredPageAwardItem(Version version, List<String> languageList,String structuredPageUrl,int sectionNumber, String hospitalCode, String country)
-    {
-        String methodName = "getStructuredPageAwardItem";
 
-        String structuredPageSql = "SELECT sps.uid  FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_awards_country spsac  ON spsa.uid = spsac.structured_page_sd_awards_uid  " +
-                "LEFT JOIN structured_page_sd_awards_hospital spsah ON spsa.uid = spsah.structured_page_sd_awards_uid " +
-                "LEFT JOIN country_of_residence c ON c.uid = spsac.cor_uid " +
-                "LEFT JOIN hospital h ON spsah.hospital_uid = h.uid " +
-                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsas.`section` = :section AND c.cor  = :countryOfResidence " +
-                "AND sps.publish_flag = {PUBLISHED}";
-
-        String AwardSql = "SELECT spsa.heading, spsa.icon, spsa.description , spsas.display_order FROM structured_page_sd sps  " +
-                "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid " +
-                " WHERE spsa.structured_page_sd_uid = :sdUid " +
-                " AND sps.publish_flag = {PUBLISHED}";
-
-        structuredPageSql = getPublishVersion(version, structuredPageSql);
-        AwardSql = getPublishVersion(version, AwardSql);
-
-        List<StructuredPageAwardItem> result = new ArrayList<>();
-
-        try (Handle h = getHandle()) {
-
-            List<String> structuredPageUid = new ArrayList<>();
-            Query query1 = h.createQuery(structuredPageSql);
-            query1.bindList("languageList", languageList).bind("item_url", structuredPageUrl).bind("section",sectionNumber).bind("hospital", hospitalCode).bind("countryOfResidence", country);
-            structuredPageUid = query1.mapTo(String.class).list();
-            if (!structuredPageUid.isEmpty()) {
-                for (String sdUid : structuredPageUid) {
-                    Query query2 = h.createQuery(AwardSql);
-                    query2.bind("sdUid", sdUid);
-                    result = query2.mapToBean(StructuredPageAwardItem.class).list();
-                }
-            }
-
-        }
-        catch (Exception ex) {
-            log.error(methodName, ex);
-        }
         return result;
     }
     //END - Structured Page Award Block

@@ -111,7 +111,7 @@ public class StructuredPageSdService extends BaseService {
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<StructuredPageAward> result = repository.getStructuredPageAward(Version.getVersion(version), languageList, structuredPageUrl,sectionNumber, hospitalCode, country);
+        StructuredPageAward result = repository.getStructuredPageAward(Version.getVersion(version), languageList, structuredPageUrl,sectionNumber, hospitalCode, country);
 
 
         StructuredPageAwardListResponse response = new StructuredPageAwardListResponse(result);
