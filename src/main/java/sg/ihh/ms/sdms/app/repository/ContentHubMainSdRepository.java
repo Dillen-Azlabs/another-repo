@@ -84,7 +84,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
         final String methodName = "getContentHubMainAccordion";
         start(methodName);
 
-        String sql = "SELECT chms.*, chmsa.section_intro, chmsa.title, chmsa.content, chmsa.anchor_id  FROM content_hub_main_sd chms  " +
+        String sql = "SELECT chmsa.* FROM content_hub_main_sd chms  " +
                 "LEFT JOIN content_hub_main_sd_accordion chmsa  ON chms.uid = chmsa.content_hub_main_sd_uid " +
                 "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url " +
                 "AND chms.publish_flag = {PUBLISHED}";
