@@ -44,8 +44,6 @@ public class ContentHubMainSdService extends BaseService {
     @Autowired
     private StructuredDataProcessor<ContentHubMainBodySection> bsprocessor;
 
-    @Autowired
-    private StructuredDataProcessor<ContentHubMainIconContent> icprocessor;
 
 
     public ContentHubMainSdService() {
@@ -130,8 +128,6 @@ public class ContentHubMainSdService extends BaseService {
         List<String> languageList = getLanguageList(languageCode);
 
         List<ContentHubMainIconContent> result = repository.getContentHubMainIconContent(Version.getVersion(version), languageList, contentHubMUrl);
-
-        result = icprocessor.processList(result, languageCode);
 
         ContentHubMainIconContentListResponse response = new ContentHubMainIconContentListResponse(result);
 
