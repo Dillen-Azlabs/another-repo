@@ -33,7 +33,7 @@ public class LocationSdService extends  BaseService {
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
                     message = "Allowed Values : DRAFT, PUBLISHED") String version,
             @RequestParam("languageCode") String languageCode,
-            @RequestParam("itemUrls") String itemUrl,
+            @RequestParam("itemUrls") List<String> itemUrl,
             @RequestParam("hospitalCode") String hospitalCode){
         final String methodName = "getLocationByItemUrl";
         start(methodName);
