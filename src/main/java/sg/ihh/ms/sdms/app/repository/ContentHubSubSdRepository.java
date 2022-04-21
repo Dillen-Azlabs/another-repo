@@ -136,7 +136,7 @@ public class ContentHubSubSdRepository extends BaseRepository{
 
         String sql = "SELECT chss.* ,chssb.content1,chssb.video_url, chssb.content2, chssb.did_you_know_highlight FROM content_hub_sub_sd chss " +
                 "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid " +
-                "LEFT JOIN content_hub_sub_sd_body chssb  ON chss.uid = chssb.content_hub_sub_sd_uid " +
+                "LEFT JOIN content_hub_sub_sd_body chssb  ON (chss.uid = chssb.content_hub_sub_sd_uid AND chss.status = chssb.status AND chss.language_code = chssb.language_code)  " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain " +
                 "AND chss.publish_flag = {PUBLISHED}";
 
