@@ -132,9 +132,9 @@ public class StructuredPageSdRepository extends BaseRepository {
         final String methodName = "getStructuredPageBodySection";
         start(methodName);
 
-            String sql = "SELECT sps.*, spsb.content1,spsb.video_url , spsb.content2, spsb.button_label_1,spsb.button_url_1 , spsb.button_1_newtab , spsb.button_label_2 , spsb.button_url_2 , spsb.button_2_newtab , spsb.did_you_know_highlight, spsb.note_highlight , spsb.download_highlight FROM structured_page_sd sps " +
+            String sql = "SELECT spsb.* FROM structured_page_sd sps " +
                     "LEFT JOIN structured_page_sd_body spsb  ON sps.uid = spsb.structured_page_sd_uid " +
-                    "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url  AND spsb.section  = :section " +
+                    "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url  AND spsb.`section`  = :section " +
                     "AND sps.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
