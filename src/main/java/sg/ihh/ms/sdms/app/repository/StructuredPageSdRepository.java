@@ -157,13 +157,13 @@ public class StructuredPageSdRepository extends BaseRepository {
         final String methodName = "getStructuredPageAward";
         start(methodName);
 
-        String sql = "SELECT spsa.*, spsas.award_intro FROM structured_page_sd sps " +
+        String sql = "SELECT spsa.uid,spsa.language_code, spsas.award_intro, spsa.publish_flag, spsa.created_dt, spsa.modified_dt FROM structured_page_sd sps " +
                 "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_awards_country spsac  ON spsa.uid = spsac.structured_page_sd_awards_uid  " +
-                "LEFT JOIN structured_page_sd_awards_hospital spsah ON spsa.uid = spsah.structured_page_sd_awards_uid " +
-                "LEFT JOIN country_of_residence c ON c.uid = spsac.cor_uid " +
-                "LEFT JOIN hospital h ON spsah.hospital_uid = h.uid " +
+                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid  " +
+                "LEFT JOIN structured_page_sd_award_section_country spsasc ON spsas.uid = spsasc.structured_page_sd_award_section_uid  " +
+                "LEFT JOIN structured_page_sd_award_section_hospital spsash ON spsas.uid = spsash.structured_page_sd_award_section_uid  " +
+                "LEFT JOIN country_of_residence c ON c.uid = spsasc.cor_uid " +
+                "LEFT JOIN hospital h ON spsash.hospital_uid = h.uid  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsas.`section` = :section AND c.cor  = :countryOfResidence " +
                 "AND sps.publish_flag = {PUBLISHED} " +
                 "GROUP BY sps.uid";
@@ -188,11 +188,11 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
         String sql ="SELECT DISTINCT spsa.heading, spsa.icon, spsa.description, spsa.display_order FROM structured_page_sd sps " +
                 "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_awards_country spsac  ON spsa.uid = spsac.structured_page_sd_awards_uid  " +
-                "LEFT JOIN structured_page_sd_awards_hospital spsah ON spsa.uid = spsah.structured_page_sd_awards_uid " +
-                "LEFT JOIN country_of_residence c ON c.uid = spsac.cor_uid " +
-                "LEFT JOIN hospital h ON spsah.hospital_uid = h.uid " +
+                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid  " +
+                "LEFT JOIN structured_page_sd_award_section_country spsasc ON spsas.uid = spsasc.structured_page_sd_award_section_uid  " +
+                "LEFT JOIN structured_page_sd_award_section_hospital spsash ON spsas.uid = spsash.structured_page_sd_award_section_uid  " +
+                "LEFT JOIN country_of_residence c ON c.uid = spsasc.cor_uid " +
+                "LEFT JOIN hospital h ON spsash.hospital_uid = h.uid  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsas.`section` = :section AND c.cor  = :countryOfResidence " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
