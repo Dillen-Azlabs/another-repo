@@ -29,7 +29,7 @@ public class ContentHubSubSdRepository extends BaseRepository{
 
         sql = getPublishVersion(version, sql);
 
-        ContentHubSubCta result = null;
+        ContentHubSubCta result = new ContentHubSubCta();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("itemUrlSub", contentHubSUrl).bind("itemUrlMain", contentHubMUrl);
             result = query.mapToBean(ContentHubSubCta.class).one();
@@ -56,7 +56,7 @@ public class ContentHubSubSdRepository extends BaseRepository{
 
         sql = getPublishVersion(version, sql);
 
-        ContentHubSubBasicDetail result = null;
+        ContentHubSubBasicDetail result = new ContentHubSubBasicDetail();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("itemUrlSub", contentHubSUrl).bind("itemUrlMain", contentHubMUrl);
             result = query.mapToBean(ContentHubSubBasicDetail.class).one();
