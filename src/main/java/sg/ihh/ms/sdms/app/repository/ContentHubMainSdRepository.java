@@ -336,7 +336,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
         final String methodName = "getContentHubMainBodySection";
         start(methodName);
 
-        String sql = "SELECT chms.*, chmsb.content1,chmsb.video_url , chmsb.content2, chmsb.did_you_know_highlight FROM content_hub_main_sd chms " +
+        String sql = "SELECT chms.uid, chms.language_code, chms.publish_flag, chms.created_dt, chms.modified_dt, chmsb.content1, chmsb.video_url, chmsb.content2, chmsb.did_you_know_highlight, chmsb.display_order FROM content_hub_main_sd chms " +
                 "LEFT JOIN content_hub_main_sd_body chmsb  ON (chms.uid = chmsb.content_hub_main_sd_uid AND chms.status = chmsb.status AND chms.language_code = chmsb.language_code) " +
                 "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url  AND chmsb.section  = :section " +
                 "AND chms.publish_flag = {PUBLISHED}";
