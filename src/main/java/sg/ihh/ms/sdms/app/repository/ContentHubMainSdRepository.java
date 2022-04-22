@@ -30,7 +30,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
 
         sql = getPublishVersion(version, sql);
 
-        ContentHubMainBasicDetail result = null;
+        ContentHubMainBasicDetail result = new ContentHubMainBasicDetail();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", contentHubMUrl);
             result = query.mapToBean(ContentHubMainBasicDetail.class).one();
