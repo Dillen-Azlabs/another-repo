@@ -23,8 +23,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
         final String methodName = "getContentHubMainBasicDetail";
         start(methodName);
 
-        String sql = "SELECT chms.*, chmsm.social_summary FROM content_hub_main_sd chms " +
-                "LEFT JOIN content_hub_main_sd_metadata chmsm  ON chms.uid = chmsm.content_hub_main_sd_uid   " +
+        String sql = "SELECT chms.* FROM content_hub_main_sd chms " +
                 "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url " +
                 "AND chms.publish_flag = {PUBLISHED}";
 
@@ -32,7 +31,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
 
         ContentHubMainBasicDetail result = new ContentHubMainBasicDetail();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", contentHubMUrl);
+            query.bindList("languageList", languageList).bind("item_url", contentHubMUrl).bind("hospital", hospitalCode);
             result = query.mapToBean(ContentHubMainBasicDetail.class).one();
 
         } catch (Exception ex) {
@@ -49,6 +48,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
             }
             result.setMetaTitle((String) metadataDetails.get("meta_title"));
             result.setMetaDescription((String) metadataDetails.get("meta_description"));
+            result.setSocialSummary((String) metadataDetails.get("social_summary"));
         }
 
         completed(methodName);
