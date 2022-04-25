@@ -157,20 +157,18 @@ public class StructuredPageSdRepository extends BaseRepository {
         final String methodName = "getStructuredPageAward";
         start(methodName);
 
-        String sql = "SELECT spsa.uid,spsa.language_code, spsas.award_intro, spsa.publish_flag, spsa.created_dt, spsa.modified_dt FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid  " +
+        String sql = "SELECT sps.language_code, sps.uid, spsas.award_intro, sps.publish_flag,sps.created_dt, sps.modified_dt FROM structured_page_sd sps " +
+                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid AND sps.status = spsas.status AND sps.language_code = spsas.language_code " +
                 "LEFT JOIN structured_page_sd_award_section_country spsasc ON spsas.uid = spsasc.structured_page_sd_award_section_uid  " +
                 "LEFT JOIN structured_page_sd_award_section_hospital spsash ON spsas.uid = spsash.structured_page_sd_award_section_uid  " +
                 "LEFT JOIN country_of_residence c ON c.uid = spsasc.cor_uid " +
                 "LEFT JOIN hospital h ON spsash.hospital_uid = h.uid  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsas.`section` = :section AND c.cor  = :countryOfResidence " +
-                "AND sps.publish_flag = {PUBLISHED} " +
-                "GROUP BY sps.uid";
+                "AND sps.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
-        StructuredPageAward result = null;
+        StructuredPageAward result = new StructuredPageAward();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", structuredPageUrl).bind("section",sectionNumber).bind("hospital", hospitalCode).bind("countryOfResidence", country);
             result = query.mapToBean(StructuredPageAward.class).one();
@@ -194,7 +192,7 @@ public class StructuredPageSdRepository extends BaseRepository {
                 "LEFT JOIN country_of_residence c ON c.uid = spsasc.cor_uid " +
                 "LEFT JOIN hospital h ON spsash.hospital_uid = h.uid  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsas.`section` = :section AND c.cor  = :countryOfResidence " +
-                "AND sps.publish_flag = {PUBLISHED}";
+                "AND sps.publish_flag = {PUBLISHED} GROUP BY sps.uid ";
 
         sql = getPublishVersion(version, sql);
 
