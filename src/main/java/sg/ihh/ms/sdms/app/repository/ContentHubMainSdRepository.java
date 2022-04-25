@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import sg.ihh.ms.sdms.app.model.*;
 
 import java.util.ArrayList;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -380,5 +379,50 @@ public class ContentHubMainSdRepository extends BaseRepository {
         return result;
     }
     //END - Content Hub Main Icon Content Block
+
+    //START - Get Content Hub Main with Item URLs
+    public List<ContentHubMain> getContentHubMainList(Version version, List<String> languageList, String contentHubMItemUrls, String hospitalCode) {
+        final String methodName = "getContentHubMainList";
+        start(methodName);
+
+        // parse the list of item urls into an array
+        String[] itemUrls = contentHubMItemUrls.split(",");
+
+        // iterate through the string array to get the content hub
+        List<ContentHubMain> list = new ArrayList<>();
+
+        for (String contentHubMUrl : itemUrls) {
+
+            String sql = "SELECT chms.* FROM content_hub_main_sd chms " +
+                    "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url " +
+                    "AND chms.publish_flag = {PUBLISHED}";
+
+            sql = getPublishVersion(version, sql);
+
+            ContentHubMain result = new ContentHubMain();
+            try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+                query.bindList("languageList", languageList).bind("item_url", contentHubMUrl);
+                result = query.mapToBean(ContentHubMain.class).one();
+
+            } catch (Exception ex) {
+                log.error(methodName, ex);
+            }
+
+            if (result.getPageTitle() != null && result.getPageTitle().length() > 0) {
+                Map<String, Object> metadataDetails = getMetadataBasicDetail(version, languageList, contentHubMUrl, hospitalCode);
+                if (metadataDetails.get("hospital_main_image") != null && !metadataDetails.get("hospital_main_image").equals("")) {
+                    result.setMainImage((String) metadataDetails.get("hospital_main_image"));
+                }
+                if (metadataDetails.get("hospital_main_image_alt_text") != null && !metadataDetails.get("hospital_main_image_alt_text").equals("")) {
+                    result.setMainImageAltText((String) metadataDetails.get("hospital_main_image_alt_text"));
+                }
+
+                list.add(result);
+            }
+        }
+        completed(methodName);
+        return list;
+    }
+    //END - Get Content Hub Main with Item URLs
 
 }
