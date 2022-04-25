@@ -23,12 +23,12 @@ public class LocationSdRepository  extends BaseRepository {
         final String methodName = "getLocationByItemUrl";
         start(methodName);
         String sql ="SELECT ls.uid, ls.language_code, ls.location_title, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.publish_flag, ls.created_dt, ls.modified_dt FROM location_sd ls " +
-                "LEFT JOIN location_sd_contact lsc  ON ls.uid = lsc.location_sd_uid " +
                 "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid " +
                 "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid " +
                 "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid " +
                 "WHERE ls.language_code IN(<languageList>) AND ls.item_url IN(<itemUrls>) AND h.hospital = :hospital " +
-                "AND ls.publish_flag = {PUBLISHED}";
+                "AND ls.publish_flag = {PUBLISHED} " +
+                "GROUP BY ls.uid ";
 
         sql = getPublishVersion(version, sql);
 
