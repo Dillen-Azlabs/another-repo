@@ -32,8 +32,8 @@ public class LocationSd extends BaseModel {
     private String fax;
     @JsonProperty("email")
     private String email;
-    @JsonIgnore
-    protected int order;
+    @JsonProperty("order")
+    protected int displayOrder;
 
     public LocationSd() {
         // empty constructor
@@ -127,13 +127,11 @@ public class LocationSd extends BaseModel {
         this.email = email;
     }
 
-    @Override
-    public int getOrder() {
-        return order;
+    public int getDisplayOrder() {
+        return displayOrder;
     }
 
-    @Override
-    public void setOrder(int order) {
-        this.order = order;
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }
