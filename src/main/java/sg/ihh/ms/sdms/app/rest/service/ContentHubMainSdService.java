@@ -18,11 +18,8 @@ import sg.ihh.ms.sdms.app.repository.ContentHubMainSdRepository;
 import sg.ihh.ms.sdms.app.rest.model.ContentHubMainAwardListResponse;
 import sg.ihh.ms.sdms.app.rest.model.ContentHubMainBasicDetailListResponse;
 import sg.ihh.ms.sdms.app.rest.model.*;
-import sg.ihh.ms.sdms.app.rest.model.ContentHubMainAwardListResponse;
-import sg.ihh.ms.sdms.app.rest.model.ContentHubMainBasicDetailListResponse;
 import sg.ihh.ms.sdms.app.rest.model.ContentHubMainIconContentListResponse;
 import sg.ihh.ms.sdms.app.rest.model.ContentHubMainCtaListResponse;
-import sg.ihh.ms.sdms.app.rest.model.*;
 
 
 import javax.validation.constraints.Pattern;
@@ -215,6 +212,29 @@ public class ContentHubMainSdService extends BaseService {
         return response;
     }
     //END - Content Hub Main Accordion Block
+
+    //START - Get Content Hub Main by Item URLs Block
+    @RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ContentHubMainsListResponse getContentHubMains(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("contentHubMItemUrls") String contentHubMItemUrls,
+            @RequestParam("hospitalCode") String hospitalCode){
+        final String methodName = "getContentHubMains";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<ContentHubMain> result = repository.getContentHubMainList(Version.getVersion(version), languageList, contentHubMItemUrls, hospitalCode);
+
+        ContentHubMainsListResponse response = new ContentHubMainsListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Get Content Hub Main by Item URLs Block
 
 
 }
