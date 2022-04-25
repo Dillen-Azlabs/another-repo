@@ -440,7 +440,7 @@ public class SpecialtySdRepository extends BaseRepository{
         SpecialtyRelatedData specialtyRelatedData = getSpecialtySd(version, languageList, specialtyItemUrl);
         List<SpecialtyRelatedDataCondition> relatedConditions = getRelatedDataConditions(version,specialtyRelatedData.getSpecialtyUid());
 
-        List<SpecialtyRelatedDataTreatment> relatedTreatments = getRelatedTreatments(version, specialtyRelatedData.getSpecialtyUid());
+        List<SpecialtyRelatedDataTreatment> relatedTreatments = getRelatedTreatments(version, specialtyRelatedData.getSpecialtyUid(), languageList);
 
         specialtyRelatedData.setRelatedConditions(relatedConditions);
         specialtyRelatedData.setRelatedTreatments(relatedTreatments);
@@ -527,7 +527,7 @@ public class SpecialtySdRepository extends BaseRepository{
         return result;
     }
 
-    private List<SpecialtyRelatedDataTreatment> getRelatedTreatments(Version version,String uid)
+    private List<SpecialtyRelatedDataTreatment> getRelatedTreatments(Version version,String uid, List<String> languageList)
     {
         String methodName = "getRelatedTreatments";
         /*
@@ -539,13 +539,17 @@ public class SpecialtySdRepository extends BaseRepository{
           Return the pair of (item_url, treatment_h1_display). Ensure publish_flag is DRAFT.
           */
 
-        String query1 = "SELECT item_url, treatment_h1_display FROM test_treatment_primary_specialty ttps " +
-                "INNER JOIN test_treatment_sd tts  ON tts.primary_treatment_uid = ttps.test_treatment_uid  " +
-                " WHERE ttps.specialty_uid = :uid";
 
-        String query2 = "SELECT test_treatment_uid FROM test_treatment_other_specialty WHERE specialty_uid = :uid";
 
-        String query3 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd WHERE primary_treatment_uid =:uid";
+
+
+        String query1 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd tts "+
+        "INNER JOIN test_treatment_primary_specialty ttps  ON tts.primary_treatment_uid = ttps.test_treatment_uid "+
+        "WHERE tts.language_code IN(<languageList>) AND ttps.specialty_uid = :uid ";
+
+        String query2 = "SELECT test_treatment_uid FROM test_treatment_other_specialty ttos WHERE ttos.language_code IN(<languageList>) AND ttos.specialty_uid = :uid ";
+
+        String query3 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd tts WHERE tts.language_code IN(<languageList>) AND tts.primary_treatment_uid =:uid ";
 
         query1 = getPublishVersion(version, query1);
         query2 = getPublishVersion(version, query2);
@@ -558,17 +562,17 @@ public class SpecialtySdRepository extends BaseRepository{
             List<String> conditionUid = new ArrayList<>();
             List<SpecialtyRelatedDataTreatment> list = new ArrayList<>();
             Query q1 = h.createQuery(query1);
-            q1.bind("uid", uid);
+            q1.bindList("languageList", languageList).bind("uid", uid);
             list.addAll(q1.mapToBean(SpecialtyRelatedDataTreatment.class).list());
 
             Query q2 = h.createQuery(query2);
-            q2.bind("uid", uid);
+            q2.bindList("languageList", languageList).bind("uid", uid);
             conditionUid = q2.mapTo(String.class).list();
 
             if (!conditionUid.isEmpty()) {
                 for (String primaryUid : conditionUid) {
                     Query q3 = h.createQuery(query3);
-                    q3.bind("uid", primaryUid);
+                    q3.bindList("languageList", languageList).bind("uid", primaryUid);
                     list.addAll(q3.mapToBean(SpecialtyRelatedDataTreatment.class).list());
                 }
             }

@@ -13,6 +13,7 @@ import sg.ihh.ms.sdms.app.rest.model.*;
 
 import javax.validation.constraints.Pattern;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "specialties", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -143,6 +144,8 @@ public class SpecialtySdService extends BaseService{
         final String methodName = "getSpecialtyRelatedTreatment";
         start(methodName);
 
+
+
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
@@ -202,19 +205,36 @@ public class SpecialtySdService extends BaseService{
     @RequestMapping(path = "relatedData", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public SpecialtyRelatedDataListResponse getSpecialtyRelatedData(
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
-            @RequestParam("languageCode") String languageCode,
-            @RequestParam("specialtyUrl") String specialtyUrl) {
+            @RequestParam Map<String, String> requestParams) {
         final String methodName = "getSpecialtyRelatedData";
         start(methodName);
 
-        // Language Code
-        List<String> languageList = getLanguageList(languageCode);
-
-        SpecialtyRelatedData result = repository.getSpecialtyRelatedData(Version.getVersion(version), languageList, specialtyUrl);
-
-        //result = crdProcessor.processList(result, languageCode);
-
+        SpecialtyRelatedData result = new SpecialtyRelatedData();
         SpecialtyRelatedDataListResponse response = new SpecialtyRelatedDataListResponse(result);
+
+
+        if(requestParams.containsKey("specialtyUrl")){
+            String specialtyUrl = requestParams.get("specialtyUrl");
+
+            if (requestParams.containsKey("languageCode")){
+                String languageCode = requestParams.get("languageCode");
+                List<String> languageList = getLanguageList(languageCode);
+                if (languageCode.isEmpty()){
+                    languageList = getLanguageList("EN");
+                    result = repository.getSpecialtyRelatedData(Version.getVersion(version), languageList, specialtyUrl);
+                    response = new SpecialtyRelatedDataListResponse(result);
+                    return response;
+                }
+                result = repository.getSpecialtyRelatedData(Version.getVersion(version), languageList, specialtyUrl);
+                response = new SpecialtyRelatedDataListResponse(result);
+                return response;
+
+            }
+            result = repository.getSpecialtyRelatedData(Version.getVersion(version), getLanguageList("EN"), specialtyUrl);
+            response = new SpecialtyRelatedDataListResponse(result);
+            return response;
+        }
+
 
         completed(methodName);
         return response;
