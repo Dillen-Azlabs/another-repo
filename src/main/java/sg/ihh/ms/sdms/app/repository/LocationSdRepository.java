@@ -60,8 +60,7 @@ public class LocationSdRepository  extends BaseRepository {
                 "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid " +
                 "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid " +
                 "WHERE ls.language_code IN(<languageList>) AND ls.item_url IN(<itemUrls>) AND h.hospital = :hospital " +
-                "AND ls.publish_flag = {PUBLISHED} " +
-                "GROUP BY ls.uid ";
+                "AND ls.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
