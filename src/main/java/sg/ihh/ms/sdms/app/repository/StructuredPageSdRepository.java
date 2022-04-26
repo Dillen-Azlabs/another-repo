@@ -577,14 +577,14 @@ public class StructuredPageSdRepository extends BaseRepository {
                 " LEFT JOIN structured_page_sd_tab_section spsts ON sps.uid = spsts.structured_page_sd_uid " +
                 " LEFT JOIN structured_page_sd_tab_section_hospital spstsh ON spsts.uid = spstsh.structured_page_sd_tab_section_uid " +
                 " LEFT JOIN hospital h ON h.uid = spstsh.hospital_uid " +
-                " WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = 'Mount Elizabeth Hospital'" +
+                " WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospitalCode" +
                 " AND sps.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
         StructuredPageTab result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
+            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl).bind("hospitalCode", hospitalCode);
             result = query.mapToBean(StructuredPageTab.class).one();
 
         } catch (Exception ex) {
