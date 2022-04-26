@@ -51,14 +51,15 @@ public class ContentHubSubSdRepository extends BaseRepository{
         String sql = "SELECT chss.*, chssm.overview, chssm.social_summary  FROM content_hub_sub_sd chss " +
                 "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid " +
                 "LEFT JOIN content_hub_sub_sd_metadata chssm  ON chss.uid = chssm.content_hub_sub_sd_uid " +
+                "LEFT JOIN hospital h ON h.uid = chssm.hospital_uid " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain " +
-                "AND chss.publish_flag = {PUBLISHED}";
+                "AND chss.publish_flag = {PUBLISHED} AND h.hospital = :hospitalCode";
 
         sql = getPublishVersion(version, sql);
 
         ContentHubSubBasicDetail result = new ContentHubSubBasicDetail();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("itemUrlSub", contentHubSUrl).bind("itemUrlMain", contentHubMUrl);
+            query.bindList("languageList", languageList).bind("itemUrlSub", contentHubSUrl).bind("itemUrlMain", contentHubMUrl).bind("hospitalCode", hospitalCode);
             result = query.mapToBean(ContentHubSubBasicDetail.class).one();
 
         } catch (Exception ex) {
