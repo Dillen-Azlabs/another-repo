@@ -66,8 +66,8 @@ public class ContentHubSubSdRepository extends BaseRepository{
         }
 
         if (result != null) {
-            Map<String, Object> metadataDetails = getMetadataBasicDetail(version, languageList, contentHubSUrl, hospitalCode);
-            Map<String, Object> contentHubMain = getContentHubMain(version, languageList, contentHubSUrl);
+            Map<String, Object> metadataDetails = getMetadataBasicDetail(version, languageList, contentHubSUrl,contentHubMUrl, hospitalCode);
+            Map<String, Object> contentHubMain = getContentHubMain(version, languageList, contentHubSUrl,contentHubMUrl);
             if (metadataDetails.get("hospital_main_image") != null && !metadataDetails.get("hospital_main_image").equals("")) {
                 result.setMainImage((String) metadataDetails.get("hospital_main_image"));
             }
@@ -82,20 +82,20 @@ public class ContentHubSubSdRepository extends BaseRepository{
         completed(methodName);
         return result;
     }
-    public Map<String, Object> getContentHubMain(Version version, List<String> languageList, String contentHubSUrl) {
+    public Map<String, Object> getContentHubMain(Version version, List<String> languageList, String contentHubSUrl, String contentHubMUrl) {
         final String methodName = "getContentHubMain";
         start(methodName);
 
-        String sql = "SELECT chss.language_code,chss.item_url,chss.publish_flag, chms.page_title FROM content_hub_sub_sd chss " +
+        String sql = "SELECT  chms.page_title FROM content_hub_sub_sd chss " +
                 "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid " +
-                "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :item_url " +
+                "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain " +
                 "AND chss.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", contentHubSUrl);
+            query.bindList("languageList", languageList).bind("itemUrlSub", contentHubSUrl).bind("itemUrlMain", contentHubMUrl);
             result = query.mapToMap().one();
 
         } catch (Exception ex) {
@@ -104,21 +104,22 @@ public class ContentHubSubSdRepository extends BaseRepository{
         completed(methodName);
         return result;
     }
-    public Map<String, Object> getMetadataBasicDetail(Version version, List<String> languageList, String contentHubSUrl, String hospitalCode) {
+    public Map<String, Object> getMetadataBasicDetail(Version version, List<String> languageList, String contentHubSUrl,String contentHubMUrl, String hospitalCode) {
         final String methodName = "getMetadataBasicDetail";
         start(methodName);
 
         String sql = "SELECT chssm.hospital_main_image, chssm.hospital_main_image_alt_text, chssm.social_summary, chssm.meta_title, chssm.meta_description  FROM content_hub_sub_sd chss " +
                 "LEFT JOIN content_hub_sub_sd_metadata chssm  ON chss.uid = chssm.content_hub_sub_sd_uid " +
+                "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid " +
                 "LEFT JOIN hospital h ON chssm.hospital_uid  = h.uid " +
-                "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :item_url AND h.hospital = :hospital " +
+                "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain AND h.hospital = :hospital " +
                 "AND chss.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("item_url", contentHubSUrl).bind("hospital", hospitalCode);
+            query.bindList("languageList", languageList).bind("itemUrlSub", contentHubSUrl).bind("itemUrlMain", contentHubMUrl).bind("hospital", hospitalCode);
             result = query.mapToMap().one();
 
         } catch (Exception ex) {
