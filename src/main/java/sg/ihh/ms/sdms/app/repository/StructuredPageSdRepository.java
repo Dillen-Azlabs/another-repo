@@ -573,7 +573,7 @@ public class StructuredPageSdRepository extends BaseRepository {
         final String methodName = "getStructuredPageTab";
         start(methodName);
 
-        String sql = " SELECT spsts.tab_section_intro as sectionIntro FROM structured_page_sd sps " +
+        String sql = " SELECT spsts.*, spsts.tab_section_intro as sectionIntro FROM structured_page_sd sps " +
                 " LEFT JOIN structured_page_sd_tab_section spsts ON sps.uid = spsts.structured_page_sd_uid " +
                 " LEFT JOIN structured_page_sd_tab_section_hospital spstsh ON spsts.uid = spstsh.structured_page_sd_tab_section_uid " +
                 " LEFT JOIN hospital h ON h.uid = spstsh.hospital_uid " +
