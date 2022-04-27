@@ -255,12 +255,10 @@ public class StructuredPageSdRepository extends BaseRepository {
         return structuredPageCardCarousel;
     }
     public StructuredPageCardCarousel getStructuredPageCard(Version version, List<String> languageList, String structuredPageUrl) {
-        final String methodName = "getStructuredPage";
+        final String methodName = "getStructuredPageCard";
         start(methodName);
 
-        String sql = "SELECT Count (DISTINCT sps.uid),spsc.*, spsa.section_intro  FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_card spsc ON sps.uid =spsc.structured_page_sd_uid " +
-                "LEFT JOIN structured_page_sd_accordion spsa ON sps.uid =spsa.structured_page_sd_uid " +
+        String sql = "SELECT sps.*, sps.card_section_intro AS section_intro  FROM structured_page_sd sps " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -279,40 +277,25 @@ public class StructuredPageSdRepository extends BaseRepository {
         return result;
     }
 
-    private List<StructuredPageCardCarouselItem> getStructuredPageCardCarouselItem(Version version,List<String> languageList, String structuredPageUrl)
-    {
+    private List<StructuredPageCardCarouselItem> getStructuredPageCardCarouselItem(Version version,List<String> languageList, String structuredPageUrl) {
         String methodName = "getStructuredPageCardCarouselItem";
-        String structuredPageSql = "SELECT sps.uid  FROM structured_page_sd sps " +
-                " WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
+
+        String sql = "SELECT spsc.* FROM structured_page_sd_card spsc  " +
+                "LEFT JOIN structured_page_sd sps ON sps.uid = spsc.structured_page_sd_uid " +
+                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
-        String structuredPageCardSql = "SELECT spsc.* FROM structured_page_sd_card spsc  " +
-                " WHERE spsc.structured_page_sd_uid = :sdUid " +
-                " AND publish_flag = {PUBLISHED}";
-
-        structuredPageSql = getPublishVersion(version, structuredPageSql);
-        structuredPageCardSql = getPublishVersion(version, structuredPageCardSql);
+        sql = getPublishVersion(version, sql);
 
         List<StructuredPageCardCarouselItem> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
+            result = query.mapToBean(StructuredPageCardCarouselItem.class).list();
 
-        try (Handle h = getHandle()) {
-
-            List<String> structuredPageUid = new ArrayList<>();
-            Query query1 = h.createQuery(structuredPageSql);
-            query1.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
-            structuredPageUid = query1.mapTo(String.class).list();
-            if (!structuredPageUid.isEmpty()) {
-                for (String sdUid : structuredPageUid) {
-                    Query query2 = h.createQuery(structuredPageCardSql);
-                    query2.bind("sdUid", sdUid);
-                    result = query2.mapToBean(StructuredPageCardCarouselItem.class).list();
-                }
-            }
-
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             log.error(methodName, ex);
         }
+
         return result;
     }
     //END - Structured Page Card Carousel Block
