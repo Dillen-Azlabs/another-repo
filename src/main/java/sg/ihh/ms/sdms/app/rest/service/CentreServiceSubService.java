@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sg.ihh.ms.sdms.app.model.LocationSd;
 import sg.ihh.ms.sdms.app.model.Version;
-import sg.ihh.ms.sdms.app.repository.model.CentreServiceSubSdRepository;
+import sg.ihh.ms.sdms.app.repository.CentreServiceSubSdRepository;
 import sg.ihh.ms.sdms.app.rest.model.LocationSdListResponse;
 
 import javax.validation.constraints.Pattern;
