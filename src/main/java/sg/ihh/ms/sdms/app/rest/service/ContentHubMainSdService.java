@@ -236,6 +236,26 @@ public class ContentHubMainSdService extends BaseService {
     }
     //END - Get Content Hub Main by Item URLs Block
 
+    //START - Content Hub Main List All Block
+    @RequestMapping(path = "list", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ContentHubMainItemListResponse getContentHubMainList(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode){
+        final String methodName = "getContentHubMainList";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<ContentHubMainItem> result = repository.getContentHubMainItemList(Version.getVersion(version), languageList);
+
+        ContentHubMainItemListResponse response = new ContentHubMainItemListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Content Hub Main List All Block
 
 }
 
