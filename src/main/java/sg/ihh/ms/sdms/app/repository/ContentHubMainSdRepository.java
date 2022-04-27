@@ -425,4 +425,28 @@ public class ContentHubMainSdRepository extends BaseRepository {
     }
     //END - Get Content Hub Main with Item URLs
 
+    //START - Get All Content Hub Main Items
+    public List<ContentHubMainItem> getContentHubMainItemList(Version version, List<String> languageList) {
+        final String methodName = "getContentHubMainItemList";
+        start(methodName);
+
+        String sql = "SELECT chms.* FROM content_hub_main_sd chms " +
+                "WHERE chms.language_code IN(<languageList>) " +
+                "AND chms.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<ContentHubMainItem> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList);
+            result = query.mapToBean(ContentHubMainItem.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+    //END - Get All Content Hub Main Items
 }
