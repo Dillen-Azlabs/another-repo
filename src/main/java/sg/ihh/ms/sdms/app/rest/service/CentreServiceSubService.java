@@ -24,25 +24,4 @@ public class CentreServiceSubService extends BaseService{
         log = getLogger(this.getClass());
     }
 
-    @RequestMapping(path = "locations", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public LocationSdListResponse getCentreServiceSubLocation(
-            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
-                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
-            @RequestParam("languageCode") String languageCode,
-            @RequestParam("centreServiceMUrl") String centreServiceMUrl,
-            @RequestParam("centreServiceSUrl") String centreServiceSUrl,
-            @RequestParam("hospitalCode") String hospitalCode) {
-        final String methodName = "getCentreServiceSubLocation";
-        start(methodName);
-
-        // Language Code
-        List<String> languageList = getLanguageList(languageCode);
-
-        List<LocationSd> result = repository.getLocationByCentreService(Version.getVersion(version), languageList, centreServiceMUrl,centreServiceSUrl, hospitalCode);
-
-        LocationSdListResponse response = new LocationSdListResponse(result);
-
-        completed(methodName);
-        return response;
-    }
 }
