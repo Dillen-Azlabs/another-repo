@@ -3,13 +3,12 @@ package sg.ihh.ms.sdms.app.repository;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.statement.Query;
 import org.springframework.stereotype.Repository;
-import sg.ihh.ms.sdms.app.model.LocationSd;
-import sg.ihh.ms.sdms.app.model.LocationSdContact;
-import sg.ihh.ms.sdms.app.model.Version;
-import sg.ihh.ms.sdms.app.repository.BaseRepository;
+import sg.ihh.ms.sdms.app.model.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class CentreServiceSubSdRepository extends BaseRepository {
@@ -18,4 +17,439 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         log = getLogger(this.getClass());
     }
 
+    //START - Get Locations by Centre & Service
+    public List<LocationSd> getLocationByCentreService(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
+        final String methodName = "getLocationByCentreService";
+        start(methodName);
+        String sql =" SELECT ls.uid, ls.language_code, ls.location_title, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.display_order, ls.publish_flag, ls.created_dt, ls.modified_dt FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid " +
+                "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid " +
+                "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid " +
+                "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid " +
+                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON csssl.uid  = cssslh.centre_service_sub_sd_location_uid " +
+                "LEFT JOIN hospital h ON cssslh.hospital_uid  = h.uid " +
+                "WHERE ls.language_code IN(<languageList>)AND csms.item_url = :itemUrlMain AND csss.item_url = :itemUrlSub  AND h.hospital = :hospital " +
+                "AND ls.publish_flag = {PUBLISHED} " +
+                "GROUP BY ls.uid ";
+
+        sql = getPublishVersion(version, sql);
+
+        List<LocationSd> result = new ArrayList<>();
+
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlMain", itemUrlMain).bind("itemUrlSub", itemUrlSub).bind("hospital", hospitalCode);
+            result = query.mapToBean(LocationSd.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        for (LocationSd locationSd : result) {
+
+            locationSd.setContactNumbers(getLocationSdContact(version,languageList,itemUrlMain,itemUrlSub,hospitalCode));
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    private List<LocationSdContact> getLocationSdContact(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
+        final String methodName = "getLocationSdContact";
+        start(methodName);
+        String sql ="SELECT lsc.contact_header, lsc.contact_number, lsc.display_order  FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid " +
+                "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid " +
+                "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid " +
+                "LEFT JOIN location_sd_contact lsc  ON ls.uid = lsc.location_sd_uid " +
+                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON csssl.uid  = cssslh.centre_service_sub_sd_location_uid " +
+                "LEFT JOIN hospital h ON cssslh.hospital_uid  = h.uid " +
+                "WHERE ls.language_code IN(<languageList>)AND csms.item_url = :itemUrlMain AND csss.item_url = :itemUrlSub  AND h.hospital = :hospital " +
+                "AND ls.publish_flag = {PUBLISHED} " +
+                "GROUP BY ls.uid ";
+
+        sql = getPublishVersion(version, sql);
+
+        List<LocationSdContact> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlMain", itemUrlMain).bind("itemUrlSub", itemUrlSub).bind("hospital", hospitalCode);
+            result = query.mapToBean(LocationSdContact.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+
+        completed(methodName);
+
+        return result;
+    }
+    //END - Get Locations by Centre & Service
+
+    //Start Get Centre & Service Sub Award List
+    public CentreServiceSubAward getCentreServiceSubAward(Version version, List<String> languageList,String centreServiceMUrl,String centreServiceSUrl, String hospitalCode) {
+        final String methodName = "getCentreServiceSubAward";
+        start(methodName);
+
+        String sql = "SELECT csss.uid, csss.language_code, csss.publish_flag, csss.created_dt, csss.modified_dt FROM centre_service_sub_sd csss  " +
+                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid   " +
+                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON csss.uid = csssas.centre_service_sub_sd_uid   " +
+                "LEFT JOIN centre_service_sub_sd_award_section_hospital csssash  ON csssas.uid = csssash.centre_service_sub_sd_award_section_uid   " +
+                "LEFT JOIN hospital h ON csssash.hospital_uid = h.uid    " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
+                "AND csss.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        CentreServiceSubAward result = new CentreServiceSubAward();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlMain", centreServiceMUrl).bind("hospital", hospitalCode).bind("itemUrlSub", centreServiceSUrl);
+            result = query.mapToBean(CentreServiceSubAward.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+            result.setAwardItem(getAward(version,languageList,centreServiceMUrl,hospitalCode,centreServiceSUrl));
+            result.setSectionIntro(getCentreServiceAwardSection(version,languageList,centreServiceMUrl,hospitalCode,centreServiceSUrl));
+
+        completed(methodName);
+        return result;
+    }
+
+    public String getCentreServiceAwardSection(Version version, List<String> languageList, String centreServiceMUrl, String hospitalCode, String centreServiceSUrl) {
+        final String methodName = "getCentreServiceAwardSection";
+        start(methodName);
+
+        String sql = "SELECT csssas.section_intro  FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid  " +
+                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON csss.uid = csssas.centre_service_sub_sd_uid  " +
+                "LEFT JOIN centre_service_sub_sd_award_section_hospital csssash  ON csssas.uid = csssash.centre_service_sub_sd_award_section_uid  " +
+                "LEFT JOIN hospital h ON csssash.hospital_uid = h.uid  " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
+                "AND csss.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        String result = null;
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlMain", centreServiceMUrl).bind("hospital", hospitalCode).bind("itemUrlSub", centreServiceSUrl);
+            result = query.mapTo(String.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
+    private List<CentreServiceSubAwardItem> getAward(Version version, List<String> languageList, String centreServiceMUrl, String hospitalCode, String centreServiceSUrl)
+    {
+        String methodName = "getAward";
+        String sql = "SELECT csssa.heading, csssa.icon, csssa.description, csssa.display_order FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid   " +
+                "LEFT JOIN centre_service_sub_sd_award csssa  ON csss.uid = csssa.centre_service_sub_sd_uid  " +
+                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON csss.uid = csssas.centre_service_sub_sd_uid   " +
+                "LEFT JOIN centre_service_sub_sd_award_section_hospital csssash  ON csssas.uid = csssash.centre_service_sub_sd_award_section_uid   " +
+                "LEFT JOIN hospital h ON csssash.hospital_uid  = h.uid  " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
+                "AND csss.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<CentreServiceSubAwardItem> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlMain", centreServiceMUrl).bind("hospital", hospitalCode).bind("itemUrlSub", centreServiceSUrl);
+            result = query.mapToBean(CentreServiceSubAwardItem.class).list();
+        }
+        catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        return result;
+    }
+    //END getCentreServiceSubAward
+
+    //START - Centre Service Sub CTA  Block
+    public CentreServiceSubCta getCentreServiceSubCta(Version version, List<String> languageList, String centerServiceSUrl, String centerServiceMUrl, String hospitalCode) {
+        final String methodName = "getCentreServiceSubCta";
+        start(methodName);
+
+        String sql = "SELECT csssm.* FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid   " +
+                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csssm.centre_service_sub_sd_uid  = csss.uid  " +
+                "LEFT JOIN hospital h ON csssm.hospital_uid = h.uid " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain  " +
+                "AND csss.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        CentreServiceSubCta result = new CentreServiceSubCta();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlSub", centerServiceSUrl).bind("hospital", hospitalCode).bind("itemUrlMain", centerServiceMUrl);
+            result = query.mapToBean(CentreServiceSubCta.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+    //END - Centre Service Sub CTA  Block
+
+
+    //START - Centre Service Main Accordion Block
+    public List<CentreServiceSubAccordion> getCentreServiceSubAccordion(Version version, List<String> languageList, String centerServiceSUrl, String centerServiceMUrl, String hospitalCode) {
+        final String methodName = "getCentreServiceSubAccordion";
+        start(methodName);
+
+        String sql = "SELECT csss.*, csssa.section_intro, csssa.title, csssa.body, csssa.anchor_id       FROM centre_service_sub_sd csss   " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid   " +
+                "LEFT JOIN centre_service_sub_sd_accordion csssa ON csss.uid = csssa.centre_service_sub_sd_uid " +
+                "LEFT JOIN centre_service_sub_sd_accordion_hospital csssah ON csssa.uid = csssah.centre_service_sub_sd_accordion_uid  " +
+                "LEFT JOIN hospital h ON csssah.hospital_uid = h.uid    " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
+                "AND csss.publish_flag = {PUBLISHED}";
+
+
+        sql = getPublishVersion(version, sql);
+
+        List<CentreServiceSubAccordion> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlSub", centerServiceSUrl).bind("hospital", hospitalCode).bind("itemUrlMain", centerServiceMUrl);
+            result = query.mapToBean(CentreServiceSubAccordion.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Centre Service Sub Accordion Block
+
+    //START - Centre Service Sub Photo Gallery Block
+    public CentreServicePhotoGallery getCentreServicePagePhotoGallery(Version version, List<String> languageList, String centerServiceSUrl, String centerServiceMUrl, String hospitalCode) {
+        final String methodName = "getCentreServicePagePhotoGallery";
+        start(methodName);
+
+        CentreServicePhotoGallery centreServicePhotoGallery = getCentreServicePhoto(version, languageList, centerServiceSUrl, centerServiceMUrl, hospitalCode);
+
+        if (centreServicePhotoGallery != null) {
+            List<CentreServicePhotoGalleryItem> centreServicePhotoGalleryItems = getCentreServicePhotoGalleryItem(version, languageList, centerServiceSUrl, centerServiceMUrl, hospitalCode);
+
+            centreServicePhotoGallery.setGalleryItems(centreServicePhotoGalleryItems);
+        }
+
+        completed(methodName);
+        return centreServicePhotoGallery;
+    }
+    public CentreServicePhotoGallery getCentreServicePhoto(Version version, List<String> languageList, String centerServiceSUrl, String centerServiceMUrl, String hospitalCode) {
+        final String methodName = "getCentreServicePhoto";
+        start(methodName);
+
+        String sql = "SELECT csss.*, csssps.section_intro FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid " +
+                "LEFT JOIN centre_service_sub_sd_photo_section csssps ON csss.uid = csssps.centre_service_sub_sd_uid " +
+                "LEFT JOIN centre_service_sub_sd_photo_section_hospital cssspsh ON csssps.uid  = cssspsh.centre_service_sub_sd_photo_section_uid  " +
+                "LEFT JOIN hospital h  ON h.uid  = cssspsh.hospital_uid " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
+                "AND csss.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        CentreServicePhotoGallery result = new CentreServicePhotoGallery();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlSub", centerServiceSUrl).bind("hospital", hospitalCode).bind("itemUrlMain", centerServiceMUrl);
+            result = query.mapToBean(CentreServicePhotoGallery.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
+    private List<CentreServicePhotoGalleryItem> getCentreServicePhotoGalleryItem(Version version, List<String> languageList, String centerServiceSUrl, String centerServiceMUrl, String hospitalCode)
+    {
+        String methodName = "getCentreServicePhotoGalleryItem";
+        String sql = "SELECT csssp.* FROM centre_service_sub_sd csss  " +
+                "LEFT JOIN centre_service_sub_sd_photo csssp ON csss.uid = csssp.centre_service_sub_sd_uid  " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid " +
+                "LEFT JOIN centre_service_sub_sd_photo_hospital csssph ON csssp.uid  = csssph.centre_service_sub_sd_photo_uid " +
+                "LEFT JOIN hospital h  ON h.uid  = csssph.hospital_uid " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
+                "AND csss.publish_flag = {PUBLISHED}";
+
+
+        sql = getPublishVersion(version, sql);
+
+        List<CentreServicePhotoGalleryItem> result = new ArrayList<>();
+
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlSub", centerServiceSUrl).bind("hospital", hospitalCode).bind("itemUrlMain", centerServiceMUrl);
+            result = query.mapToBean(CentreServicePhotoGalleryItem.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        return result;
+    }
+    //END - Centre Service Sub Photo Gallery Block
+
+
+    //START - Centre Service Sub Body Section Block
+    public List<CentreServiceSubBodySection> getCentreServiceSubBodySection(Version version, List<String> languageList, String centerServiceSUrl, String centerServiceMUrl, String hospitalCode) {
+        final String methodName = "getCentreServiceSubBodySection";
+        start(methodName);
+
+        String sql = "SELECT csssb.*  FROM centre_service_sub_sd csss  " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid " +
+                "LEFT JOIN centre_service_sub_sd_body csssb ON (csss.uid = csssb.centre_service_sub_sd_uid  AND csss.status = csssb.status AND csss.language_code = csssb.language_code)" +
+                "LEFT JOIN centre_service_sub_sd_body_hospital csssbh ON csssb.uid  = csssbh.centre_service_sub_sd_body_uid  " +
+                "LEFT JOIN hospital h  ON h.uid  = csssbh.hospital_uid " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
+                "AND csss.publish_flag = {PUBLISHED}";
+
+
+        sql = getPublishVersion(version, sql);
+
+        List<CentreServiceSubBodySection> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlSub", centerServiceSUrl).bind("hospital", hospitalCode).bind("itemUrlMain", centerServiceMUrl);
+            result = query.mapToBean(CentreServiceSubBodySection.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Centre Service Sub Body Section Block
+
+    //START - Centre Service Sub Basic Detail Block
+    public CentreServiceSubBasicDetail getCentreServiceSubBasicDetail(Version version, List<String> languageList,  String centreServiceSUrl, String centreServiceMUrl, String hospitalCode) {
+        final String methodName = "getCentreServiceSubBasicDetail";
+        start(methodName);
+
+        String sql = "SELECT csss.*  FROM centre_service_sub_sd csss  " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid " +
+                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  " +
+                "LEFT JOIN hospital h ON h.uid = csssm.hospital_uid  " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND h.hospital = :hospital " +
+                "AND csss.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        CentreServiceSubBasicDetail result = new CentreServiceSubBasicDetail();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlSub", centreServiceSUrl).bind("itemUrlMain", centreServiceMUrl).bind("hospital", hospitalCode);
+            result = query.mapToBean(CentreServiceSubBasicDetail.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        if (result != null) {
+            Map<String, Object> metadataDetails = getMetadataBasicDetail(version, languageList, centreServiceSUrl,centreServiceMUrl, hospitalCode);
+            Map<String, Object> centreServiceMain = getCentreServiceMain(version, languageList, centreServiceSUrl,centreServiceMUrl,hospitalCode );
+            if (metadataDetails.get("hospital_main_image") != null && !metadataDetails.get("hospital_main_image").equals("")) {
+                result.setMainImage((String) metadataDetails.get("hospital_main_image"));
+            }
+            if (metadataDetails.get("hospital_main_image_alt_text") != null && !metadataDetails.get("hospital_main_image_alt_text").equals("")) {
+                result.setMainImageAltText((String) metadataDetails.get("hospital_main_image_alt_text"));
+            }
+            result.setCentreServiceMPageTitle((String) centreServiceMain.get("page_title"));
+            result.setSummary((String) centreServiceMain.get("summary"));
+            result.setMetaTitle((String) metadataDetails.get("meta_title"));
+            result.setMetaDescription((String) metadataDetails.get("meta_description"));
+            result.setSocialSummary((String) metadataDetails.get("social_summary"));
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    public Map<String, Object> getCentreServiceMain(Version version, List<String> languageList, String centreServiceSUrl, String centreServiceMUrl, String hospitalCode) {
+        final String methodName = "getCentreServiceMain";
+        start(methodName);
+
+        String sql = "SELECT  csms.page_title, csms.summary FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid " +
+                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  " +
+                "LEFT JOIN hospital h ON h.uid = csssm.hospital_uid  " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND h.hospital = :hospital " +
+                "AND csss.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        Map<String, Object> result = new HashMap<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlSub", centreServiceSUrl).bind("itemUrlMain", centreServiceMUrl).bind("hospital", hospitalCode);
+            result = query.mapToMap().one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    public Map<String, Object> getMetadataBasicDetail(Version version, List<String> languageList, String centreServiceSUrl,String centreServiceMUrl, String hospitalCode) {
+        final String methodName = "getMetadataBasicDetail";
+        start(methodName);
+
+        String sql = "SELECT csmsm.hospital_main_image, csmsm.hospital_main_image_alt_text, csmsm.social_summary, csssm.meta_title, csssm.meta_description FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid " +
+                "LEFT JOIN centre_service_main_sd_metadata csmsm ON csms.uid = csmsm.centre_service_main_sd_uid  " +
+                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid " +
+                "LEFT JOIN hospital h ON csssm.hospital_uid  = h.uid " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND h.hospital = :hospital " +
+                "AND csss.publish_flag = {PUBLISHED} " +
+                "GROUP BY csss.uid";
+
+        sql = getPublishVersion(version, sql);
+
+        Map<String, Object> result = new HashMap<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlSub", centreServiceSUrl).bind("itemUrlMain", centreServiceMUrl).bind("hospital", hospitalCode);
+            result = query.mapToMap().one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Centre Service Sub Basic Detail Block
+
+    //START - Get Locations by Centre & Service
+    public List<CentreServiceSubRelatedSpecialties> getCentreServiceRelatedSpecialties(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
+        final String methodName = "getCentreServiceRelatedSpecialties";
+        start(methodName);
+        String sql ="  SELECT ss.* FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid " +
+                "LEFT JOIN centre_service_main_sd_specialty csmss ON csms.uid = csmss.centre_service_main_sd_uid  " +
+                "LEFT JOIN specialty s ON s.uid = csmss.specialty_uid  " +
+                "LEFT JOIN specialty_sd ss  ON s.uid = ss.specialty_uid " +
+                "LEFT JOIN specialty_sd_metadata ssm ON ss.uid  = ssm.specialty_sd_uid  " +
+                "LEFT JOIN hospital h ON ssm.hospital_uid  = h.uid " +
+                "WHERE ss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain  AND h.hospital = :hospital " +
+                "AND ss.publish_flag = {PUBLISHED} ";
+
+        sql = getPublishVersion(version, sql);
+
+        List<CentreServiceSubRelatedSpecialties> result = new ArrayList<>();
+
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlMain", itemUrlMain).bind("itemUrlSub", itemUrlSub).bind("hospital", hospitalCode);
+            result = query.mapToBean(CentreServiceSubRelatedSpecialties.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    //END - Get Locations by Centre & Service
 }
