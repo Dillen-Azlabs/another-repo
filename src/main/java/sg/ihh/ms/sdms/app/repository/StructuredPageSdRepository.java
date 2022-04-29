@@ -327,7 +327,7 @@ public class StructuredPageSdRepository extends BaseRepository {
 
     //START - Structured Page Photo Gallery Block
     public StructuredPagePhotoGallery getStructuredPagePhotoGallery(Version version, List<String> languageList, String structuredPageUrl) {
-        final String methodName = "getStructuredPageCardCarousel";
+        final String methodName = "getStructuredPagePhotoGallery";
         start(methodName);
 
         StructuredPagePhotoGallery structuredPagePhotoGallery = getStructuredPagePhoto(version, languageList, structuredPageUrl);
