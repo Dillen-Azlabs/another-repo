@@ -162,7 +162,7 @@ public class ContentHubSubSdRepository extends BaseRepository{
         final String methodName = "getContentHubSubAccordion";
         start(methodName);
 
-        String sql = "SELECT chss.*, chssa.section_intro, chssa.title, chssa.content, chssa.anchor_id FROM content_hub_sub_sd chss " +
+        String sql = "SELECT chssa.uid, chssa.language_code, chssa.created_dt, chssa.modified_dt, chssa.publish_flag, chssa.section_intro, chssa.title, chssa.content, chssa.anchor_id, chssa.display_order FROM content_hub_sub_sd chss " +
                 "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid " +
                 "LEFT JOIN content_hub_sub_sd_accordion chssa ON chss.uid = chssa.content_hub_sub_sd_uid " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain " +
