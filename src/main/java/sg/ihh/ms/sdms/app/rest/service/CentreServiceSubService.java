@@ -200,4 +200,26 @@ public class CentreServiceSubService extends BaseService{
         return response;
     }
 
+    @RequestMapping(path = "medicalProfessionals", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public CentreServiceSubMedicalProfessionalListResponse getCentreServiceSubMedicalProfessionals(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("centreServiceMUrl") String centreServiceMUrl,
+            @RequestParam("centreServiceSUrl") String centreServiceSUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getCentreServiceSubMedicalProfessionals";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        CentreServiceSubMedicalProfessionals result = repository.getCentreServiceMedicalProfessionals(Version.getVersion(version), languageList, centreServiceMUrl,centreServiceSUrl, hospitalCode);
+
+        CentreServiceSubMedicalProfessionalListResponse response = new CentreServiceSubMedicalProfessionalListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+
 }
