@@ -192,7 +192,7 @@ public class StructuredPageSdRepository extends BaseRepository {
                 "LEFT JOIN country_of_residence c ON c.uid = spsasc.cor_uid " +
                 "LEFT JOIN hospital h ON spsash.hospital_uid = h.uid  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsas.`section` = :section AND c.cor  = :countryOfResidence " +
-                "AND sps.publish_flag = {PUBLISHED} GROUP BY sps.uid ";
+                "AND sps.publish_flag = {PUBLISHED} ";
 
         sql = getPublishVersion(version, sql);
 
