@@ -178,7 +178,7 @@ public class CentreServiceSubService extends BaseService{
     }
     //END - Centre Service Sub Basic Detail Block
 
-    @RequestMapping(path = "relatedSpecialty", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @RequestMapping(path = "relatedSpecialties", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public CentreServiceSubRelatedSpecialtyListResponse getCentreServiceSubRelatedSpecialty(
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
                     message = "Allowed Values : DRAFT, PUBLISHED") String version,
