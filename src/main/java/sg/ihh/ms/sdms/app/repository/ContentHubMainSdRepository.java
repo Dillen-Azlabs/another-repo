@@ -246,12 +246,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT chms.* FROM content_hub_main_sd chms " +
-                "LEFT JOIN content_hub_main_sd_award_section chmsas  ON chms.uid = chmsas.content_hub_main_sd_uid " +
-                "LEFT JOIN content_hub_main_sd_award_section_country chmsasc ON chmsas.uid = chmsasc.content_hub_main_sd_award_section_uid  " +
-                "LEFT JOIN content_hub_main_sd_award_section_hospital chmsash  ON chmsas.uid = chmsash.content_hub_main_sd_award_section_uid  " +
-                "LEFT JOIN country_of_residence c ON c.uid = chmsasc.cor_uid " +
-                "LEFT JOIN hospital h ON chmsash.hospital_uid  = h.uid   " +
-                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url AND h.hospital = :hospital AND c.cor  = :countryOfResidence " +
+                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url " +
                 "AND chms.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
@@ -264,9 +259,16 @@ public class ContentHubMainSdRepository extends BaseRepository {
         } catch (Exception ex) {
             log.error(methodName, ex);
         }
+
         for (ContentHubMainAward contentHubMainAward : result) {
-            contentHubMainAward.setAwardItem(getAward(version,languageList,contentHubMUrl,hospitalCode,country));
-            contentHubMainAward.setSectionIntro(getContentHubMainSection(version,languageList,contentHubMUrl,hospitalCode,country));
+            List<ContentHubMainAwardItem> awardItemList = getAward(version,languageList,contentHubMUrl,hospitalCode,country);
+            String sectionIntro = getContentHubMainSection(version,languageList,contentHubMUrl,hospitalCode,country);
+            if (awardItemList.size() == 0 && sectionIntro.equals("")) {
+                result.remove(contentHubMainAward);
+            } else {
+                contentHubMainAward.setAwardItem(awardItemList);
+                contentHubMainAward.setSectionIntro(sectionIntro);
+            }
         }
 
         completed(methodName);
