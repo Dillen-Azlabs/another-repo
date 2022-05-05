@@ -186,12 +186,11 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
         String sql ="SELECT DISTINCT spsa.heading, spsa.icon, spsa.description, spsa.display_order FROM structured_page_sd sps " +
                 "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid AND sps.language_code = spsa.language_code AND sps.status = spsa.status " +
-                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid AND sps.language_code = spsas.language_code AND sps.status = spsas.status " +
-                "LEFT JOIN structured_page_sd_award_section_country spsasc ON spsas.uid = spsasc.structured_page_sd_award_section_uid AND spsas.language_code = spsasc.language_code AND spsas.status = spsasc.status " +
-                "LEFT JOIN structured_page_sd_award_section_hospital spsash ON spsas.uid = spsash.structured_page_sd_award_section_uid AND spsas.language_code = spsash.language_code AND spsas.status = spsash.status " +
+                "LEFT JOIN structured_page_sd_awards_country spsasc ON spsa.uid = spsasc.structured_page_sd_award_section_uid AND spsa.language_code = spsasc.language_code AND spsa.status = spsasc.status " +
+                "LEFT JOIN structured_page_sd_awards_hospital spsash ON spsa.uid = spsash.structured_page_sd_award_section_uid AND spsa.language_code = spsash.language_code AND spsa.status = spsash.status " +
                 "LEFT JOIN country_of_residence c ON c.uid = spsasc.cor_uid " +
                 "LEFT JOIN hospital h ON spsash.hospital_uid = h.uid  " +
-                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsas.`section` = :section AND c.cor  = :countryOfResidence " +
+                "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsa.`section` = :section AND c.cor  = :countryOfResidence " +
                 "AND sps.publish_flag = {PUBLISHED} ";
 
         sql = getPublishVersion(version, sql);
@@ -373,7 +372,7 @@ public class StructuredPageSdRepository extends BaseRepository {
                 "AND sps.publish_flag = {PUBLISHED}";
 
         String q2 = "SELECT spspg.* FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_photo_gallery spspg  ON sps.uid = spspg.structured_page_sd_uid " +
+                "LEFT JOIN structured_page_sd_photo_gallery spspg  ON sps.uid = spspg.structured_page_sd_uid AND sps.language_code = spspg.language_code AND sps.status = spspg.status " +
                 " WHERE spspg.structured_page_sd_uid = :spsUid " +
                 " AND sps.publish_flag = {PUBLISHED}";
 
