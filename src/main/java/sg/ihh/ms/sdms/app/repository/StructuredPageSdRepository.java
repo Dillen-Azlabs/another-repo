@@ -305,8 +305,8 @@ public class StructuredPageSdRepository extends BaseRepository {
         final String methodName = "getStructuredPageFaq";
         start(methodName);
 
-        String sql = "SELECT spsf.* FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_faq spsf  ON sps.uid = spsf.structured_page_sd_uid AND sps.language_code = spsf.language_code AND sps.status = spsf.status " +
+        String sql = "SELECT spsf.* FROM structured_page_sd_faq spsf " +
+                "LEFT JOIN structured_page_sd sps  ON sps.uid = spsf.structured_page_sd_uid AND sps.language_code = spsf.language_code AND sps.status = spsf.status " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
