@@ -18,8 +18,7 @@ public class StructuredPageSdRepository extends BaseRepository {
         final String methodName = "getStructuredPageBasicDetail";
         start(methodName);
 
-        String sql = "SELECT sps.*, spsm.social_summary, spsm.overview FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_metadata spsm ON sps.uid = spsm.structured_page_sd_uid AND sps.language_code = spsm.language_code AND sps.status AND spsm.status " +
+        String sql = "SELECT sps.* FROM structured_page_sd sps " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -49,6 +48,8 @@ public class StructuredPageSdRepository extends BaseRepository {
             if (metadataDetails.get("hospital_main_image_alt_text") != null && !metadataDetails.get("hospital_main_image_alt_text").equals("")) {
                 result.setMainImageAltText((String) metadataDetails.get("hospital_main_image_alt_text"));
             }
+            result.setSocialSummary((String) metadataDetails.get("social_summary"));
+            result.setOverview((String) metadataDetails.get("overview"));
             result.setMetaTitle((String) metadataDetails.get("meta_title"));
             result.setMetaDescription((String) metadataDetails.get("meta_description"));
         }
