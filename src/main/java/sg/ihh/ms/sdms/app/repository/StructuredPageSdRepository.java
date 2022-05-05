@@ -187,8 +187,8 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
         String sql ="SELECT DISTINCT spsa.heading, spsa.icon, spsa.description, spsa.display_order FROM structured_page_sd sps " +
                 "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid AND sps.language_code = spsa.language_code AND sps.status = spsa.status " +
-                "LEFT JOIN structured_page_sd_awards_country spsasc ON spsa.uid = spsasc.structured_page_sd_award_section_uid AND spsa.language_code = spsasc.language_code AND spsa.status = spsasc.status " +
-                "LEFT JOIN structured_page_sd_awards_hospital spsash ON spsa.uid = spsash.structured_page_sd_award_section_uid AND spsa.language_code = spsash.language_code AND spsa.status = spsash.status " +
+                "LEFT JOIN structured_page_sd_awards_country spsasc ON spsa.uid = spsasc.structured_page_sd_awards_uid AND spsa.language_code = spsasc.language_code AND spsa.status = spsasc.status " +
+                "LEFT JOIN structured_page_sd_awards_hospital spsash ON spsa.uid = spsash.structured_page_sd_awards_uid AND spsa.language_code = spsash.language_code AND spsa.status = spsash.status " +
                 "LEFT JOIN country_of_residence c ON c.uid = spsasc.cor_uid " +
                 "LEFT JOIN hospital h ON spsash.hospital_uid = h.uid  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsa.`section` = :section AND c.cor  = :countryOfResidence " +
