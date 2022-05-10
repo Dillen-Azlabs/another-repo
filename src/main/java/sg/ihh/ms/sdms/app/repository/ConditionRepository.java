@@ -482,8 +482,8 @@ public class ConditionRepository extends BaseRepository {
         ConditionRelatedData conditionRelatedData = getConditionDisease(version, languageList, conditionItemUrl);
 
         if (conditionRelatedData != null) {
-            List<ConditionRelatedDataCondition> relatedConditions = getRelatedDataConditions(version,conditionRelatedData.getUid());
-            List<ConditionRelatedDataTreatment> relatedTreatments = getRelatedTreatments(version, conditionRelatedData.getUid());
+            List<ConditionRelatedDataCondition> relatedConditions = getRelatedDataConditions(version,conditionRelatedData.getUid(), languageList);
+            List<ConditionRelatedDataTreatment> relatedTreatments = getRelatedTreatments(version, conditionRelatedData.getUid(), languageList);
 
             conditionRelatedData.setRelatedCondition(relatedConditions);
             conditionRelatedData.setRelatedTreatments(relatedTreatments);
@@ -513,16 +513,16 @@ public class ConditionRepository extends BaseRepository {
         return result;
     }
 
-    private List<ConditionRelatedDataCondition> getRelatedDataConditions(Version version, String uid)
+    private List<ConditionRelatedDataCondition> getRelatedDataConditions(Version version, String uid, List<String> languageList)
     {
         String methodName = "getRelatedCondition";
         String relatedConditionSql = "SELECT condition_disease_uid FROM condition_disease_sd_related_condition cdsdrc " +
                 " LEFT JOIN condition_disease_sd cd ON cd.uid = cdsdrc.condition_disease_sd_uid " +
-                " WHERE cdsdrc.condition_disease_sd_uid =:uid " +
+                " WHERE cdsdrc.language_code IN(<languageList>) AND cdsdrc.condition_disease_sd_uid =:uid " +
                 " AND cd.publish_flag = {PUBLISHED}";
 
         String conditionDiseaseSql = "SELECT item_url, condition_h1_display FROM condition_disease_sd " +
-                " WHERE primary_condition_uid = :primaryUid " +
+                " WHERE language_code IN(<languageList>) AND primary_condition_uid = :primaryUid " +
                 " AND publish_flag = {PUBLISHED}";
 
         relatedConditionSql = getPublishVersion(version, relatedConditionSql);
@@ -534,12 +534,12 @@ public class ConditionRepository extends BaseRepository {
 
             List<String> conditionUid = new ArrayList<>();
             Query query1 = h.createQuery(relatedConditionSql);
-            query1.bind("uid", uid);
+            query1.bind("uid", uid).bindList("languageList", languageList);
             conditionUid = query1.mapTo(String.class).list();
             if (!conditionUid.isEmpty()) {
                 for (String primaryUid : conditionUid) {
                     Query query2 = h.createQuery(conditionDiseaseSql);
-                    query2.bind("primaryUid", primaryUid);
+                    query2.bind("primaryUid", primaryUid).bindList("languageList", languageList);
                     result = query2.mapToBean(ConditionRelatedDataCondition.class).list();
                 }
             }
@@ -551,17 +551,17 @@ public class ConditionRepository extends BaseRepository {
         return result;
     }
 
-    private List<ConditionRelatedDataTreatment> getRelatedTreatments(Version version,String uid)
+    private List<ConditionRelatedDataTreatment> getRelatedTreatments(Version version,String uid, List<String> languageList)
     {
         String methodName = "getRelatedTreatments";
         String relatedTreatmentSql = "SELECT test_treatment_sd_uid FROM condition_disease_sd_related_treatment cdsdrt " +
-                " LEFT JOIN condition_disease_sd cd ON cd.uid = cdsdrt.condition_disease_sd_uid " +
-                " WHERE cdsdrt.condition_disease_sd_uid = :uid " +
-                " AND cd.publish_flag = {PUBLISHED} ";
+                " WHERE cdsdrt.language_code IN(<languageList>) AND cdsdrt.condition_disease_sd_uid = :uid " +
+                " AND cdsdrt.publish_flag = {PUBLISHED} ";
 
-        String treatmentSql = "SELECT item_url, treatment_h1_display FROM test_treatment_sd " +
-                " WHERE  primary_treatment_uid = :primaryUid " +
-                " AND publish_flag = {PUBLISHED}";
+        String treatmentSql = "SELECT item_url, treatment_h1_display FROM test_treatment_sd tts " +
+                " WHERE tts.language_code IN(<languageList>) AND tts.primary_treatment_uid = :primaryUid " +
+                " AND tts.publish_flag = {PUBLISHED}";
+
 
         relatedTreatmentSql = getPublishVersion(version, relatedTreatmentSql);
         treatmentSql = getPublishVersion(version, treatmentSql);
@@ -572,12 +572,12 @@ public class ConditionRepository extends BaseRepository {
 
             List<String> conditionUid = new ArrayList<>();
             Query query1 = h.createQuery(relatedTreatmentSql);
-            query1.bind("uid", uid);
+            query1.bind("uid", uid).bindList("languageList", languageList);
             conditionUid = query1.mapTo(String.class).list();
             if (!conditionUid.isEmpty()) {
                 for (String primaryUid : conditionUid) {
                     Query query2 = h.createQuery(treatmentSql);
-                    query2.bind("primaryUid", primaryUid);
+                    query2.bind("primaryUid", primaryUid).bindList("languageList", languageList);
                     result = query2.mapToBean(ConditionRelatedDataTreatment.class).list();
                 }
             }

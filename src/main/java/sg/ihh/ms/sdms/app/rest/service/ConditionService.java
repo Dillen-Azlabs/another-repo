@@ -13,6 +13,7 @@ import sg.ihh.ms.sdms.app.rest.model.*;
 
 import javax.validation.constraints.Pattern;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "conditions", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -187,20 +188,34 @@ public class ConditionService extends BaseService{
     @RequestMapping(path = "relatedData", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ConditionRelatedDataListResponse getConditionRelatedData(
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
-            @RequestParam("languageCode") String languageCode,
-            @RequestParam("conditionUrl") String conditionUrl) {
+            @RequestParam Map<String, String> requestParams) {
         final String methodName = "getConditionRelatedData";
         start(methodName);
 
-        // Language Code
-        List<String> languageList = getLanguageList(languageCode);
-
-        ConditionRelatedData result = repository.getConditionRelatedData(Version.getVersion(version), languageList, conditionUrl);
-
-        //result = crdProcessor.processList(result, languageCode);
-
+        ConditionRelatedData result = new ConditionRelatedData();
         ConditionRelatedDataListResponse response = new ConditionRelatedDataListResponse(result);
 
+        if(requestParams.containsKey("conditionUrl")){
+            String conditionUrl = requestParams.get("conditionUrl");
+
+            if (requestParams.containsKey("languageCode")){
+                String languageCode = requestParams.get("languageCode");
+                List<String> languageList = getLanguageList(languageCode);
+                if (languageCode.isEmpty()){
+                    languageList = getLanguageList("EN");
+                    result = repository.getConditionRelatedData(Version.getVersion(version), languageList, conditionUrl);
+                    response = new ConditionRelatedDataListResponse(result);
+                    return response;
+                }
+                result = repository.getConditionRelatedData(Version.getVersion(version), languageList, conditionUrl);
+                response = new ConditionRelatedDataListResponse(result);
+                return response;
+
+            }
+            result = repository.getConditionRelatedData(Version.getVersion(version), getLanguageList("EN"), conditionUrl);
+            response = new ConditionRelatedDataListResponse(result);
+            return response;
+        }
         completed(methodName);
         return response;
     }
