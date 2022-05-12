@@ -6,12 +6,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.http.HttpStatus;
 import sg.ihh.ms.sdms.app.model.CentreServiceSubAward;
 
-import java.util.List;
 
-@JsonPropertyOrder({"code", "message", "award"})
+@JsonPropertyOrder({"code", "message", "awards"})
 public class CentreServiceSubAwardListResponse extends BaseResponse {
 
-    @JsonProperty("award")
+    @JsonProperty("awards")
     private CentreServiceSubAward centreServiceSubAward;
 
     public CentreServiceSubAwardListResponse(CentreServiceSubAward centreServiceSubAward) {
