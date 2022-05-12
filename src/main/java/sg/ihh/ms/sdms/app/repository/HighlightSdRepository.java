@@ -22,11 +22,12 @@ public class HighlightSdRepository extends  BaseRepository {
         final String methodName = "getHighlightSearch";
         start(methodName);
 
-        String sql = "SELECT hs.uid, hs.language_code, hs.image, hs.title, hs.link, hs.linkType, cor.cor, coc.coc, hs.publish_flag,hs.created_dt, hs.modified_dt, hs.publish_date  FROM highlights_sd hs " +
+        String sql = "SELECT hs.uid, hs.language_code, hs.image, hs.title, hs.link, hs.linkType, cor.cor, coc.coc, hs.display_order, hs.publish_flag,hs.created_dt, hs.modified_dt, hs.publish_date  FROM highlights_sd hs " +
                 "LEFT JOIN country_of_residence cor ON cor.uid = hs.country_of_residence_uid " +
                 "LEFT JOIN country_of_care coc ON coc.uid = hs.country_of_care_uid " +
                 "WHERE hs.language_code IN(<languageList>) AND hs.publish_date BETWEEN :publishDateFrom AND :publishDateTo " +
-                "AND hs.publish_flag = {PUBLISHED}";
+                "AND hs.publish_flag = {PUBLISHED} " +
+                "ORDER BY hs.display_order ";
         sql = getPublishVersion(version, sql);
 
         List<HighlightsSearch> result = new ArrayList<>();
