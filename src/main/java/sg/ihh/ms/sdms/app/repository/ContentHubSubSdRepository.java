@@ -48,18 +48,16 @@ public class ContentHubSubSdRepository extends BaseRepository{
         final String methodName = "getContentHubSubBasicDetail";
         start(methodName);
 
-        String sql = "SELECT chss.*, chssm.overview, chssm.social_summary  FROM content_hub_sub_sd chss " +
+        String sql = "SELECT chss.*  FROM content_hub_sub_sd chss " +
                 "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid " +
-                "LEFT JOIN content_hub_sub_sd_metadata chssm  ON chss.uid = chssm.content_hub_sub_sd_uid " +
-                "LEFT JOIN hospital h ON h.uid = chssm.hospital_uid " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain " +
-                "AND chss.publish_flag = {PUBLISHED} AND h.hospital = :hospitalCode";
+                "AND chss.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
         ContentHubSubBasicDetail result = new ContentHubSubBasicDetail();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("itemUrlSub", contentHubSUrl).bind("itemUrlMain", contentHubMUrl).bind("hospitalCode", hospitalCode);
+            query.bindList("languageList", languageList).bind("itemUrlSub", contentHubSUrl).bind("itemUrlMain", contentHubMUrl);
             result = query.mapToBean(ContentHubSubBasicDetail.class).one();
 
         } catch (Exception ex) {
@@ -75,6 +73,8 @@ public class ContentHubSubSdRepository extends BaseRepository{
             if (metadataDetails.get("hospital_main_image_alt_text") != null && !metadataDetails.get("hospital_main_image_alt_text").equals("")) {
                 result.setMainImageAltText((String) metadataDetails.get("hospital_main_image_alt_text"));
             }
+            result.setSocialSummary((String) metadataDetails.get("social_summary"));
+            result.setOverview((String) metadataDetails.get("overview"));
             result.setRelatedMPageDisplay((String) contentHubMain.get("page_title"));
             result.setMetaTitle((String) metadataDetails.get("meta_title"));
             result.setMetaDescription((String) metadataDetails.get("meta_description"));
@@ -109,8 +109,8 @@ public class ContentHubSubSdRepository extends BaseRepository{
         final String methodName = "getMetadataBasicDetail";
         start(methodName);
 
-        String sql = "SELECT chssm.hospital_main_image, chssm.hospital_main_image_alt_text, chssm.social_summary, chssm.meta_title, chssm.meta_description  FROM content_hub_sub_sd chss " +
-                "LEFT JOIN content_hub_sub_sd_metadata chssm  ON chss.uid = chssm.content_hub_sub_sd_uid " +
+        String sql = "SELECT chssm.hospital_main_image, chssm.hospital_main_image_alt_text, chssm.social_summary, chssm.meta_title, chssm.meta_description, chssm.overview FROM content_hub_sub_sd chss " +
+                "LEFT JOIN content_hub_sub_sd_metadata chssm  ON chss.uid = chssm.content_hub_sub_sd_uid AND chss.language_code = chssm.language_code AND chss.status = chssm.status " +
                 "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid " +
                 "LEFT JOIN hospital h ON chssm.hospital_uid  = h.uid " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain AND h.hospital = :hospital " +
