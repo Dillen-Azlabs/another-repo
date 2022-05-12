@@ -9,7 +9,7 @@ import sg.ihh.ms.sdms.app.model.CentreServiceSubBasicDetail;
 @JsonPropertyOrder({"code", "message", "centreServiceS"})
 public class CentreServiceSubBasicDetailListResponse extends BaseResponse{
 
-    @JsonProperty("contentHub")
+    @JsonProperty("centreServiceS")
     private CentreServiceSubBasicDetail centreServiceSubBasicDetail;
 
     public CentreServiceSubBasicDetailListResponse(CentreServiceSubBasicDetail centreServiceSubBasicDetail) {
