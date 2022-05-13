@@ -28,7 +28,7 @@ public class HighlightSdService extends  BaseService {
     }
 
     //START - Highlight Search Block
-    @RequestMapping(path = "highlights", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @RequestMapping(path = "highlights/search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public HighlightsSearchResponse getHighlightSearch(
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
             @RequestParam("languageCode") String languageCode,
