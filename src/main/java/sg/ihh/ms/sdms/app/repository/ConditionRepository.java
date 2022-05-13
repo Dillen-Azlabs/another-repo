@@ -502,7 +502,7 @@ public class ConditionRepository extends BaseRepository {
 
         sql = getPublishVersion(version, sql);
 
-        ConditionRelatedData result = null;
+        ConditionRelatedData result = new ConditionRelatedData();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("item_url", conditionItemUrl);
             result = query.mapToBean(ConditionRelatedData.class).one();
