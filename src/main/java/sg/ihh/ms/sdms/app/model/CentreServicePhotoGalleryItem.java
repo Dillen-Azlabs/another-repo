@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CentreServicePhotoGalleryItem {
 
-    @JsonProperty("image")
+    @JsonProperty("imageUrl")
     private String image;
+
     @JsonProperty("altText")
     private String imageAltText;
+
     @JsonProperty("caption")
     private String caption;
     @JsonProperty("order")
