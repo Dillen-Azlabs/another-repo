@@ -621,7 +621,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     private List<CentreServiceSubMedicalProfessional> getAhps(Version version, List<String> languageList, String centreServiceMUrl)
     {
         String methodName = "getAhps";
-        String sql ="  SELECT mp.uid, mp.language_code, mp.item_url, mp.display_name, mp.salutation, mp.designation, mp.profile_photo_url, mp.profile_photo_alt_text, mp.display_order AS order, mp.publish_flag, mp.created_dt, mp.modified_dt FROM centre_service_main_sd csms " +
+        String sql ="  SELECT mp.uid, mp.language_code, mp.item_url, mp.display_name, mp.salutation, mp.designation, mp.profile_photo_url, mp.profile_photo_alt_text, mp.display_order, mp.publish_flag, mp.created_dt, mp.modified_dt FROM centre_service_main_sd csms " +
                 "LEFT JOIN centre_service_main_sd_specialty csmss ON csms.uid = csmss.centre_service_main_sd_uid  " +
                 "LEFT JOIN specialty s ON s.uid = csmss.specialty_uid  " +
                 "LEFT JOIN medical_professional_specialty mps ON s.uid = mps.specialty_uid  " +
