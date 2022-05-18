@@ -90,12 +90,9 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         final String methodName = "getCentreServiceSubAward";
         start(methodName);
 
-        String sql = "SELECT csss.uid, csss.language_code, csss.publish_flag, csss.created_dt, csss.modified_dt FROM centre_service_sub_sd csss  " +
-                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid   " +
-                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON csss.uid = csssas.centre_service_sub_sd_uid   " +
-                "LEFT JOIN centre_service_sub_sd_award_section_hospital csssash  ON csssas.uid = csssash.centre_service_sub_sd_award_section_uid   " +
-                "LEFT JOIN hospital h ON csssash.hospital_uid = h.uid    " +
-                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
+        String sql = "SELECT csss.uid, csss.language_code, csss.publish_flag, csss.created_dt, csss.modified_dt FROM centre_service_sub_sd csss   " +
+                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid     " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain  " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
@@ -145,12 +142,11 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     private List<CentreServiceSubAwardItem> getAward(Version version, List<String> languageList, String centreServiceMUrl, String hospitalCode, String centreServiceSUrl)
     {
         String methodName = "getAward";
-        String sql = "SELECT csssa.heading, csssa.icon, csssa.description, csssa.display_order FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid   " +
-                "LEFT JOIN centre_service_sub_sd_award csssa  ON csss.uid = csssa.centre_service_sub_sd_uid  " +
-                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON csss.uid = csssas.centre_service_sub_sd_uid   " +
-                "LEFT JOIN centre_service_sub_sd_award_section_hospital csssash  ON csssas.uid = csssash.centre_service_sub_sd_award_section_uid   " +
-                "LEFT JOIN hospital h ON csssash.hospital_uid  = h.uid  " +
+        String sql = "SELECT csssa.heading, csssa.icon, csssa.description, csssa.display_order FROM centre_service_sub_sd csss  " +
+                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid    " +
+                "LEFT JOIN centre_service_sub_sd_award csssa  ON csss.uid = csssa.centre_service_sub_sd_uid   " +
+                "LEFT JOIN centre_service_sub_sd_award_hospital csssah  ON csssa.uid = csssah.centre_service_sub_sd_award_uid   " +
+                "LEFT JOIN hospital h ON csssah.hospital_uid  = h.uid " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
