@@ -19,9 +19,10 @@ public class MedicalProfessionalRepository extends BaseRepository {
         final String methodName = "list";
         start(methodName);
 
-        String sql = "SELECT mp.*, mpt.profession AS type FROM medical_professional mp " +
-                " LEFT JOIN medical_professional_type mpt ON mp.medical_professional_type_uid = mpt.uid AND mp.language_code = mpt.language_code " +
-                " LEFT JOIN media_coverage mc ON mp.uid = mc.related_specialist_uid AND mp.language_code = mc.language_code " +
+        String sql = "SELECT mp.*, mpt.profession AS type FROM medical_professional mp  " +
+                "LEFT JOIN medical_professional_type mpt ON mp.medical_professional_type_uid = mpt.uid AND mp.language_code = mpt.language_code  " +
+                "LEFT JOIN media_coverage_related_specialist mcrs ON mp.uid = mcrs.medical_professional_uid " +
+                "LEFT JOIN media_coverage mc ON mc.uid = mcrs.media_coverage_uid AND mp.language_code = mc.language_code" +
                 " WHERE mp.language_code IN(<languageList>) " +
                 " AND mp.publish_flag = {PUBLISHED}";
 
