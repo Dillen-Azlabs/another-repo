@@ -14,7 +14,7 @@ public class CentreServiceSubCta extends BaseModel{
     @JsonProperty("buttonUrl")
     private String ctaSectionButtonUrl;
     @JsonProperty("newTab")
-    private boolean ctaSectionSuttonNewtab;
+    private boolean ctaSectionButtonNewTab;
 
     public CentreServiceSubCta() {
     }
@@ -51,11 +51,11 @@ public class CentreServiceSubCta extends BaseModel{
         this.ctaSectionButtonUrl = ctaSectionButtonUrl;
     }
 
-    public boolean isCtaSectionSuttonNewtab() {
-        return ctaSectionSuttonNewtab;
+    public boolean isCtaSectionButtonNewTab() {
+        return ctaSectionButtonNewTab;
     }
 
-    public void setCtaSectionSuttonNewtab(boolean ctaSectionSuttonNewtab) {
-        this.ctaSectionSuttonNewtab = ctaSectionSuttonNewtab;
+    public void setCtaSectionButtonNewTab(boolean ctaSectionButtonNewTab) {
+        this.ctaSectionButtonNewTab = ctaSectionButtonNewTab;
     }
 }
