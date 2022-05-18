@@ -7,10 +7,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sg.ihh.ms.sdms.app.model.StructuredCampaignAccordion;
 import sg.ihh.ms.sdms.app.model.StructuredCampaignDetails;
 import sg.ihh.ms.sdms.app.model.StructuredPageBasicDetail;
 import sg.ihh.ms.sdms.app.model.Version;
 import sg.ihh.ms.sdms.app.repository.StructuredCampaignRepository;
+import sg.ihh.ms.sdms.app.rest.model.StructuredCampaignAccordionListResponse;
 import sg.ihh.ms.sdms.app.rest.model.StructuredCampaignResponse;
 import sg.ihh.ms.sdms.app.rest.model.StructuredPageBasicDetailListResponse;
 
@@ -45,6 +47,28 @@ public class StructuredCampaignService extends BaseService {
         StructuredCampaignDetails result = repository.getStructuredCampaignDetails(Version.getVersion(version), languageList, structuredPageUrl, hospitalCode);
 
         StructuredCampaignResponse response = new StructuredCampaignResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Page Basic Detail Block
+
+    //START - Structured Page Basic Accordion Block
+    @RequestMapping(path = "accordion", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredCampaignAccordionListResponse getStructuredCampaignAccordionList(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredCampaignUrl") String structuredPageUrl,
+            @RequestParam("hospitalCode") String hospitalCode) {
+        final String methodName = "getStructuredCampaignAccordionList";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredCampaignAccordion> result = repository.getStructuredCampaignAccordion(Version.getVersion(version), languageList, structuredPageUrl, hospitalCode);
+
+        StructuredCampaignAccordionListResponse response = new StructuredCampaignAccordionListResponse(result);
 
         completed(methodName);
         return response;
