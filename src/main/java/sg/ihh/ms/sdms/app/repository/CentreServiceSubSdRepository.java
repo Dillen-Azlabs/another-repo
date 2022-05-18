@@ -466,6 +466,15 @@ public class CentreServiceSubSdRepository extends BaseRepository {
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain  AND h.hospital = :hospital " +
                 "AND csss.publish_flag = {PUBLISHED} ";
 
+        Map<String, Object> param = new HashMap<>();
+        param.put("version", version);
+        param.put("languageCode", languageList);
+        param.put("centreServiceMUrl", itemUrlMain);
+        param.put("centreServiceSUrl", itemUrlSub);
+        param.put("hospitalCode", hospitalCode);
+
+        log.debug(param.toString());
+
         sql = getPublishVersion(version, sql);
 
         CentreServiceSubMedicalProfessionals result = new CentreServiceSubMedicalProfessionals();

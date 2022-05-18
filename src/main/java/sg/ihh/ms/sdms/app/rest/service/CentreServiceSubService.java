@@ -11,7 +11,9 @@ import sg.ihh.ms.sdms.app.repository.CentreServiceSubSdRepository;
 import sg.ihh.ms.sdms.app.rest.model.*;
 
 import javax.validation.constraints.Pattern;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "centreServiceS", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -210,6 +212,15 @@ public class CentreServiceSubService extends BaseService{
             @RequestParam("hospitalCode") String hospitalCode) {
         final String methodName = "getCentreServiceSubMedicalProfessionals";
         start(methodName);
+
+        Map<String, Object> param = new HashMap<>();
+        param.put("version", version);
+        param.put("languageCode", languageCode);
+        param.put("centreServiceMUrl", centreServiceMUrl);
+        param.put("centreServiceSUrl", centreServiceSUrl);
+        param.put("hospitalCode", hospitalCode);
+
+        log.debug(param.toString());
 
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
