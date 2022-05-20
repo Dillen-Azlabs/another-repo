@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sg.ihh.ms.sdms.app.model.*;
 import sg.ihh.ms.sdms.app.repository.StructuredCampaignRepository;
-import sg.ihh.ms.sdms.app.rest.model.StructuredCampaignAccordionListResponse;
-import sg.ihh.ms.sdms.app.rest.model.StructuredCampaignBodySectionsResponse;
-import sg.ihh.ms.sdms.app.rest.model.StructuredCampaignResponse;
-import sg.ihh.ms.sdms.app.rest.model.StructuredPageBasicDetailListResponse;
+import sg.ihh.ms.sdms.app.rest.model.*;
 
 import javax.validation.constraints.Pattern;
 import java.util.List;
@@ -95,4 +92,49 @@ public class StructuredCampaignService extends BaseService {
         return response;
     }
     //END - Structured Campaign Body Section Block
+
+
+    //START - Structured Campaign Faq Block
+    @RequestMapping(path = "faq", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredCampaignFaqResponse getStructuredCampaignFaq(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredCampaignUrl") String structuredPageUrl,
+            @RequestParam("country") String country) {
+        final String methodName = "getStructuredCampaignFaq";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredCampaignFaq> result = repository.getStructuredCampaignFaq(Version.getVersion(version), languageList, structuredPageUrl,country);
+
+        StructuredCampaignFaqResponse response = new StructuredCampaignFaqResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Campaign Faq Block
+
+    //START - Structured Campaign By Specialty Block
+    @RequestMapping(path = "specialty", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredCampaignSdResponse getStructuredCampaignBySpecialty(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("specialtyUrl") String specialtyUrl,
+            @RequestParam("hospitalCode") String hospital) {
+        final String methodName = "getStructuredCampaignBySpecialty";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredCampaignSd> result = repository.getStructuredCampaignBySpecialty(Version.getVersion(version), languageList, specialtyUrl,hospital);
+
+        StructuredCampaignSdResponse response = new StructuredCampaignSdResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Campaign Faq Block
 }

@@ -143,6 +143,65 @@ public class StructuredCampaignRepository extends BaseRepository {
         completed(methodName);
         return result;
     }
-    //END - Structured Page Photo Gallery Block
+    //END - Structured Campaign StructuredBody Block
 
+    //START - Structured Page Faq Block
+    public List<StructuredCampaignFaq> getStructuredCampaignFaq(Version version, List<String> languageList, String structuredCampaignUrl, String country) {
+        final String methodName = "getStructuredCampaignFaq";
+        start(methodName);
+
+        String sql = "SELECT scsf.* FROM structured_campaign_sd scs  " +
+                "LEFT JOIN structured_campaign_sd_faq scsf ON scs.uid = scsf.structured_campaign_sd_uid " +
+                "LEFT JOIN structured_campaign_sd_faq_cor scsfc ON scsf.uid = scsfc.structured_campaign_sd_faq_uid " +
+                "LEFT JOIN country_of_residence cor ON cor.uid = scsfc.cor_uid  " +
+                "WHERE scs.language_code IN(<languageList>) AND scs.item_url = :item_url AND cor.cor = :country " +
+                "AND scs.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<StructuredCampaignFaq> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredCampaignUrl).bind("country", country);
+            result = query.mapToBean(StructuredCampaignFaq.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Structured Campaign Faq Block
+
+
+    //START - Structured Campaign By Specialty Block
+    public List<StructuredCampaignSd> getStructuredCampaignBySpecialty(Version version, List<String> languageList, String structuredCampaignUrl, String hospital) {
+        final String methodName = "getStructuredCampaignBySpecialty";
+        start(methodName);
+
+        String sql = "SELECT scs.uid, scs.language_code, scs.campaign_title, scs.item_url, scs.main_image, " +
+                "scs.main_image_alt_text, scs.publish_flag, scs.created_dt, scs.modified_dt " +
+                "FROM structured_campaign_sd scs " +
+                "LEFT JOIN structured_campaign_sd_specialty scss ON scs.uid = scss.structured_campaign_sd_uid " +
+                "LEFT JOIN specialty s ON s.uid = scss.specialty_uid " +
+                "LEFT JOIN specialty_sd ss ON ss.specialty_uid = s.uid " +
+                "LEFT JOIN structured_campaign_sd_hospital scsh ON scs.uid = scsh.structured_campaign_sd_uid " +
+                "LEFT JOIN hospital h ON h.uid = scsh.hospital_uid " +
+                "WHERE scs.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital " +
+                "AND scs.publish_flag = {PUBLISHED} " +
+                "GROUP BY scs.uid ";
+
+        sql = getPublishVersion(version, sql);
+
+        List<StructuredCampaignSd> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredCampaignUrl).bind("hospital", hospital);
+            result = query.mapToBean(StructuredCampaignSd.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Campaign By Specialty Block
 }
