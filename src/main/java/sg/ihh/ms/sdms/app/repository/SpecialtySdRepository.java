@@ -438,7 +438,7 @@ public class SpecialtySdRepository extends BaseRepository{
         4. Use specialty_sd.specialty_uid to match with specialty_uid in table:condition_disease_sd_other_specialty. There might be more than 1 match.
         5. For each match found, use condition_disease_sd_other_specialty.condition_disease_sd_uid to match with condition_disease_sd.uid. Return the pair of (item_url, condition_h1_display). Ensure publish_flag is DRAFT. */
         SpecialtyRelatedData specialtyRelatedData = getSpecialtySd(version, languageList, specialtyItemUrl);
-        List<SpecialtyRelatedDataCondition> relatedConditions = getRelatedDataConditions(version,specialtyRelatedData.getSpecialtyUid());
+        List<SpecialtyRelatedDataCondition> relatedConditions = getRelatedDataConditions(version,specialtyRelatedData.getSpecialtyUid(), languageList);
 
         List<SpecialtyRelatedDataTreatment> relatedTreatments = getRelatedTreatments(version, specialtyRelatedData.getSpecialtyUid(), languageList);
 
@@ -471,7 +471,7 @@ public class SpecialtySdRepository extends BaseRepository{
         return result;
     }
 
-    private List<SpecialtyRelatedDataCondition> getRelatedDataConditions(Version version,String uid)
+    private List<SpecialtyRelatedDataCondition> getRelatedDataConditions(Version version,String uid, List<String> languageList)
     {
         String methodName = "getRelatedCondition";
 
@@ -485,12 +485,12 @@ public class SpecialtySdRepository extends BaseRepository{
 */
 
         String query1 = "SELECT item_url, condition_h1_display FROM condition_disease_sd " +
-                "WHERE primary_specialty_uid = :uid";
+                "WHERE primary_specialty_uid = :uid  AND language_code IN(<languageList>) AND publish_flag = {PUBLISHED}";
 
         String query2 = "SELECT condition_disease_sd_uid FROM condition_disease_sd_other_specialty " +
-                "WHERE specialty_uid = :uid";
+                "WHERE specialty_uid = :uid AND language_code IN(<languageList>) AND publish_flag = {PUBLISHED}";
 
-        String query3 = "SELECT item_url, condition_h1_display FROM condition_disease_sd WHERE uid = :uid ";
+        String query3 = "SELECT item_url, condition_h1_display FROM condition_disease_sd WHERE uid = :uid AND language_code IN(<languageList>) AND publish_flag = {PUBLISHED}";
 
         query1 = getPublishVersion(version, query1);
         query2 = getPublishVersion(version, query2);
@@ -504,16 +504,16 @@ public class SpecialtySdRepository extends BaseRepository{
             List<SpecialtyRelatedDataCondition> list = new ArrayList<>();
 
             Query q1 = h.createQuery(query1);
-            q1.bind("uid", uid);
+            q1.bind("uid", uid).bindList("languageList", languageList);
             list.addAll(q1.mapToBean(SpecialtyRelatedDataCondition.class).list());
 
             Query q2 = h.createQuery(query2);
-            q2.bind("uid", uid);
+            q2.bind("uid", uid).bindList("languageList", languageList);
             specialtyUid = q2.mapTo(String.class).list();
             if (!specialtyUid.isEmpty()) {
                 for (String primaryUid : specialtyUid) {
                     Query q3 = h.createQuery(query3);
-                    q3.bind("uid", primaryUid);
+                    q3.bind("uid", primaryUid).bindList("languageList", languageList);
                     list.addAll(q3.mapToBean(SpecialtyRelatedDataCondition.class).list());
                 }
             }
@@ -544,12 +544,12 @@ public class SpecialtySdRepository extends BaseRepository{
 
 
         String query1 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd tts "+
-        "INNER JOIN test_treatment_primary_specialty ttps  ON tts.primary_treatment_uid = ttps.test_treatment_uid "+
-        "WHERE tts.language_code IN(<languageList>) AND ttps.specialty_uid = :uid ";
+                "INNER JOIN test_treatment_primary_specialty ttps  ON tts.primary_treatment_uid = ttps.test_treatment_uid "+
+                "WHERE tts.language_code IN(<languageList>) AND ttps.specialty_uid = :uid  AND tts.publish_flag = {PUBLISHED}";
 
-        String query2 = "SELECT test_treatment_uid FROM test_treatment_other_specialty ttos WHERE ttos.language_code IN(<languageList>) AND ttos.specialty_uid = :uid ";
+        String query2 = "SELECT test_treatment_uid FROM test_treatment_other_specialty ttos WHERE ttos.language_code IN(<languageList>) AND ttos.specialty_uid = :uid  AND  ttos.publish_flag = {PUBLISHED}";
 
-        String query3 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd tts WHERE tts.language_code IN(<languageList>) AND tts.primary_treatment_uid =:uid ";
+        String query3 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd tts WHERE tts.language_code IN(<languageList>) AND tts.primary_treatment_uid =:uid AND tts.publish_flag = {PUBLISHED} ";
 
         query1 = getPublishVersion(version, query1);
         query2 = getPublishVersion(version, query2);
