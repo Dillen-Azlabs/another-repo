@@ -136,5 +136,50 @@ public class StructuredCampaignService extends BaseService {
         completed(methodName);
         return response;
     }
-    //END - Structured Campaign Faq Block
+    //END - Structured Campaign Specialty Block
+
+    //START - Structured Campaign By Condition Block
+    @RequestMapping(path = "condition", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredCampaignSdResponse getStructuredCampaignByCondition(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("conditionUrl") String specialtyUrl,
+            @RequestParam("hospitalCode") String hospital) {
+        final String methodName = "getStructuredCampaignByCondition";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredCampaignSd> result = repository.getStructuredCampaignByCondition(Version.getVersion(version), languageList, specialtyUrl,hospital);
+
+        StructuredCampaignSdResponse response = new StructuredCampaignSdResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Campaign Condition Block
+
+
+    //START - Structured Campaign By Test & Treatment Block
+    @RequestMapping(path = "treatment", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredCampaignSdResponse getStructuredCampaignByTestTreatment(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("treatmentUrl") String specialtyUrl,
+            @RequestParam("hospitalCode") String hospital) {
+        final String methodName = "getStructuredCampaignByTestTreatment";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<StructuredCampaignSd> result = repository.getStructuredCampaignByTestTreatment(Version.getVersion(version), languageList, specialtyUrl,hospital);
+
+        StructuredCampaignSdResponse response = new StructuredCampaignSdResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Campaign Test & Treatment Block
 }
