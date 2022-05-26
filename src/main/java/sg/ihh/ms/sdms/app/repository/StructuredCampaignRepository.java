@@ -183,6 +183,8 @@ public class StructuredCampaignRepository extends BaseRepository {
                 "FROM structured_campaign_sd scs " +
                 "LEFT JOIN structured_campaign_sd_specialty scss ON scs.uid = scss.structured_campaign_sd_uid " +
                 "LEFT JOIN specialty s ON s.uid = scss.specialty_uid " +
+                "LEFT JOIN structured_campaign_sd_child_specialty scscs ON scs.uid = scscs.structured_campaign_sd_uid  " +
+                "LEFT JOIN child_specialty cs ON cs.uid = scscs.child_specialty_uid " +
                 "LEFT JOIN specialty_sd ss ON ss.specialty_uid = s.uid " +
                 "LEFT JOIN structured_campaign_sd_hospital scsh ON scs.uid = scsh.structured_campaign_sd_uid " +
                 "LEFT JOIN hospital h ON h.uid = scsh.hospital_uid " +
@@ -204,4 +206,75 @@ public class StructuredCampaignRepository extends BaseRepository {
         return result;
     }
     //END - Campaign By Specialty Block
+
+    //START - Structured Campaign By Condition Block
+    public List<StructuredCampaignSd> getStructuredCampaignByCondition(Version version, List<String> languageList, String structuredCampaignUrl, String hospital) {
+        final String methodName = "getStructuredCampaignByCondition";
+        start(methodName);
+
+        String sql = "SELECT scs.uid, scs.language_code, scs.campaign_title, scs.item_url, scs.main_image,  " +
+                "scs.main_image_alt_text, scs.publish_flag, scs.created_dt, scs.modified_dt  " +
+                "FROM structured_campaign_sd scs " +
+                "LEFT JOIN structured_campaign_sd_specialty scss ON scs.uid = scss.structured_campaign_sd_uid " +
+                "LEFT JOIN specialty s ON s.uid = scss.specialty_uid " +
+                "LEFT JOIN structured_campaign_sd_child_specialty scscs ON scs.uid = scscs.structured_campaign_sd_uid  " +
+                "LEFT JOIN child_specialty cs ON cs.uid = scscs.child_specialty_uid " +
+                "LEFT JOIN condition_disease_sd cds ON scss.specialty_uid = cds.primary_specialty_uid " +
+                "LEFT JOIN structured_campaign_sd_hospital scsh ON scs.uid = scsh.structured_campaign_sd_uid " +
+                "LEFT JOIN hospital h ON h.uid = scsh.hospital_uid " +
+                "WHERE scs.language_code IN(<languageList>) AND cds.item_url = :item_url AND h.hospital = :hospital " +
+                "AND scs.publish_flag = {PUBLISHED} " +
+                "GROUP BY scs.uid";
+
+        sql = getPublishVersion(version, sql);
+
+        List<StructuredCampaignSd> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredCampaignUrl).bind("hospital", hospital);
+            result = query.mapToBean(StructuredCampaignSd.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Campaign By Condition Block
+
+
+    //START - Structured Campaign By Test & Treatment Block
+    public List<StructuredCampaignSd> getStructuredCampaignByTestTreatment(Version version, List<String> languageList, String structuredCampaignUrl, String hospital) {
+        final String methodName = "getStructuredCampaignByTestTreatment";
+        start(methodName);
+
+        String sql = "SELECT scs.uid, scs.language_code, scs.campaign_title, scs.item_url, scs.main_image,   " +
+                "scs.main_image_alt_text, scs.publish_flag, scs.created_dt, scs.modified_dt   " +
+                "FROM structured_campaign_sd scs  " +
+                "LEFT JOIN structured_campaign_sd_specialty scss ON scs.uid = scss.structured_campaign_sd_uid  " +
+                "LEFT JOIN specialty s ON s.uid = scss.specialty_uid  " +
+                "LEFT JOIN structured_campaign_sd_child_specialty scscs ON scs.uid = scscs.structured_campaign_sd_uid   " +
+                "LEFT JOIN child_specialty cs ON cs.uid = scscs.child_specialty_uid  " +
+                "LEFT JOIN test_treatment_primary_specialty ttps ON ttps.specialty_uid = scss.specialty_uid  " +
+                "LEFT JOIN test_treatment tt ON tt.uid = ttps.test_treatment_uid  " +
+                "LEFT JOIN test_treatment_sd tts ON tt.uid = tts.primary_treatment_uid  " +
+                "LEFT JOIN structured_campaign_sd_hospital scsh ON scs.uid = scsh.structured_campaign_sd_uid  " +
+                "LEFT JOIN hospital h ON h.uid = scsh.hospital_uid " +
+                "WHERE scs.language_code IN(<languageList>) AND tts.item_url = :item_url AND h.hospital = :hospital " +
+                "AND scs.publish_flag = {PUBLISHED} " +
+                "GROUP BY scs.uid";
+
+        sql = getPublishVersion(version, sql);
+
+        List<StructuredCampaignSd> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredCampaignUrl).bind("hospital", hospital);
+            result = query.mapToBean(StructuredCampaignSd.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Campaign By Test & Treatment Block
 }
