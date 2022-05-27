@@ -518,7 +518,7 @@ public class ConditionRepository extends BaseRepository {
         String methodName = "getRelatedCondition";
         String relatedConditionSql = "SELECT condition_disease_uid FROM condition_disease_sd_related_condition cdsdrc " +
                 " LEFT JOIN condition_disease_sd cd ON cd.uid = cdsdrc.condition_disease_sd_uid " +
-                " WHERE cdsdrc.language_code IN(<languageList>) AND cdsdrc.condition_disease_sd_uid =:uid " +
+                " WHERE cd.language_code IN(<languageList>) AND cdsdrc.condition_disease_sd_uid =:uid " +
                 " AND cd.publish_flag = {PUBLISHED}";
 
         String conditionDiseaseSql = "SELECT item_url, condition_h1_display FROM condition_disease_sd " +
