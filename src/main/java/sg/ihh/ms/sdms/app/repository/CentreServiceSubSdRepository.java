@@ -358,6 +358,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
             }
             result.setCentreServiceMPageTitle((String) centreServiceMain.get("page_title"));
             result.setSummary((String) centreServiceMain.get("summary"));
+            result.setHideHeroImage((boolean) centreServiceMain.get("hide_hero_image"));
             result.setMetaTitle((String) metadataDetails.get("meta_title"));
             result.setMetaDescription((String) metadataDetails.get("meta_description"));
             result.setSocialSummary((String) metadataDetails.get("social_summary"));
@@ -371,7 +372,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         final String methodName = "getCentreServiceMain";
         start(methodName);
 
-        String sql = "SELECT  csms.page_title, csms.summary FROM centre_service_sub_sd csss " +
+        String sql = "SELECT  csms.page_title, csms.summary, csms.hide_hero_image FROM centre_service_sub_sd csss " +
                 "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid " +
                 "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  " +
                 "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid  " +

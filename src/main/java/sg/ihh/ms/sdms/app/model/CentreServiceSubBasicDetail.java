@@ -16,6 +16,8 @@ public class CentreServiceSubBasicDetail extends BaseModel{
     private String mainImage;
     @JsonProperty("mainImageAltText")
     private String mainImageAltText;
+    @JsonProperty("hideHeroImage")
+    private boolean hideHeroImage;
     @JsonProperty("summary")
     private String summary;
     @JsonProperty("socialSummary")
@@ -67,6 +69,14 @@ public class CentreServiceSubBasicDetail extends BaseModel{
 
     public void setMainImageAltText(String mainImageAltText) {
         this.mainImageAltText = mainImageAltText;
+    }
+
+    public boolean isHideHeroImage() {
+        return hideHeroImage;
+    }
+
+    public void setHideHeroImage(boolean hideHeroImage) {
+        this.hideHeroImage = hideHeroImage;
     }
 
     public String getSummary() {
