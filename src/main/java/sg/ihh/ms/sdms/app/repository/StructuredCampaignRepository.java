@@ -75,6 +75,68 @@ public class StructuredCampaignRepository extends BaseRepository {
     }
     // END - Structured Campaign Accordion
 
+    //START - Structured Campaign Card Carousel Block
+    public StructuredCampaignCardCarousel getStructuredCampaignCardCarousel(Version version, List<String> languageList, String structuredPageUrl) {
+        final String methodName = "getStructuredCampaignCardCarousel";
+        start(methodName);
+
+        StructuredCampaignCardCarousel structuredCampaignCardCarousel = getStructuredPageCard(version, languageList, structuredPageUrl);
+
+        if (structuredCampaignCardCarousel != null) {
+            List<StructuredCampaignCardItem> structuredPageCardCarouselItems = getStructuredCampaignCardCarouselItem(version, languageList, structuredPageUrl);
+
+            structuredCampaignCardCarousel.setCarouselItems(structuredPageCardCarouselItems);
+        }
+
+        completed(methodName);
+        return structuredCampaignCardCarousel;
+    }
+    public StructuredCampaignCardCarousel getStructuredPageCard(Version version, List<String> languageList, String structuredPageUrl) {
+        final String methodName = "getStructuredPageCard";
+        start(methodName);
+
+        String sql = "SELECT scs.*, scs.card_carousel_intro AS section_intro  FROM structured_campaign_sd scs  " +
+                "WHERE scs.language_code IN(<languageList>) AND scs.item_url = :item_url  " +
+                "AND scs.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        StructuredCampaignCardCarousel result = new StructuredCampaignCardCarousel();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
+            result = query.mapToBean(StructuredCampaignCardCarousel.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    private List<StructuredCampaignCardItem> getStructuredCampaignCardCarouselItem(Version version,List<String> languageList, String structuredPageUrl) {
+        String methodName = "getStructuredPageCardCarouselItem";
+
+        String sql = "SELECT scsc.* FROM structured_campaign_sd_card scsc " +
+                "LEFT JOIN structured_campaign_sd scs ON scs.uid = scsc.structured_campaign_sd_uid AND scs.language_code = scsc.language_code AND scs.status = scsc.status  " +
+                "WHERE scs.language_code IN(<languageList>) AND scs.item_url = :item_url " +
+                "AND scs.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<StructuredCampaignCardItem> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredPageUrl);
+            result = query.mapToBean(StructuredCampaignCardItem.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        return result;
+    }
+    //END - Structured Campaign Card Carousel Block
+
 
     //START - Structured Campaign Body Section
     public List<StructuredCampaignBodySections> getStructuredCampaignBodySections(Version version, List<String> languageList, String structuredCampaignUrl, String country, String hospital) {
