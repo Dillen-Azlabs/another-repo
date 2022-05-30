@@ -145,7 +145,7 @@ public class StructuredCampaignRepository extends BaseRepository {
     }
     //END - Structured Campaign StructuredBody Block
 
-    //START - Structured Page Faq Block
+    //START - Structured Campaign Faq Block
     public List<StructuredCampaignFaq> getStructuredCampaignFaq(Version version, List<String> languageList, String structuredCampaignUrl, String country) {
         final String methodName = "getStructuredCampaignFaq";
         start(methodName);
@@ -206,6 +206,63 @@ public class StructuredCampaignRepository extends BaseRepository {
         return result;
     }
     //END - Campaign By Specialty Block
+
+
+    //START - Structured Campaign Cta Section Block
+    public StructuredCampaignCTASection getStructuredCampaignCtaSection(Version version, List<String> languageList, String structuredCampaignUrl) {
+        final String methodName = "getStructuredCampaignCtaSection";
+        start(methodName);
+
+        String sql = "SELECT scs.uid, scs.language_code, scs.cta_section_image, scs.cta_section_title, scs.cta_section_description, " +
+                "scs.cta_section_button1_label , scs.cta_section_button1_url, scs.cta_section_button2_label, scs.cta_section_button2_url, " +
+                "scs.display_order, scs.publish_flag, scs.created_dt, scs.modified_dt FROM structured_campaign_sd scs  " +
+                "WHERE scs.language_code IN(<languageList>) AND scs.item_url = :item_url AND scs.publish_flag = {PUBLISHED} ";
+
+        sql = getPublishVersion(version, sql);
+
+        StructuredCampaignCTASection result = new StructuredCampaignCTASection();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredCampaignUrl);
+            result = query.mapToBean(StructuredCampaignCTASection.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Structured Campaign Cta Section Block
+
+
+    //START - Structured Campaign Cta Block
+    public StructuredCampaignCTA getStructuredCampaignCta(Version version, List<String> languageList, String structuredCampaignUrl, String country) {
+        final String methodName = "getStructuredCampaignCta";
+        start(methodName);
+
+        String sql = "SELECT scs.uid, scs.language_code, scs.display_enquiry_cta, scs.display_appointment_cta, scs.add_cta_label, " +
+                "scs.add_cta_url, scs.publish_flag, scs.created_dt, scs.modified_dt FROM structured_campaign_sd scs  " +
+                "LEFT JOIN structured_campaign_sd_faq scsf ON scs.uid = scsf.structured_campaign_sd_uid  " +
+                "LEFT JOIN structured_campaign_sd_faq_cor scsfc ON scsf.uid = scsfc.structured_campaign_sd_faq_uid  " +
+                "LEFT JOIN country_of_residence cor ON cor.uid = scsfc.cor_uid   " +
+                "WHERE scs.language_code IN(<languageList>) AND scs.item_url = :item_url AND cor.cor = :country  " +
+                "AND scs.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        StructuredCampaignCTA result = new StructuredCampaignCTA();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("item_url", structuredCampaignUrl).bind("country", country);
+            result = query.mapToBean(StructuredCampaignCTA.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+    //END - Structured Campaign Cta Block
+
+
 
     //START - Structured Campaign By Condition Block
     public List<StructuredCampaignSd> getStructuredCampaignByCondition(Version version, List<String> languageList, String structuredCampaignUrl, String hospital) {

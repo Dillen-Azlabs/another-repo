@@ -136,6 +136,51 @@ public class StructuredCampaignService extends BaseService {
         completed(methodName);
         return response;
     }
+    //END - Structured Campaign Faq Block
+
+    //START - Structured Campaign Cta Section Block
+    @RequestMapping(path = "ctaSection", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredCampaignCTASectionResponse getStructuredCampaignCtaSection(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredCampaignUrl") String structuredCampaignUrl) {
+        final String methodName = "getStructuredCampaignCtaSection";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        StructuredCampaignCTASection result = repository.getStructuredCampaignCtaSection(Version.getVersion(version), languageList, structuredCampaignUrl);
+
+        StructuredCampaignCTASectionResponse response = new StructuredCampaignCTASectionResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Campaign Cta Section Block
+
+
+    //START - Structured Campaign Cta Block
+    @RequestMapping(path = "cta", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public StructuredCampaignCtaResponse getStructuredCampaignCta(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("structuredCampaignUrl") String structuredCampaignUrl,
+            @RequestParam("country") String country) {
+        final String methodName = "getStructuredCampaignCta";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        StructuredCampaignCTA result = repository.getStructuredCampaignCta(Version.getVersion(version), languageList, structuredCampaignUrl, country);
+
+        StructuredCampaignCtaResponse response = new StructuredCampaignCtaResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+    //END - Structured Campaign Cta Block
     //END - Structured Campaign Specialty Block
 
     //START - Structured Campaign By Condition Block
