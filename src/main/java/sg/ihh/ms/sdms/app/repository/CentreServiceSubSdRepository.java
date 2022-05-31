@@ -200,11 +200,11 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         final String methodName = "getCentreServiceSubAccordion";
         start(methodName);
 
-        String sql = "SELECT csss.*, csssa.section_intro, csssa.title, csssa.body, csssa.anchor_id       FROM centre_service_sub_sd csss   " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid   " +
-                "LEFT JOIN centre_service_sub_sd_accordion csssa ON csss.uid = csssa.centre_service_sub_sd_uid " +
-                "LEFT JOIN centre_service_sub_sd_accordion_hospital csssah ON csssa.uid = csssah.centre_service_sub_sd_accordion_uid  " +
-                "LEFT JOIN hospital h ON csssah.hospital_uid = h.uid    " +
+        String sql = "SELECT csss.*, csssa.section_intro, csssa.title, csssa.body, csssa.anchor_id FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code " +
+                "LEFT JOIN centre_service_sub_sd_accordion csssa ON csss.uid = csssa.centre_service_sub_sd_uid  AND csss.status = csssa.status AND csss.language_code = csssa.language_code " +
+                "LEFT JOIN centre_service_sub_sd_accordion_hospital csssah ON csssa.uid = csssah.centre_service_sub_sd_accordion_uid AND csssa.status = csssah.status AND csssa.language_code = csssah.language_code " +
+                "LEFT JOIN hospital h ON csssah.hospital_uid = h.uid " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
