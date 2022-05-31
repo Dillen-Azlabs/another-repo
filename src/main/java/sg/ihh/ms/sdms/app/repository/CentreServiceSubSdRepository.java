@@ -170,13 +170,13 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         final String methodName = "getCentreServiceSubCta";
         start(methodName);
 
-        String sql = "SELECT csssm.* FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid   " +
-                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csssm.centre_service_sub_sd_uid  = csss.uid  " +
-                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid " +
-                "LEFT JOIN hospital h  ON h.uid  = csssmh.hospital_uid  " +
+        String sql = "SELECT csssm.* FROM centre_service_main_sd csms  " +
+                "LEFT JOIN centre_service_sub_sd csss ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code   " +
+                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csssm.centre_service_sub_sd_uid  = csss.uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code  " +
+                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid  " +
+                "LEFT JOIN hospital h  ON h.uid  = csssmh.hospital_uid   " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain  " +
-                "AND csss.publish_flag = {PUBLISHED}";
+                "AND csss.publish_flag = {PUBLISHED} GROUP BY csss.uid ";
 
         sql = getPublishVersion(version, sql);
 
