@@ -202,7 +202,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         final String methodName = "getCentreServiceSubAccordion";
         start(methodName);
 
-        String sql = "SELECT csss.*, csssa.section_intro, csssa.title, csssa.body, csssa.anchor_id FROM centre_service_sub_sd csss " +
+        String sql = "SELECT csss.uid, csss.language_code, csssa.section_intro, csssa.title, csssa.body, csssa.anchor_id, csssa.display_order, csss.publish_flag, csss.created_dt, csss.modified_dt FROM centre_service_sub_sd csss " +
                 "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code " +
                 "LEFT JOIN centre_service_sub_sd_accordion csssa ON csss.uid = csssa.centre_service_sub_sd_uid  AND csss.status = csssa.status AND csss.language_code = csssa.language_code " +
                 "LEFT JOIN centre_service_sub_sd_accordion_hospital csssah ON csssa.uid = csssah.centre_service_sub_sd_accordion_uid AND csssa.status = csssah.status AND csssa.language_code = csssah.language_code " +
