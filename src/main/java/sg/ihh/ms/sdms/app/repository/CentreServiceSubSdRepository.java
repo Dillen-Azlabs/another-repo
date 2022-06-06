@@ -297,7 +297,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
 
 
     //START - Centre Service Sub Body Section Block
-    public List<CentreServiceSubBodySection> getCentreServiceSubBodySection(Version version, List<String> languageList, String centerServiceSUrl, String centerServiceMUrl, String hospitalCode) {
+    public List<CentreServiceSubBodySection> getCentreServiceSubBodySection(Version version, List<String> languageList, String centerServiceSUrl, String centerServiceMUrl, String hospitalCode, int sectionNumber) {
         final String methodName = "getCentreServiceSubBodySection";
         start(methodName);
 
@@ -306,7 +306,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
                 "LEFT JOIN centre_service_sub_sd_body csssb ON csss.uid = csssb.centre_service_sub_sd_uid  AND csss.status = csssb.status AND csss.language_code = csssb.language_code " +
                 "LEFT JOIN centre_service_sub_sd_body_hospital csssbh ON csssb.uid  = csssbh.centre_service_sub_sd_body_uid AND csssb.status = csssbh.status AND csssb.language_code = csssbh.language_code " +
                 "LEFT JOIN hospital h  ON h.uid  = csssbh.hospital_uid " +
-                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csssb.section = :section AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
 
@@ -314,7 +314,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
 
         List<CentreServiceSubBodySection> result = new ArrayList<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("itemUrlSub", centerServiceSUrl).bind("hospital", hospitalCode).bind("itemUrlMain", centerServiceMUrl);
+            query.bindList("languageList", languageList).bind("itemUrlSub", centerServiceSUrl).bind("hospital", hospitalCode).bind("section", sectionNumber).bind("itemUrlMain", centerServiceMUrl);
             result = query.mapToBean(CentreServiceSubBodySection.class).list();
 
         } catch (Exception ex) {

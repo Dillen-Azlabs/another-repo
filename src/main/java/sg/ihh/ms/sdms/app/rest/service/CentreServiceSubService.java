@@ -1,5 +1,6 @@
 package sg.ihh.ms.sdms.app.rest.service;
 
+import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -142,14 +143,16 @@ public class CentreServiceSubService extends BaseService{
             @RequestParam("languageCode") String languageCode,
             @RequestParam("centreServiceMUrl") String centreServiceMUrl,
             @RequestParam("centreServiceSUrl") String centreServiceSUrl,
-            @RequestParam("hospitalCode") String hospitalCode) {
+            @RequestParam("hospitalCode") String hospitalCode,
+            @RequestParam("sectionNumber") @Range(min = 1, max = 2,
+                    message = "Allowed Values : 1, 2") int sectionNumber) {
         final String methodName = "getCentreServiceBodySection";
         start(methodName);
 
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<CentreServiceSubBodySection> result = repository.getCentreServiceSubBodySection(Version.getVersion(version), languageList, centreServiceSUrl, centreServiceMUrl, hospitalCode);
+        List<CentreServiceSubBodySection> result = repository.getCentreServiceSubBodySection(Version.getVersion(version), languageList, centreServiceSUrl, centreServiceMUrl, hospitalCode, sectionNumber);
 
         CentreServiceBodySectionListResponse response = new CentreServiceBodySectionListResponse(result);
 
