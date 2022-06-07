@@ -94,12 +94,12 @@ public class LocationSdRepository  extends BaseRepository {
     public List<LocationSd> getLocationByCentreService(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
         final String methodName = "getLocationByCentreService";
         start(methodName);
-        String sql =" SELECT ls.uid, ls.language_code, ls.location_title, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.display_order, ls.publish_flag, ls.created_dt, ls.modified_dt FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid " +
-                "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid " +
-                "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid " +
-                "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid " +
-                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON csssl.uid  = cssslh.centre_service_sub_sd_location_uid " +
+        String sql = "SELECT ls.uid, ls.language_code, ls.location_title, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.display_order, ls.publish_flag, ls.created_dt, ls.modified_dt FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
+                "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid AND csss.status = csssl.status AND csss.language_code = csssl.language_code " +
+                "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid AND ls.status = csssl.status AND ls.language_code = csssl.language_code " +
+                "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid AND ls.status = cor.status AND ls.language_code = cor.language_code " +
+                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON csssl.uid  = cssslh.centre_service_sub_sd_location_uid AND cssslh.status = csssl.status AND cssslh.language_code = csssl.language_code " +
                 "LEFT JOIN hospital h ON cssslh.hospital_uid  = h.uid " +
                 "WHERE ls.language_code IN(<languageList>)AND csms.item_url = :itemUrlMain AND csss.item_url = :itemUrlSub  AND h.hospital = :hospital " +
                 "AND ls.publish_flag = {PUBLISHED} ";
@@ -129,11 +129,11 @@ public class LocationSdRepository  extends BaseRepository {
         final String methodName = "getLocationSdContact";
         start(methodName);
         String sql ="SELECT lsc.contact_header, lsc.contact_number, lsc.display_order  FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid " +
-                "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid " +
-                "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid " +
-                "LEFT JOIN location_sd_contact lsc  ON ls.uid = lsc.location_sd_uid " +
-                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON csssl.uid  = cssslh.centre_service_sub_sd_location_uid " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
+                "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid AND csss.status = csssl.status AND csss.language_code = csssl.language_code " +
+                "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid AND ls.status = csssl.status AND ls.language_code = csssl.language_code " +
+                "LEFT JOIN location_sd_contact lsc  ON ls.uid = lsc.location_sd_uid AND ls.status = lsc.status AND ls.language_code = lsc.language_code " +
+                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON csssl.uid  = cssslh.centre_service_sub_sd_location_uid AND cssslh.status = csssl.status AND cssslh.language_code = csssl.language_code " +
                 "LEFT JOIN hospital h ON cssslh.hospital_uid  = h.uid " +
                 "WHERE ls.language_code IN(<languageList>)AND csms.item_url = :itemUrlMain AND csss.item_url = :itemUrlSub  AND h.hospital = :hospital " +
                 "AND ls.publish_flag = {PUBLISHED} ";
