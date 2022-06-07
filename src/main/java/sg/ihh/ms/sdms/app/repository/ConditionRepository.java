@@ -277,7 +277,7 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT s.specialty FROM specialty s " +
-                "LEFT JOIN condition_disease_sd cds ON cds.language_code = s.language_code AND cds.primary_specialty_uid  = s.uid " +
+                "LEFT JOIN condition_disease_sd cds ON cds.language_code = s.language_code AND cds.primary_specialty_uid  = s.uid  AND s.status = cds.status " +
                 "WHERE cds.language_code IN(<languageList>) AND cds.publish_flag = {PUBLISHED} AND cds.uid  = :uid";
 
         sql = getPublishVersion(version, sql);
@@ -299,8 +299,8 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT s.specialty FROM specialty s " +
-                "INNER JOIN condition_disease_sd cds ON cds.language_code = s.language_code " +
-                "INNER JOIN condition_disease_sd_other_specialty cdsos ON cdsos.condition_disease_sd_uid = cds.uid AND cdsos.specialty_uid = s.uid " +
+                "INNER JOIN condition_disease_sd cds ON cds.language_code = s.language_code AND s.uid = cds.primary_specialty_uid AND s.status = cds.status " +
+                "INNER JOIN condition_disease_sd_other_specialty cdsos ON cdsos.condition_disease_sd_uid = cds.uid  AND cds.status = cdsos.status AND cds.language_code = cdsos.language_code " +
                 "WHERE cdsos.language_code IN(<languageList>) AND cdsos.publish_flag = {PUBLISHED} AND cds.uid  = :uid;";
 
         sql = getPublishVersion(version, sql);
@@ -323,8 +323,8 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cs.child_specialty from child_specialty cs " +
-                "INNER JOIN condition_disease_sd cds ON cds.language_code = cs.language_code " +
-                "INNER JOIN condition_disease_sd_other_child_specialty cdsocs ON cdsocs.condition_disease_sd_uid = cds.uid AND cdsocs.child_specialty_uid = cs.uid " +
+                "INNER JOIN condition_disease_sd cds ON cds.language_code = cs.language_code   " +
+                "INNER JOIN condition_disease_sd_other_child_specialty cdsocs ON cdsocs.condition_disease_sd_uid = cds.uid AND cdsocs.child_specialty_uid = cs.uid AND cs.status = cdsocs.status AND cs.language_code = cdsocs.language_code " +
                 "WHERE cdsocs.language_code IN(<languageList>) AND cdsocs.publish_flag = {PUBLISHED} AND cds.uid  = :uid;";
 
         sql = getPublishVersion(version, sql);
@@ -345,7 +345,7 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cdsm.expertise_meta_title, cdsm.expertise_meta_desc,cdsm.wcu, cdsm.doc_intro FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid AND cdsm.language_code = cd.language_code" +
+                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid AND cdsm.language_code = cd.language_code AND cd.status = cdsm.status " +
                 " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +
                 " AND cd.publish_flag = {PUBLISHED}";
