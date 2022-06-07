@@ -67,9 +67,9 @@ public class LocationSdRepository  extends BaseRepository {
         final String methodName = "getLocationSdContact";
         start(methodName);
         String sql ="SELECT lsc.contact_header, lsc.contact_number, lsc.display_order  FROM location_sd ls " +
-                "LEFT JOIN location_sd_contact lsc  ON ls.uid = lsc.location_sd_uid " +
-                "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid " +
-                "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid " +
+                "LEFT JOIN location_sd_contact lsc  ON ls.uid = lsc.location_sd_uid AND ls.status = lsc.status AND ls.language_code = lsc.language_code " +
+                "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid AND ls.status = cor.status AND ls.language_code = cor.language_code  " +
+                "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid AND lsc.status = lsh.status AND lsc.language_code = lsh.language_code " +
                 "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid " +
                 "WHERE ls.language_code IN(<languageList>) AND ls.item_url = :itemUrls AND h.hospital = :hospital " +
                 "AND ls.publish_flag = {PUBLISHED}";
