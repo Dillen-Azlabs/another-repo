@@ -428,6 +428,8 @@ public class SpecialtySdRepository extends BaseRepository{
         completed(methodName);
         return result;
     }
+
+    // Start Get Specialty Related Data Block
     public SpecialtyRelatedData getSpecialtyRelatedData(Version version, List<String> languageList, String specialtyItemUrl) {
         final String methodName = "getSpecialtyRelatedData";
         start(methodName);
@@ -483,7 +485,6 @@ public class SpecialtySdRepository extends BaseRepository{
         5. For each match found, use condition_disease_sd_other_specialty.condition_disease_sd_uid to match with condition_disease_sd.uid.
            Return the pair of (item_url, condition_h1_display). Ensure publish_flag is DRAFT.
 */
-
         String query1 = "SELECT item_url, condition_h1_display FROM condition_disease_sd " +
                 "WHERE primary_specialty_uid = :uid  AND language_code IN(<languageList>) AND publish_flag = {PUBLISHED}";
 
@@ -542,10 +543,11 @@ public class SpecialtySdRepository extends BaseRepository{
 
 
 
+        // hardcode for ttps language code for filtering
 
         String query1 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd tts "+
-                "INNER JOIN test_treatment_primary_specialty ttps  ON tts.primary_treatment_uid = ttps.test_treatment_uid "+
-                "WHERE tts.language_code IN(<languageList>) AND ttps.specialty_uid = :uid  AND tts.publish_flag = {PUBLISHED}";
+                "LEFT JOIN test_treatment_primary_specialty ttps  ON tts.primary_treatment_uid = ttps.test_treatment_uid  AND tts.status = ttps.status "+
+                "WHERE tts.language_code IN(<languageList>) AND ttps.specialty_uid = :uid  AND tts.publish_flag = {PUBLISHED} AND ttps.language_code = 'EN'";
 
         String query2 = "SELECT test_treatment_uid FROM test_treatment_other_specialty ttos WHERE ttos.language_code IN(<languageList>) AND ttos.specialty_uid = :uid  AND  ttos.publish_flag = {PUBLISHED}";
 
@@ -585,4 +587,6 @@ public class SpecialtySdRepository extends BaseRepository{
         }
         return result;
     }
+
+    // Start Get Specialty Related Data Block
 }
