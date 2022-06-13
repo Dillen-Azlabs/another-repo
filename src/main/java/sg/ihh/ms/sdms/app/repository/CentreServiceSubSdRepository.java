@@ -587,7 +587,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
                 "LEFT JOIN centre_service_main_sd_specialty csmss ON csms.uid = csmss.centre_service_main_sd_uid  " +
                 "LEFT JOIN specialty s ON s.uid = csmss.specialty_uid  " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain " +
-                "AND csss.publish_flag = {PUBLISHED} ";
+                "AND csss.publish_flag = {PUBLISHED} AND s.specialty IS NOT NULL";
 
         sql = getPublishVersion(version, sql);
 
@@ -611,7 +611,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
                 "LEFT JOIN centre_service_main_sd_child_specialty csmscs ON csms.uid = csmscs.centre_service_main_sd_uid  " +
                 "LEFT JOIN child_specialty cs ON cs.uid = csmscs.child_specialty_uid  " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain " +
-                "AND csss.publish_flag = {PUBLISHED} ";
+                "AND csss.publish_flag = {PUBLISHED} AND cs.child_specialty IS NOT NULL";
 
         sql = getPublishVersion(version, sql);
 
