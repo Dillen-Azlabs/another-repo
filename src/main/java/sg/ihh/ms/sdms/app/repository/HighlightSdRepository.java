@@ -22,6 +22,10 @@ public class HighlightSdRepository extends  BaseRepository {
         final String methodName = "getHighlightSearch";
         start(methodName);
 
+        // To append the timing for both publishDateFrom and publicDateTo in order to return the result correctly.
+        publishDateFrom += " 00:00:00";
+        publishDateTo += " 23:59:59";
+
         String sql = "SELECT hs.uid, hs.language_code, hs.image, hs.title, hs.link, hs.linkType, cor.cor, coc.coc, hs.display_order, hs.publish_flag,hs.created_dt, hs.modified_dt, hs.publish_date  FROM highlights_sd hs " +
                 "LEFT JOIN country_of_residence cor ON cor.uid = hs.country_of_residence_uid " +
                 "LEFT JOIN country_of_care coc ON coc.uid = hs.country_of_care_uid " +
