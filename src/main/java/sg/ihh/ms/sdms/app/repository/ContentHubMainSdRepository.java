@@ -260,20 +260,12 @@ public class ContentHubMainSdRepository extends BaseRepository {
             log.error(methodName, ex);
         }
 
-        List<ContentHubMainAward> deleteResult = new ArrayList<>();
         for (ContentHubMainAward contentHubMainAward : result) {
             List<ContentHubMainAwardItem> awardItemList = getAward(version,languageList,contentHubMUrl,hospitalCode,country);
             String sectionIntro = getContentHubMainSection(version,languageList,contentHubMUrl,hospitalCode,country);
-            if (awardItemList.size() == 0 && sectionIntro.equals("")) {
-                deleteResult.add(contentHubMainAward);
-            } else {
-                contentHubMainAward.setAwardItem(awardItemList);
-                contentHubMainAward.setSectionIntro(sectionIntro);
-            }
-        }
 
-        if(deleteResult.size() != 0){
-            result.removeAll(deleteResult);
+            contentHubMainAward.setAwardItem(awardItemList);
+            contentHubMainAward.setSectionIntro(sectionIntro);
         }
 
         completed(methodName);
@@ -284,13 +276,13 @@ public class ContentHubMainSdRepository extends BaseRepository {
         final String methodName = "getContentHubMainSection";
         start(methodName);
 
-        String sql = "SELECT  chmsas.section_intro FROM content_hub_main_sd chms " +
-                "LEFT JOIN content_hub_main_sd_award_section chmsas  ON chms.uid = chmsas.content_hub_main_sd_uid " +
-                "LEFT JOIN content_hub_main_sd_award_section_country chmsasc ON chmsas.uid = chmsasc.content_hub_main_sd_award_section_uid  " +
-                "LEFT JOIN content_hub_main_sd_award_section_hospital chmsash  ON chmsas.uid = chmsash.content_hub_main_sd_award_section_uid  " +
+        String sql = "SELECT chmsas.section_intro FROM content_hub_main_sd chms " +
+                "LEFT JOIN content_hub_main_sd_award_section chmsas ON chms.uid = chmsas.content_hub_main_sd_uid AND chms.language_code = chmsas.language_code AND chms.status = chmsas.status " +
+                "LEFT JOIN content_hub_main_sd_award_section_country chmsasc ON chmsas.uid = chmsasc.content_hub_main_sd_award_section_uid AND chmsas.language_code = chmsasc.language_code AND chmsas.status = chmsasc.status " +
+                "LEFT JOIN content_hub_main_sd_award_section_hospital chmsash ON chmsas.uid = chmsash.content_hub_main_sd_award_section_uid AND chmsas.language_code = chmsash.language_code AND chmsas.status = chmsash.status " +
                 "LEFT JOIN country_of_residence c ON c.uid = chmsasc.cor_uid " +
-                "LEFT JOIN hospital h ON chmsash.hospital_uid  = h.uid " +
-                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url AND h.hospital = :hospital AND c.cor  = :countryOfResidence " +
+                "LEFT JOIN hospital h ON chmsash.hospital_uid = h.uid " +
+                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url AND h.hospital = :hospital AND c.cor = :countryOfResidence " +
                 "AND chms.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
@@ -311,13 +303,13 @@ public class ContentHubMainSdRepository extends BaseRepository {
     {
         String methodName = "getAward";
         String sql = "SELECT chmsa.heading, chmsa.icon, chmsa.description, chmsa.display_order FROM content_hub_main_sd chms " +
-                "LEFT JOIN content_hub_main_sd_awards chmsa  ON chms.uid = chmsa.content_hub_main_sd_uid " +
-                "LEFT JOIN content_hub_main_sd_award_section chmsas  ON chms.uid = chmsas.content_hub_main_sd_uid  " +
-                "LEFT JOIN content_hub_main_sd_awards_country chmsac ON chmsa.uid = chmsac.content_hub_main_sd_awards_uid " +
-                "LEFT JOIN content_hub_main_sd_awards_hospital chmsah ON chmsa.uid = chmsah.content_hub_main_sd_awards_uid " +
+                "LEFT JOIN content_hub_main_sd_awards chmsa ON chms.uid = chmsa.content_hub_main_sd_uid AND chms.language_code = chmsa.language_code AND chms.status = chmsa.status " +
+                "LEFT JOIN content_hub_main_sd_award_section chmsas ON chms.uid = chmsas.content_hub_main_sd_uid AND chms.language_code = chmsas.language_code AND chms.status = chmsas.status " +
+                "LEFT JOIN content_hub_main_sd_awards_country chmsac ON chmsa.uid = chmsac.content_hub_main_sd_awards_uid AND chmsa.language_code = chmsac.language_code AND chmsa.status = chmsac.status " +
+                "LEFT JOIN content_hub_main_sd_awards_hospital chmsah ON chmsa.uid = chmsah.content_hub_main_sd_awards_uid AND chmsa.language_code = chmsah.language_code AND chmsa.status = chmsah.status " +
                 "LEFT JOIN country_of_residence c ON c.uid = chmsac.cor_uid " +
-                "LEFT JOIN hospital h ON chmsah.hospital_uid  = h.uid " +
-                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url AND h.hospital = :hospital AND c.cor  = :countryOfResidence " +
+                "LEFT JOIN hospital h ON chmsah.hospital_uid = h.uid " +
+                "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url AND h.hospital = :hospital AND c.cor = :countryOfResidence " +
                 "AND chms.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
