@@ -531,10 +531,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     {
         String methodName = "getSpecialists";
         String sql ="  SELECT mp.uid, mp.language_code, mp.item_url, mp.display_name, mp.salutation, mp.designation, mp.profile_photo_url, mp.profile_photo_alt_text, mp.display_order, mp.publish_flag, mp.created_dt, mp.modified_dt FROM centre_service_main_sd csms " +
-                "LEFT JOIN centre_service_main_sd_specialty csmss ON csms.uid = csmss.centre_service_main_sd_uid  " +
+                "LEFT JOIN centre_service_main_sd_specialty csmss ON csms.uid = csmss.centre_service_main_sd_uid AND csms.language_code = csmss.language_code AND csms.status = csmss.status " +
                 "LEFT JOIN specialty s ON s.uid = csmss.specialty_uid  " +
-                "LEFT JOIN medical_professional_specialty mps ON s.uid = mps.specialty_uid  " +
-                "LEFT JOIN medical_professional mp ON mp.uid = mps.medical_professional_uid  " +
+                "LEFT JOIN medical_professional_specialty mps ON s.uid = mps.specialty_uid AND s.language_code = mps.language_code AND s.status = mps.status " +
+                "LEFT JOIN medical_professional mp ON mp.uid = mps.medical_professional_uid AND mp.language_code = mps.language_code AND mp.status = mps.status " +
                 "LEFT JOIN medical_professional_type mpt ON mpt.uid = mp.medical_professional_type_uid  " +
                 "WHERE csms.language_code IN(<languageList>) AND csms.item_url = :itemUrlMain AND mpt.profession = 'Specialists' " +
                 "AND csms.publish_flag = {PUBLISHED} ";
@@ -557,10 +557,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     {
         String methodName = "getSpecialistsByCentreService";
         String sql ="  SELECT mp.uid, mp.language_code, mp.item_url, mp.display_name, mp.salutation, mp.designation, mp.profile_photo_url, mp.profile_photo_alt_text, mp.display_order, mp.publish_flag, mp.created_dt, mp.modified_dt FROM centre_service_main_sd csms " +
-                "LEFT JOIN medical_professional_centre_service mpcs ON csms.uid = mpcs.centre_service_main_sd_uid  " +
-                "LEFT JOIN medical_professional_centre_service_hospital mpcsh ON mpcs.uid = mpcsh.medical_professional_centre_service_uid  " +
+                "LEFT JOIN medical_professional_centre_service mpcs ON csms.uid = mpcs.centre_service_main_sd_uid  AND csms.language_code = mpcs.language_code AND csms.status = mpcs.status " +
+                "LEFT JOIN medical_professional_centre_service_hospital mpcsh ON mpcs.uid = mpcsh.medical_professional_centre_service_uid AND mpcs.language_code = mpcsh.language_code AND mpcs.status = mpcsh.status " +
                 "LEFT JOIN hospital h ON h.uid = mpcsh.hospital_uid  " +
-                "LEFT JOIN medical_professional mp ON mp.uid = mpcs.medical_professional_uid  " +
+                "LEFT JOIN medical_professional mp ON mp.uid = mpcs.medical_professional_uid AND mp.language_code = mpcs.language_code AND mp.status = mpcs.status " +
                 "LEFT JOIN medical_professional_type mpt ON mpt.uid = mp.medical_professional_type_uid  " +
                 "WHERE csms.language_code IN(<languageList>) AND csms.item_url = :itemUrlMain AND mpt.profession = 'Specialists' AND h.hospital = :hospital " +
                 "AND csms.publish_flag = {PUBLISHED} ";
@@ -607,8 +607,8 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     {
         String methodName = "getChildSpecialties";
         String sql ="  SELECT cs.child_specialty FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid " +
-                "LEFT JOIN centre_service_main_sd_child_specialty csmscs ON csms.uid = csmscs.centre_service_main_sd_uid  " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid AND csms.language_code = csss.language_code AND csms.status = csss.status " +
+                "LEFT JOIN centre_service_main_sd_child_specialty csmscs ON csms.uid = csmscs.centre_service_main_sd_uid AND csms.language_code = csmscs.language_code AND csms.status = csmscs.status " +
                 "LEFT JOIN child_specialty cs ON cs.uid = csmscs.child_specialty_uid  " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED} AND cs.child_specialty IS NOT NULL";
@@ -631,10 +631,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     {
         String methodName = "getAhps";
         String sql ="  SELECT mp.uid, mp.language_code, mp.item_url, mp.display_name, mp.salutation, mp.designation, mp.profile_photo_url, mp.profile_photo_alt_text, mp.display_order, mp.publish_flag, mp.created_dt, mp.modified_dt FROM centre_service_main_sd csms " +
-                "LEFT JOIN centre_service_main_sd_specialty csmss ON csms.uid = csmss.centre_service_main_sd_uid  " +
+                "LEFT JOIN centre_service_main_sd_specialty csmss ON csms.uid = csmss.centre_service_main_sd_uid AND csms.language_code = csmss.language_code AND csms.status = csmss.status " +
                 "LEFT JOIN specialty s ON s.uid = csmss.specialty_uid  " +
-                "LEFT JOIN medical_professional_specialty mps ON s.uid = mps.specialty_uid  " +
-                "LEFT JOIN medical_professional mp ON mp.uid = mps.medical_professional_uid  " +
+                "LEFT JOIN medical_professional_specialty mps ON s.uid = mps.specialty_uid AND s.language_code = mps.language_code AND s.status = mps.status " +
+                "LEFT JOIN medical_professional mp ON mp.uid = mps.medical_professional_uid AND mp.language_code = mps.language_code AND mp.status = mps.status " +
                 "LEFT JOIN medical_professional_type mpt ON mpt.uid = mp.medical_professional_type_uid  " +
                 "WHERE csms.language_code IN(<languageList>) AND csms.item_url = :itemUrlMain AND mpt.profession = 'Allied health Professionals' " +
                 "AND csms.publish_flag = {PUBLISHED} ";
@@ -656,11 +656,11 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     private List<CentreServiceSubMedicalProfessional> getAhpsByCentreService(Version version, List<String> languageList, String centreServiceMUrl, String hospitalCode)
     {
         String methodName = "getSpecialistsByCentreService";
-        String sql ="  SELECT mp.uid, mp.language_code, mp.item_url, mp.display_name, mp.salutation, mp.designation, mp.profile_photo_url, mp.profile_photo_alt_text, mp.display_order AS order, mp.publish_flag, mp.created_dt, mp.modified_dt FROM centre_service_main_sd csms " +
-                "LEFT JOIN medical_professional_centre_service mpcs ON csms.uid = mpcs.centre_service_main_sd_uid  " +
-                "LEFT JOIN medical_professional_centre_service_hospital mpcsh ON mpcs.uid = mpcs.medical_professional_centre_service_uid  " +
+        String sql ="  SELECT mp.uid, mp.language_code, mp.item_url, mp.display_name, mp.salutation, mp.designation, mp.profile_photo_url, mp.profile_photo_alt_text, mp.display_order AS `order`, mp.publish_flag, mp.created_dt, mp.modified_dt FROM centre_service_main_sd csms " +
+                "LEFT JOIN medical_professional_centre_service mpcs ON csms.uid = mpcs.centre_service_main_sd_uid AND csms.language_code = mpcs.language_code AND csms.status = mpcs.status " +
+                "LEFT JOIN medical_professional_centre_service_hospital mpcsh ON mpcs.uid = mpcs.medical_professional_centre_service_uid AND mpcs.language_code = mpcsh.language_code AND mpcs.status = mpcsh.status " +
                 "LEFT JOIN hospital h ON h.uid = mpcsh.hospital_uid  " +
-                "LEFT JOIN medical_professional mp ON mp.uid = mpcs.medical_professional_uid  " +
+                "LEFT JOIN medical_professional mp ON mp.uid = mpcs.medical_professional_uid  AND mp.language_code = mpcs.language_code AND mp.status = mpcs.status " +
                 "LEFT JOIN medical_professional_type mpt ON mpt.uid = mp.medical_professional_type_uid  " +
                 "WHERE csms.language_code IN(<languageList>) AND csms.item_url = :itemUrlMain AND mpt.profession = 'Allied health Professionals' AND h.hospital = :hospital " +
                 "AND csms.publish_flag = {PUBLISHED} ";
@@ -683,8 +683,8 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     {
         String methodName = "getServiceProviderTypes";
         String sql ="  SELECT spt.type FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid " +
-                "LEFT JOIN centre_service_main_sd_service_provider csmssp ON csms.uid = csmssp.centre_service_main_sd_uid  " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid AND csms.language_code = csss.language_code AND csms.status = csss.status " +
+                "LEFT JOIN centre_service_main_sd_service_provider csmssp ON csms.uid = csmssp.centre_service_main_sd_uid AND csms.language_code = csmssp.language_code AND csms.status = csmssp.status " +
                 "LEFT JOIN service_provider_type spt ON spt.uid = csmssp.service_provider_type_uid  " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED} ";
