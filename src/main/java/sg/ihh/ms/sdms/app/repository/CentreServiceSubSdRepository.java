@@ -491,7 +491,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
             log.error(methodName, ex);
         }
 
-        if (result != null && !result.getUid().equals("")) {
+        if (result != new CentreServiceSubMedicalProfessionals()) {
             List<CentreServiceSubMedicalProfessional> specialistList = new ArrayList<>();
             if (result.isDisplaySpecialist()) {
                 if(result.getSpecialistListing().equals("By Specialty / Service Provider Type")) {
