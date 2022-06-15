@@ -260,15 +260,20 @@ public class ContentHubMainSdRepository extends BaseRepository {
             log.error(methodName, ex);
         }
 
+        List<ContentHubMainAward> deleteResult = new ArrayList<>();
         for (ContentHubMainAward contentHubMainAward : result) {
             List<ContentHubMainAwardItem> awardItemList = getAward(version,languageList,contentHubMUrl,hospitalCode,country);
             String sectionIntro = getContentHubMainSection(version,languageList,contentHubMUrl,hospitalCode,country);
             if (awardItemList.size() == 0 && sectionIntro.equals("")) {
-                result.remove(contentHubMainAward);
+                deleteResult.add(contentHubMainAward);
             } else {
                 contentHubMainAward.setAwardItem(awardItemList);
                 contentHubMainAward.setSectionIntro(sectionIntro);
             }
+        }
+
+        if(deleteResult.size() != 0){
+            result.removeAll(deleteResult);
         }
 
         completed(methodName);
