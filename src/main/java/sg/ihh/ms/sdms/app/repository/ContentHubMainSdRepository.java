@@ -58,7 +58,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT chmsm.hospital_main_image, chmsm.hospital_main_image_alt_text, chmsm.social_summary, chmsm.meta_title, chmsm.meta_description  FROM content_hub_main_sd chms " +
-                "LEFT JOIN content_hub_main_sd_metadata chmsm  ON chms.uid = chmsm.content_hub_main_sd_uid " +
+                "LEFT JOIN content_hub_main_sd_metadata chmsm  ON chms.uid = chmsm.content_hub_main_sd_uid AND chms.language_code = chmsm.language_code AND chms.status = chmsm.status " +
                 "LEFT JOIN hospital h ON chmsm.hospital_uid  = h.uid " +
                 "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url AND h.hospital = :hospital " +
                 "AND chms.publish_flag = {PUBLISHED}";
@@ -143,7 +143,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT chms.*, chmsm.care_area_overview, chmsm.specialists_heading, chmsm.specialists_count, chmsm.specialists_label, chmsm.specialists_description, chmsm.specialists_button_label, chmsm.specialists_button_url FROM content_hub_main_sd chms " +
-                "LEFT JOIN content_hub_main_sd_metadata chmsm  ON chms.uid = chmsm.content_hub_main_sd_uid " +
+                "LEFT JOIN content_hub_main_sd_metadata chmsm  ON chms.uid = chmsm.content_hub_main_sd_uid AND chms.language_code = chmsm.language_code AND chms.status = chmsm.status " +
                 "LEFT JOIN hospital h ON chmsm.hospital_uid  = h.uid " +
                 "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url AND h.hospital = :hospital " +
                 "AND chms.publish_flag = {PUBLISHED}";
@@ -195,8 +195,8 @@ public class ContentHubMainSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT chmsa.* ,chmsas.section_intro  FROM content_hub_main_sd chms " +
-                "LEFT JOIN content_hub_main_sd_awards chmsa  ON chms.uid = chmsa.content_hub_main_sd_uid " +
-                "LEFT JOIN content_hub_main_sd_award_section chmsas  ON chms.uid = chmsas.content_hub_main_sd_uid  " +
+                "LEFT JOIN content_hub_main_sd_awards chmsa  ON chms.uid = chmsa.content_hub_main_sd_uid AND chms.language_code = chmsa.language_code AND chms.status = chmsa.status " +
+                "LEFT JOIN content_hub_main_sd_award_section chmsas  ON chms.uid = chmsas.content_hub_main_sd_uid AND chms.language_code = chmsas.language_code AND chms.status = chmsas.status " +
                 "WHERE chmsa.language_code IN(<languageList>) " +
                 "AND chmsa.publish_flag = {PUBLISHED}";
 
@@ -220,9 +220,9 @@ public class ContentHubMainSdRepository extends BaseRepository {
     {
         String methodName = "getAwardList";
         String sql = "SELECT chmsa.* FROM content_hub_main_sd chms " +
-                "LEFT JOIN content_hub_main_sd_awards chmsa  ON chms.uid = chmsa.content_hub_main_sd_uid " +
-                "LEFT JOIN content_hub_main_sd_award_section chmsas  ON chms.uid = chmsas.content_hub_main_sd_uid  " +
-                "LEFT JOIN content_hub_main_sd_awards_country chmsac ON chmsa.uid = chmsac.content_hub_main_sd_awards_uid " +
+                "LEFT JOIN content_hub_main_sd_awards chmsa  ON chms.uid = chmsa.content_hub_main_sd_uid AND chms.language_code = chmsa.language_code AND chms.status = chmsa.status " +
+                "LEFT JOIN content_hub_main_sd_award_section chmsas  ON chms.uid = chmsas.content_hub_main_sd_uid AND chms.language_code = chmsas.language_code AND chms.status = chmsas.status " +
+                "LEFT JOIN content_hub_main_sd_awards_country chmsac ON chmsa.uid = chmsac.content_hub_main_sd_awards_uid AND chmsa.language_code = chmsac.language_code AND chmsa.status = chmsac.status " +
                 "LEFT JOIN country_of_residence c ON c.uid = chmsac.cor_uid " +
                 "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url  AND c.cor  = :countryOfResidence " +
                 "AND chms.publish_flag = {PUBLISHED}";
@@ -360,7 +360,7 @@ public class ContentHubMainSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT chms.uid,chms.language_code,chmsic.icon_image, chmsic.header, chmsic.anchor_id, chmsic.content,chmsic.display_order, chms.publish_flag,chms.created_dt,chms.modified_dt FROM content_hub_main_sd chms " +
-                "LEFT JOIN content_hub_main_sd_icon_content chmsic  ON chms.uid = chmsic.content_hub_main_sd_uid  " +
+                "LEFT JOIN content_hub_main_sd_icon_content chmsic  ON chms.uid = chmsic.content_hub_main_sd_uid AND chms.language_code = chmsic.language_code AND chms.status = chmsic.status  " +
                 "WHERE chms.language_code IN(<languageList>) AND chms.item_url = :item_url " +
                 "AND chms.publish_flag = {PUBLISHED}";
 
