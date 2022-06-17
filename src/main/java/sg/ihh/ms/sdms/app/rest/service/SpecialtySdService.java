@@ -12,6 +12,7 @@ import sg.ihh.ms.sdms.app.repository.SpecialtySdRepository;
 import sg.ihh.ms.sdms.app.rest.model.*;
 
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -144,10 +145,14 @@ public class SpecialtySdService extends BaseService{
         final String methodName = "getSpecialtyRelatedTreatment";
         start(methodName);
 
-
-
         // Language Code
-        List<String> languageList = getLanguageList(languageCode);
+        List<String> languageList;
+
+        if (languageCode.isEmpty()) {
+            languageList = getLanguageList("EN");
+        }else{
+            languageList = getLanguageList(languageCode);
+        }
 
         SpecialtyRelatedTreatment result = repository.getSpecialtyRelatedTreatment(Version.getVersion(version), languageList, specialtyUrl,hospitalCode);
 
