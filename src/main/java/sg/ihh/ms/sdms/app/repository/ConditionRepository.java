@@ -55,8 +55,8 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cdsm.hospital_main_image, cdsm.hospital_main_text FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid AND cd.language_code = cdsm.language_code AND cd.status = cdsm.status " +
-                " LEFT JOIN hospital h ON cdsm.hospital_uid = h.uid"+
+                " LEFT JOIN condition_disease_sd_metadata cdsm ON (cd.uid = cdsm.condition_disease_sd_uid AND cd.language_code = cdsm.language_code AND cd.status = cdsm.status) " +
+                " LEFT JOIN hospital h ON (cdsm.hospital_uid = h.uid AND h.language_code IN(<languageList>)) "+
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +
                 " AND cd.publish_flag = {PUBLISHED}";
 
@@ -133,8 +133,8 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cdsm.symptoms_meta_title, cdsm.symptoms_meta_desc FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid AND cd.language_code = cdsm.language_code AND cd.status = cdsm.status " +
-                " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
+                " LEFT JOIN condition_disease_sd_metadata cdsm ON (cd.uid = cdsm.condition_disease_sd_uid AND cd.language_code = cdsm.language_code AND cd.status = cdsm.status) " +
+                " LEFT JOIN hospital h ON (h.uid = cdsm.hospital_uid AND h.language_code IN(<languageList>)) " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital " +
                 " AND cd.publish_flag = {PUBLISHED}";
 
@@ -188,8 +188,8 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cdsm.diagnosis_meta_title,cdsm.diagnosis_meta_desc FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid AND cd.language_code = cdsm.language_code AND cd.status = cdsm.status " +
-                " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
+                " LEFT JOIN condition_disease_sd_metadata cdsm ON (cd.uid = cdsm.condition_disease_sd_uid AND cd.language_code = cdsm.language_code AND cd.status = cdsm.status) " +
+                " LEFT JOIN hospital h ON (h.uid = cdsm.hospital_uid AND h.language_code IN(<languageList>)) " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +
                 " AND cd.publish_flag = {PUBLISHED}";
 
@@ -277,7 +277,7 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT s.specialty FROM specialty s " +
-                "LEFT JOIN condition_disease_sd cds ON cds.language_code = s.language_code AND cds.primary_specialty_uid  = s.uid  AND s.status = cds.status " +
+                "LEFT JOIN condition_disease_sd cds ON (cds.language_code = s.language_code AND cds.primary_specialty_uid  = s.uid  AND s.status = cds.status) " +
                 "WHERE cds.language_code IN(<languageList>) AND cds.publish_flag = {PUBLISHED} AND cds.uid  = :uid";
 
         sql = getPublishVersion(version, sql);
@@ -299,8 +299,8 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT s.specialty FROM specialty s " +
-                "INNER JOIN condition_disease_sd cds ON cds.language_code = s.language_code AND s.uid = cds.primary_specialty_uid AND s.status = cds.status " +
-                "INNER JOIN condition_disease_sd_other_specialty cdsos ON cdsos.condition_disease_sd_uid = cds.uid  AND cds.status = cdsos.status AND cds.language_code = cdsos.language_code " +
+                "INNER JOIN condition_disease_sd cds ON (cds.language_code = s.language_code AND s.uid = cds.primary_specialty_uid AND s.status = cds.status) " +
+                "INNER JOIN condition_disease_sd_other_specialty cdsos ON (cdsos.condition_disease_sd_uid = cds.uid  AND cds.status = cdsos.status AND cds.language_code = cdsos.language_code) " +
                 "WHERE cdsos.language_code IN(<languageList>) AND cdsos.publish_flag = {PUBLISHED} AND cds.uid  = :uid;";
 
         sql = getPublishVersion(version, sql);
@@ -323,8 +323,8 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cs.child_specialty from child_specialty cs " +
-                "INNER JOIN condition_disease_sd cds ON cds.language_code = cs.language_code   " +
-                "INNER JOIN condition_disease_sd_other_child_specialty cdsocs ON cdsocs.condition_disease_sd_uid = cds.uid AND cdsocs.child_specialty_uid = cs.uid AND cs.status = cdsocs.status AND cs.language_code = cdsocs.language_code " +
+                "INNER JOIN condition_disease_sd cds ON (cds.language_code = cs.language_code AND cds.status = cs.status) " +
+                "INNER JOIN condition_disease_sd_other_child_specialty cdsocs ON (cdsocs.condition_disease_sd_uid = cds.uid AND cdsocs.child_specialty_uid = cs.uid AND cs.status = cdsocs.status AND cs.language_code = cdsocs.language_code) " +
                 "WHERE cdsocs.language_code IN(<languageList>) AND cdsocs.publish_flag = {PUBLISHED} AND cds.uid  = :uid;";
 
         sql = getPublishVersion(version, sql);
@@ -345,8 +345,8 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cdsm.expertise_meta_title, cdsm.expertise_meta_desc,cdsm.wcu, cdsm.doc_intro FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid AND cdsm.language_code = cd.language_code AND cd.status = cdsm.status " +
-                " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
+                " LEFT JOIN condition_disease_sd_metadata cdsm ON (cd.uid = cdsm.condition_disease_sd_uid AND cdsm.language_code = cd.language_code AND cd.status = cdsm.status) " +
+                " LEFT JOIN hospital h ON (h.uid = cdsm.hospital_uid AND h.language_code IN(<languageList>)) " +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +
                 " AND cd.publish_flag = {PUBLISHED}";
 
@@ -411,7 +411,7 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cdsf.question, cdsf.answer, cdsf.display_order FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_faq cdsf ON cd.uid = cdsf.condition_disease_sd_uid AND cdsf.language_code = cd.language_code AND cdsf.status = cd.status" +
+                " LEFT JOIN condition_disease_sd_faq cdsf ON (cd.uid = cdsf.condition_disease_sd_uid AND cdsf.language_code = cd.language_code AND cdsf.status = cd.status)" +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url" +
                 " AND cd.publish_flag = {PUBLISHED}";
 
@@ -435,8 +435,8 @@ public class ConditionRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT cdsm.faq_title,cdsm.faq_desc FROM condition_disease_sd cd " +
-                " LEFT JOIN condition_disease_sd_metadata cdsm ON cd.uid = cdsm.condition_disease_sd_uid AND cd.language_code = cdsm.language_code AND cd.status = cdsm.status " +
-                " LEFT JOIN hospital h ON h.uid = cdsm.hospital_uid " +
+                " LEFT JOIN condition_disease_sd_metadata cdsm ON (cd.uid = cdsm.condition_disease_sd_uid AND cd.language_code = cdsm.language_code AND cd.status = cdsm.status) " +
+                " LEFT JOIN hospital h ON (h.uid = cdsm.hospital_uid AND h.language_code IN(<languageList>))" +
                 " WHERE cd.language_code IN(<languageList>) AND cd.item_url = :item_url AND h.hospital = :hospital" +
                 " AND cd.publish_flag = {PUBLISHED}";
 
@@ -517,7 +517,7 @@ public class ConditionRepository extends BaseRepository {
     {
         String methodName = "getRelatedCondition";
         String relatedConditionSql = "SELECT condition_disease_uid FROM condition_disease_sd_related_condition cdsdrc " +
-                " LEFT JOIN condition_disease_sd cd ON cd.uid = cdsdrc.condition_disease_sd_uid AND cdsdrc.status  = cd.status AND cdsdrc.language_code = cd.language_code " +
+                " LEFT JOIN condition_disease_sd cd ON (cd.uid = cdsdrc.condition_disease_sd_uid AND cdsdrc.status  = cd.status AND cdsdrc.language_code = cd.language_code) " +
                 " WHERE cd.language_code IN(<languageList>) AND cdsdrc.condition_disease_sd_uid = :uid " +
                 " AND cd.publish_flag = {PUBLISHED}";
 
@@ -555,7 +555,7 @@ public class ConditionRepository extends BaseRepository {
     {
         String methodName = "getRelatedTreatments";
         String relatedTreatmentSql = "SELECT test_treatment_sd_uid FROM condition_disease_sd_related_treatment cdsdrt " +
-                " LEFT JOIN condition_disease_sd cd ON cd.uid = cdsdrt.condition_disease_sd_uid AND cdsdrt.status  = cd.status AND cdsdrt.language_code = cd.language_code " +
+                " LEFT JOIN condition_disease_sd cd ON (cd.uid = cdsdrt.condition_disease_sd_uid AND cdsdrt.status  = cd.status AND cdsdrt.language_code = cd.language_code) " +
                 " WHERE cdsdrt.language_code IN(<languageList>) AND cdsdrt.condition_disease_sd_uid = :uid " +
                 " AND cdsdrt.publish_flag = {PUBLISHED} ";
 
