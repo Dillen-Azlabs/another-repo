@@ -494,9 +494,9 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         if (result != new CentreServiceSubMedicalProfessionals()) {
             List<CentreServiceSubMedicalProfessional> specialistList = new ArrayList<>();
             if (result.isDisplaySpecialist()) {
-                if(result.getSpecialistListing().equals("By Specialty / Service Provider Type")) {
+                if(result.getSpecialistListing().equals("by_specialty_or_service_provider_type")) {
                     specialistList = getSpecialists(version, languageList, itemUrlMain);
-                } else if (result.getSpecialistListing().equals("By Selection")) {
+                } else if (result.getSpecialistListing().equals("by_selection")) {
                     specialistList = getSpecialistsByCentreService(version, languageList, itemUrlMain, hospitalCode);
                 }
             }
