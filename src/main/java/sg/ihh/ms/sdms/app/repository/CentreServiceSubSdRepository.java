@@ -22,13 +22,13 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         final String methodName = "getLocationByCentreService";
         start(methodName);
         String sql ="SELECT ls.uid, ls.language_code, ls.location_title, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.display_order, ls.publish_flag, ls.created_dt, ls.modified_dt FROM centre_service_sub_sd csss  " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid AND csss.status = csssl.status AND csss.language_code = csssl.language_code  " +
-                "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid  " +
-                "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid  " +
-                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON csssl.uid  = cssslh.centre_service_sub_sd_location_uid AND cssslh.status = csssl.status AND cssslh.language_code = csssl.language_code  " +
-                "LEFT JOIN hospital h ON cssslh.hospital_uid  = h.uid  " +
-                "WHERE ls.language_code IN(<languageList>)AND csms.item_url = :itemUrlMain AND csss.item_url = :itemUrlSub  AND h.hospital = :hospital " +
+                "LEFT JOIN centre_service_main_sd csms ON (csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code)  " +
+                "LEFT JOIN centre_service_sub_sd_location csssl ON (csss.uid = csssl.centre_service_sub_sd_uid AND csss.status = csssl.status AND csss.language_code = csssl.language_code)  " +
+                "LEFT JOIN location_sd ls  ON (ls.uid = csssl.location_uid  AND ls.status = csssl.status AND ls.language_code = csssl.language_code)  " +
+                "LEFT JOIN country_of_residence cor ON (ls.cor_uid  = cor.uid AND cor.language_code IN(<languageList>))  " +
+                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON (csssl.uid  = cssslh.centre_service_sub_sd_location_uid AND cssslh.status = csssl.status AND cssslh.language_code = csssl.language_code)  " +
+                "LEFT JOIN hospital h ON (cssslh.hospital_uid  = h.uid AND h.language_code IN(<languageList>)) " +
+                "WHERE ls.language_code IN(<languageList>) AND csms.item_url = :itemUrlMain AND csss.item_url = :itemUrlSub  AND h.hospital = :hospital " +
                 "AND ls.publish_flag = {PUBLISHED} ";
 
         sql = getPublishVersion(version, sql);
@@ -55,16 +55,15 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     private List<LocationSdContact> getLocationSdContact(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
         final String methodName = "getLocationSdContact";
         start(methodName);
-        String sql ="SELECT lsc.contact_header, lsc.contact_number, lsc.display_order  FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid " +
-                "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid " +
-                "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid " +
-                "LEFT JOIN location_sd_contact lsc  ON ls.uid = lsc.location_sd_uid " +
-                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON csssl.uid  = cssslh.centre_service_sub_sd_location_uid " +
-                "LEFT JOIN hospital h ON cssslh.hospital_uid  = h.uid " +
+        String sql = "SELECT lsc.contact_header, lsc.contact_number, lsc.display_order  FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON (csms.uid = csss.centre_service_main_sd_uid AND csms.status = csss.status AND  csms.language_code = csss.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_location csssl ON (csss.uid = csssl.centre_service_sub_sd_uid AND csss.status  = csssl.status AND csss.language_code  = csssl.language_code )  " +
+                "LEFT JOIN location_sd ls  ON (ls.uid = csssl.location_uid AND ls.status = csssl.status AND ls.language_code = csssl.language_code) " +
+                "LEFT JOIN location_sd_contact lsc ON (ls.uid = lsc.location_sd_uid AND ls.status = lsc.status AND ls.language_code = lsc.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON (csssl.uid  = cssslh.centre_service_sub_sd_location_uid AND csssl.status = cssslh.status AND csssl.language_code = cssslh.language_code) " +
+                "LEFT JOIN hospital h ON (cssslh.hospital_uid  = h.uid AND h.language_code IN(<languageList>)) " +
                 "WHERE ls.language_code IN(<languageList>)AND csms.item_url = :itemUrlMain AND csss.item_url = :itemUrlSub  AND h.hospital = :hospital " +
-                "AND ls.publish_flag = {PUBLISHED} " +
-                "GROUP BY ls.uid ";
+                "AND ls.publish_flag = {PUBLISHED} ";
 
         sql = getPublishVersion(version, sql);
 
@@ -90,10 +89,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT csss.uid, csss.language_code, csss.publish_flag, csss.created_dt, csss.modified_dt FROM centre_service_sub_sd csss    " +
-                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code   " +
-                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON csss.uid = csssas.centre_service_sub_sd_uid AND csss.status = csssas.status AND csss.language_code = csssas.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_award_section_hospital csssash  ON csssas.uid = csssash.centre_service_sub_sd_award_section_uid  AND csssash.status = csssas.status AND csssash.language_code = csssas.language_code " +
-                "LEFT JOIN hospital h ON csssash.hospital_uid = h.uid " +
+                "LEFT JOIN centre_service_main_sd csms ON (csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code)  " +
+                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON (csss.uid = csssas.centre_service_sub_sd_uid AND csss.status = csssas.status AND csss.language_code = csssas.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_award_section_hospital csssash  ON (csssas.uid = csssash.centre_service_sub_sd_award_section_uid  AND csssash.status = csssas.status AND csssash.language_code = csssas.language_code) " +
+                "LEFT JOIN hospital h ON (csssash.hospital_uid = h.uid AND h.language_code IN(<languageList>)) " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain  " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
@@ -105,6 +104,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
             result = query.mapToBean(CentreServiceSubAward.class).one();
 
         } catch (Exception ex) {
+
             log.error(methodName, ex);
         }
 
@@ -120,10 +120,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT csssas.section_intro  FROM centre_service_sub_sd csss  " +
-                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code   " +
-                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON csss.uid = csssas.centre_service_sub_sd_uid AND csss.status = csssas.status AND csss.language_code = csssas.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_award_section_hospital csssash  ON csssas.uid = csssash.centre_service_sub_sd_award_section_uid  AND csssash.status = csssas.status AND csssash.language_code = csssas.language_code   " +
-                "LEFT JOIN hospital h ON csssash.hospital_uid = h.uid " +
+                "LEFT JOIN centre_service_main_sd csms ON (csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code)   " +
+                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON (csss.uid = csssas.centre_service_sub_sd_uid AND csss.status = csssas.status AND csss.language_code = csssas.language_code)  " +
+                "LEFT JOIN centre_service_sub_sd_award_section_hospital csssash  ON (csssas.uid = csssash.centre_service_sub_sd_award_section_uid  AND csssash.status = csssas.status AND csssash.language_code = csssas.language_code)   " +
+                "LEFT JOIN hospital h ON (csssash.hospital_uid = h.uid AND h.language_code IN(<languageList>))" +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
@@ -145,10 +145,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     {
         String methodName = "getAward";
         String sql = "SELECT csssa.heading, csssa.icon, csssa.description, csssa.display_order FROM centre_service_sub_sd csss   " +
-                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid = csms.uid AND csss.status = csms.status AND csss.language_code = csms.language_code " +
-                "LEFT JOIN centre_service_sub_sd_award csssa  ON csss.uid = csssa.centre_service_sub_sd_uid AND csss.status = csssa.status AND csss.language_code = csssa.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_award_hospital csssah  ON csssa.uid = csssah.centre_service_sub_sd_award_uid AND csssah.status = csssa.status AND csssah.language_code = csssa.language_code  " +
-                "LEFT JOIN hospital h ON csssah.hospital_uid  = h.uid " +
+                "LEFT JOIN centre_service_main_sd csms ON (csss.centre_service_main_sd_uid = csms.uid AND csss.status = csms.status AND csss.language_code = csms.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_award csssa  ON (csss.uid = csssa.centre_service_sub_sd_uid AND csss.status = csssa.status AND csss.language_code = csssa.language_code)  " +
+                "LEFT JOIN centre_service_sub_sd_award_hospital csssah  ON (csssa.uid = csssah.centre_service_sub_sd_award_uid AND csssah.status = csssa.status AND csssah.language_code = csssa.language_code)  " +
+                "LEFT JOIN hospital h ON (csssah.hospital_uid  = h.uid AND h.language_code IN(<languageList>)) " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
@@ -173,12 +173,12 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT csssm.* FROM centre_service_main_sd csms  " +
-                "LEFT JOIN centre_service_sub_sd csss ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code   " +
-                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csssm.centre_service_sub_sd_uid  = csss.uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid  " +
-                "LEFT JOIN hospital h  ON h.uid  = csssmh.hospital_uid   " +
+                "LEFT JOIN centre_service_sub_sd csss ON (csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code)  \n" +
+                "LEFT JOIN centre_service_sub_sd_metadata csssm ON (csssm.centre_service_sub_sd_uid  = csss.uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code)  \n" +
+                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON (csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code = csssmh.language_code)\n" +
+                "LEFT JOIN hospital h  ON (h.uid  = csssmh.hospital_uid AND h.language_code IN(<languageList>)) " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain  " +
-                "AND csss.publish_flag = {PUBLISHED} GROUP BY csss.uid ";
+                "AND csss.publish_flag = {PUBLISHED} ";
 
         sql = getPublishVersion(version, sql);
 
@@ -203,10 +203,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT csss.uid, csss.language_code, csssa.section_intro, csssa.title, csssa.body, csssa.anchor_id, csssa.display_order, csss.publish_flag, csss.created_dt, csss.modified_dt FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code " +
-                "LEFT JOIN centre_service_sub_sd_accordion csssa ON csss.uid = csssa.centre_service_sub_sd_uid  AND csss.status = csssa.status AND csss.language_code = csssa.language_code " +
-                "LEFT JOIN centre_service_sub_sd_accordion_hospital csssah ON csssa.uid = csssah.centre_service_sub_sd_accordion_uid AND csssa.status = csssah.status AND csssa.language_code = csssah.language_code " +
-                "LEFT JOIN hospital h ON csssah.hospital_uid = h.uid " +
+                "LEFT JOIN centre_service_main_sd csms ON (csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_accordion csssa ON (csss.uid = csssa.centre_service_sub_sd_uid  AND csss.status = csssa.status AND csss.language_code = csssa.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_accordion_hospital csssah ON (csssa.uid = csssah.centre_service_sub_sd_accordion_uid AND csssa.status = csssah.status AND csssa.language_code = csssah.language_code) " +
+                "LEFT JOIN hospital h ON (csssah.hospital_uid = h.uid AND h.language_code IN(<languageList>))" +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
@@ -247,10 +247,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT csss.*, csssps.section_intro FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code " +
-                "LEFT JOIN centre_service_sub_sd_photo_section csssps ON csss.uid = csssps.centre_service_sub_sd_uid AND csss.status = csssps.status AND csss.language_code = csssps.language_code " +
-                "LEFT JOIN centre_service_sub_sd_photo_section_hospital cssspsh ON csssps.uid  = cssspsh.centre_service_sub_sd_photo_section_uid  AND csssps.status = cssspsh.status AND csssps.language_code = cssspsh.language_code " +
-                "LEFT JOIN hospital h  ON h.uid  = cssspsh.hospital_uid " +
+                "LEFT JOIN centre_service_main_sd csms ON (csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_photo_section csssps ON (csss.uid = csssps.centre_service_sub_sd_uid AND csss.status = csssps.status AND csss.language_code = csssps.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_photo_section_hospital cssspsh ON (csssps.uid  = cssspsh.centre_service_sub_sd_photo_section_uid  AND csssps.status = cssspsh.status AND csssps.language_code = cssspsh.language_code) " +
+                "LEFT JOIN hospital h  ON (h.uid  = cssspsh.hospital_uid AND h.language_code IN(<languageList>)) " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
@@ -272,10 +272,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     {
         String methodName = "getCentreServicePhotoGalleryItem";
         String sql = "SELECT csssp.* FROM centre_service_sub_sd csss  " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code " +
-                "LEFT JOIN centre_service_sub_sd_photo csssp ON csss.uid = csssp.centre_service_sub_sd_uid AND csss.status = csssp.status AND csss.language_code = csssp.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_photo_hospital csssph ON csssp.uid  = csssph.centre_service_sub_sd_photo_uid AND csssph.status = csssp.status AND csssph.language_code = csssp.language_code " +
-                "LEFT JOIN hospital h  ON h.uid  = csssph.hospital_uid " +
+                "LEFT JOIN centre_service_main_sd csms ON (csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_photo csssp ON (csss.uid = csssp.centre_service_sub_sd_uid AND csss.status = csssp.status AND csss.language_code = csssp.language_code)  " +
+                "LEFT JOIN centre_service_sub_sd_photo_hospital csssph ON (csssp.uid  = csssph.centre_service_sub_sd_photo_uid AND csssph.status = csssp.status AND csssph.language_code = csssp.language_code) " +
+                "LEFT JOIN hospital h  ON (h.uid  = csssph.hospital_uid AND h.language_code IN(<languageList>))" +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
@@ -302,10 +302,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT csssb.*  FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code " +
-                "LEFT JOIN centre_service_sub_sd_body csssb ON csss.uid = csssb.centre_service_sub_sd_uid  AND csss.status = csssb.status AND csss.language_code = csssb.language_code " +
-                "LEFT JOIN centre_service_sub_sd_body_hospital csssbh ON csssb.uid  = csssbh.centre_service_sub_sd_body_uid AND csssb.status = csssbh.status AND csssb.language_code = csssbh.language_code " +
-                "LEFT JOIN hospital h  ON h.uid  = csssbh.hospital_uid " +
+                "LEFT JOIN centre_service_main_sd csms ON (csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_body csssb ON (csss.uid = csssb.centre_service_sub_sd_uid  AND csss.status = csssb.status AND csss.language_code = csssb.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_body_hospital csssbh ON (csssb.uid  = csssbh.centre_service_sub_sd_body_uid AND csssb.status = csssbh.status AND csssb.language_code = csssbh.language_code) " +
+                "LEFT JOIN hospital h  ON (h.uid  = csssbh.hospital_uid AND h.language_code IN(<languageList>)) " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csssb.section = :section AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
@@ -331,12 +331,11 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT csss.*  FROM centre_service_sub_sd csss    " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code  = csssmh.language_code " +
-                "LEFT JOIN hospital h  ON h.uid  = csssmh.hospital_uid " +
-                "WHERE csss.la" +
-                "nguage_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND h.hospital = :hospital " +
+                "LEFT JOIN centre_service_main_sd csms ON (csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_metadata csssm ON (csss.uid = csssm.centre_service_sub_sd_uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON (csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code  = csssmh.language_code) " +
+                "LEFT JOIN hospital h  ON (h.uid  = csssmh.hospital_uid AND h.language_code IN(<languageList>)) " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND h.hospital = :hospital " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
@@ -378,10 +377,10 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT  csms.page_title, csms.summary, csms.hide_hero_image FROM centre_service_sub_sd csss   " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code = csssmh.language_code " +
-                "LEFT JOIN hospital h  ON h.uid  = csssmh.hospital_uid " +
+                "LEFT JOIN centre_service_main_sd csms ON (csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_metadata csssm ON (csss.uid = csssm.centre_service_sub_sd_uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code)  " +
+                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON (csssm.uid = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code = csssmh.language_code) " +
+                "LEFT JOIN hospital h  ON (h.uid  = csssmh.hospital_uid AND h.language_code IN(<languageList>)) " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND h.hospital = :hospital " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
@@ -403,12 +402,12 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT csmsm.hospital_main_image, csmsm.hospital_main_image_alt_text, csmsm.social_summary, csssm.meta_title, csssm.meta_description FROM centre_service_sub_sd csss   " +
-                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code   " +
-                "LEFT JOIN centre_service_main_sd_metadata csmsm ON csms.uid = csmsm.centre_service_main_sd_uid AND csms.status = csmsm.status AND csms.language_code  = csmsm.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid AND csss.status = csssm.status AND csss.language_code = csssm.language_code   " +
-                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code = csssmh.language_code    " +
-                "LEFT JOIN hospital hs  ON hs.uid  = csssmh.hospital_uid    " +
-                "LEFT JOIN hospital hm  ON hm.uid  = csmsm.hospital_uid " +
+                "LEFT JOIN centre_service_main_sd csms ON (csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code) " +
+                "LEFT JOIN centre_service_main_sd_metadata csmsm ON (csms.uid = csmsm.centre_service_main_sd_uid AND csms.status = csmsm.status AND csms.language_code  = csmsm.language_code) " +
+                "LEFT JOIN centre_service_sub_sd_metadata csssm ON (csss.uid = csssm.centre_service_sub_sd_uid AND csss.status = csssm.status AND csss.language_code = csssm.language_code)  " +
+                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON (csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code = csssmh.language_code)  " +
+                "LEFT JOIN hospital hs  ON (hs.uid  = csssmh.hospital_uid AND hs.language_code IN(<language_code>)) " +
+                "LEFT JOIN hospital hm  ON (hm.uid  = csmsm.hospital_uid AND hm.language_code IN(<language_code>)) " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND hs.hospital = :hospital AND hm.hospital = :hospital " +
                 "AND csss.publish_flag = {PUBLISHED} ";
 
@@ -427,17 +426,17 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     }
     //END - Centre Service Sub Basic Detail Block
 
-    //START - Get Locations by Centre & Service
+    //START - Get CentreService Related Specialties
     public List<CentreServiceSubRelatedSpecialties> getCentreServiceRelatedSpecialties(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
         final String methodName = "getCentreServiceRelatedSpecialties";
         start(methodName);
-        String sql ="  SELECT ss.* FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
-                "LEFT JOIN centre_service_main_sd_specialty csmss ON csms.uid = csmss.centre_service_main_sd_uid  AND csms.status = csmss.status AND csms.language_code = csmss.language_code " +
-                "LEFT JOIN specialty s ON s.uid = csmss.specialty_uid  " +
-                "LEFT JOIN specialty_sd ss  ON s.uid = ss.specialty_uid " +
-                "LEFT JOIN specialty_sd_metadata ssm ON ss.uid  = ssm.specialty_sd_uid  " +
-                "LEFT JOIN hospital h ON ssm.hospital_uid  = h.uid " +
+        String sql = " SELECT ss.* FROM centre_service_sub_sd csss " +
+                "LEFT JOIN centre_service_main_sd csms ON (csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code)  \n" +
+                "LEFT JOIN centre_service_main_sd_specialty csmss ON (csms.uid = csmss.centre_service_main_sd_uid  AND csms.status = csmss.status AND csms.language_code = csmss.language_code)\n" +
+                "LEFT JOIN specialty s ON (s.uid = csmss.specialty_uid AND s.status = csmss.status AND s.language_code = csmss.language_code)   \n" +
+                "LEFT JOIN specialty_sd ss  ON (s.uid = ss.specialty_uid AND s.status = ss.status AND s.language_code = ss.language_code)\n" +
+                "LEFT JOIN specialty_sd_metadata ssm ON (ss.uid  = ssm.specialty_sd_uid AND ss.status = ssm.status AND ss.language_code = ssm.language_code ) \n" +
+                "LEFT JOIN hospital h ON (ssm.hospital_uid  = h.uid AND h.language_code IN(<languageList>)) " +
                 "WHERE ss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain  AND h.hospital = :hospital " +
                 "AND ss.publish_flag = {PUBLISHED} ";
 

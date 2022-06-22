@@ -48,8 +48,7 @@ public class CentreServiceMainSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT csmsm.hospital_main_image, csmsm.hospital_main_image_alt_text FROM centre_service_main_sd csms " +
-                "LEFT JOIN centre_service_main_sd_metadata csmsm  ON csms.uid = csmsm.centre_service_main_sd_uid " +
-                "AND  csms.status = csmsm.status AND  csms.language_code = csmsm.language_code " +
+                "LEFT JOIN centre_service_main_sd_metadata csmsm  ON ( csms.uid = csmsm.centre_service_main_sd_uid AND  csms.status = csmsm.status AND  csms.language_code = csmsm.language_code) " +
                 "LEFT JOIN hospital h ON ( csmsm.hospital_uid  = h.uid AND csmsm.language_code IN(<languageList>)) " +
                 "WHERE csms.language_code IN(<languageList>) AND h.hospital = :hospital AND csms.uid = :uid" +
                 " AND csms.publish_flag = {PUBLISHED}";
@@ -75,10 +74,10 @@ public class CentreServiceMainSdRepository extends BaseRepository{
         start(methodName);
 
         String sql ="SELECT csms.uid, csms.language_code,csms.page_title, csms.summary, csms.main_image, csms.main_image_alt_text, csms.item_url, csms.publish_flag, csms.created_dt, csms.modified_dt FROM centre_service_main_sd csms  " +
-                    "LEFT JOIN centre_service_main_sd_specialty csmss  ON csms.uid = csmss.centre_service_main_sd_uid AND csms.language_code = csmss.language_code AND csms.status = csmss.status " +
-                    "LEFT JOIN specialty_sd ss ON csmss.specialty_uid  = ss.specialty_uid AND csmss.language_code = ss.language_code AND csmss.status = ss.status " +
-                    "LEFT JOIN centre_service_main_sd_hospital csmsh  ON csmsh.centre_service_main_sd_uid  = csms.uid AND csmsh.language_code = csms.language_code AND csmsh.status = csms.status " +
-                    "LEFT JOIN hospital h ON csmsh.hospital_uid  = h.uid " +
+                    "LEFT JOIN centre_service_main_sd_specialty csmss  ON (csms.uid = csmss.centre_service_main_sd_uid AND csms.language_code = csmss.language_code AND csms.status = csmss.status) " +
+                    "LEFT JOIN specialty_sd ss ON (csmss.specialty_uid  = ss.specialty_uid AND csmss.language_code = ss.language_code AND csmss.status = ss.status) " +
+                    "LEFT JOIN centre_service_main_sd_hospital csmsh  ON (csmsh.centre_service_main_sd_uid  = csms.uid AND csmsh.language_code = csms.language_code AND csmsh.status = csms.status) " +
+                    "LEFT JOIN hospital h ON (csmsh.hospital_uid  = h.uid AND h.language_code IN(<languageList>))" +
                     "WHERE csms.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital " +
                     " AND csms.publish_flag = {PUBLISHED}";
 
@@ -112,10 +111,10 @@ public class CentreServiceMainSdRepository extends BaseRepository{
         start(methodName);
 
         String sql =" SELECT csms.uid, csms.language_code,csms.page_title, csms.summary, csms.main_image, csms.main_image_alt_text, csms.item_url, csms.publish_flag, csms.created_dt, csms.modified_dt FROM centre_service_main_sd csms " +
-                "LEFT JOIN medical_professional_centre_service mpcs  ON csms.uid = mpcs.centre_service_main_sd_uid AND csms.language_code = mpcs.language_code AND csms.status = mpcs.status " +
-                "LEFT JOIN medical_professional mp  ON mpcs.medical_professional_uid  = mp.uid AND mpcs.language_code = mp.language_code AND mpcs.status = mp.status " +
-                "LEFT JOIN medical_professional_centre_service_hospital mpcsh  ON mpcs.uid  = mpcsh.medical_professional_centre_service_uid AND mpcs.language_code = mpcsh.language_code AND mpcs.status = mpcsh.status " +
-                "LEFT JOIN hospital h ON mpcsh.hospital_uid  = h.uid  " +
+                "LEFT JOIN medical_professional_centre_service mpcs  ON (csms.uid = mpcs.centre_service_main_sd_uid AND csms.language_code = mpcs.language_code AND csms.status = mpcs.status) " +
+                "LEFT JOIN medical_professional mp  ON (mpcs.medical_professional_uid  = mp.uid AND mpcs.language_code = mp.language_code AND mpcs.status = mp.status) " +
+                "LEFT JOIN medical_professional_centre_service_hospital mpcsh  ON (mpcs.uid  = mpcsh.medical_professional_centre_service_uid AND mpcs.language_code = mpcsh.language_code AND mpcs.status = mpcsh.status) " +
+                "LEFT JOIN hospital h ON ( mpcsh.hospital_uid  = h.uid AND  h.language_code IN(<languageList>)) " +
                 "WHERE csms.language_code IN(<languageList>) AND mp.item_url = :item_url AND h.hospital = :hospital " +
                 " AND csms.publish_flag = {PUBLISHED}";
 
@@ -149,10 +148,10 @@ public class CentreServiceMainSdRepository extends BaseRepository{
         start(methodName);
 
         String sql ="SELECT csms.uid, csms.language_code,csms.page_title, csms.summary, csms.main_image, csms.main_image_alt_text, csms.item_url, csms.publish_flag, csms.created_dt, csms.modified_dt FROM centre_service_main_sd csms " +
-                "LEFT JOIN condition_disease_sd_centre_service cdscs  ON csms.uid = cdscs.centre_service_main_sd_uid AND csms.language_code = cdscs.language_code AND csms.status = cdscs.status " +
-                "LEFT JOIN condition_disease_sd cds  ON cdscs.condition_disease_sd_uid  = cds.uid AND cds.language_code = cdscs.language_code AND cds.status = cdscs.status " +
-                "LEFT JOIN condition_disease_sd_centre_service_hospital cdscsh ON cdscs.uid  = cdscsh.condition_disease_sd_centre_service_uid AND cdscsh.language_code = cdscs.language_code AND cdscsh.status = cdscs.status " +
-                "LEFT JOIN hospital h ON cdscsh.hospital_uid  = h.uid " +
+                "LEFT JOIN condition_disease_sd_centre_service cdscs  ON (csms.uid = cdscs.centre_service_main_sd_uid AND csms.language_code = cdscs.language_code AND csms.status = cdscs.status) " +
+                "LEFT JOIN condition_disease_sd cds  ON (cdscs.condition_disease_sd_uid  = cds.uid AND cds.language_code = cdscs.language_code AND cds.status = cdscs.status) " +
+                "LEFT JOIN condition_disease_sd_centre_service_hospital cdscsh ON (cdscs.uid  = cdscsh.condition_disease_sd_centre_service_uid AND cdscsh.language_code = cdscs.language_code AND cdscsh.status = cdscs.status) " +
+                "LEFT JOIN hospital h ON (cdscsh.hospital_uid  = h.uid AND h.language_code IN(<languageList>)) " +
                 "WHERE csms.language_code IN(<languageList>) AND cds.item_url = :item_url AND h.hospital = :hospital " +
                 " AND csms.publish_flag = {PUBLISHED} GROUP BY csms.uid";
 
@@ -186,10 +185,10 @@ public class CentreServiceMainSdRepository extends BaseRepository{
         start(methodName);
 
         String sql ="SELECT csms.uid, csms.language_code,csms.page_title, csms.summary, csms.main_image, csms.main_image_alt_text, csms.item_url, csms.publish_flag, csms.created_dt, csms.modified_dt FROM centre_service_main_sd csms " +
-                "LEFT JOIN test_treatment_sd_centre_service ttscs ON csms.uid = ttscs.centre_service_main_sd_uid AND csms.language_code = ttscs.language_code AND csms.status = ttscs.status " +
-                "LEFT JOIN test_treatment_sd tts  ON ttscs.test_treatment_sd_uid  = tts.uid AND ttscs.language_code = tts.language_code AND ttscs.status = tts.status " +
-                "LEFT JOIN test_treatment_sd_centre_service_hospital ttscsh ON ttscs.uid  = ttscsh.test_treatment_sd_centre_service_uid AND ttscs.language_code = ttscsh.language_code AND ttscs.status = ttscsh.status " +
-                "LEFT JOIN hospital h ON ttscsh.hospital_uid = h.uid " +
+                "LEFT JOIN test_treatment_sd_centre_service ttscs ON (csms.uid = ttscs.centre_service_main_sd_uid AND csms.language_code = ttscs.language_code AND csms.status = ttscs.status) " +
+                "LEFT JOIN test_treatment_sd tts  ON (ttscs.test_treatment_sd_uid  = tts.uid AND ttscs.language_code = tts.language_code AND ttscs.status = tts.status) " +
+                "LEFT JOIN test_treatment_sd_centre_service_hospital ttscsh ON (ttscs.uid  = ttscsh.test_treatment_sd_centre_service_uid AND ttscs.language_code = ttscsh.language_code AND ttscs.status = ttscsh.status) " +
+                "LEFT JOIN hospital h ON (ttscsh.hospital_uid = h.uid AND h.language_code IN(<languageList>)) " +
                 "WHERE csms.language_code IN(<languageList>) AND tts.item_url = :item_url AND h.hospital = :hospital " +
                 " AND csms.publish_flag = {PUBLISHED}";
 
@@ -223,10 +222,10 @@ public class CentreServiceMainSdRepository extends BaseRepository{
         start(methodName);
 
         String sql ="SELECT csms.uid, csms.language_code,csms.page_title, csms.summary, csms.main_image, csms.main_image_alt_text, csms.item_url, csms.publish_flag, csms.created_dt, csms.modified_dt FROM centre_service_main_sd csms " +
-                "LEFT JOIN content_hub_main_sd_centre_service chmsc ON csms.uid = chmsc.centre_service_main_sd AND csms.language_code = chmsc.language_code AND csms.status = chmsc.status " +
-                "LEFT JOIN content_hub_main_sd chms  ON chmsc.content_hub_main_sd_uid  = chms.uid AND chmsc.language_code = chms.language_code AND chmsc.status = chms.status " +
-                "LEFT JOIN content_hub_main_sd_centre_service_hospital chmscsh ON chmsc.uid  = chmscsh.content_hub_main_sd_centre_service_uid AND chmsc.language_code = chmscsh.language_code AND chmsc.status = chmscsh.status " +
-                "LEFT JOIN hospital h ON chmscsh.hospital_uid = h.uid  " +
+                "LEFT JOIN content_hub_main_sd_centre_service chmsc ON (csms.uid = chmsc.centre_service_main_sd AND csms.language_code = chmsc.language_code AND csms.status = chmsc.status) " +
+                "LEFT JOIN content_hub_main_sd chms  ON (chmsc.content_hub_main_sd_uid  = chms.uid AND chmsc.language_code = chms.language_code AND chmsc.status = chms.status) " +
+                "LEFT JOIN content_hub_main_sd_centre_service_hospital chmscsh ON (chmsc.uid  = chmscsh.content_hub_main_sd_centre_service_uid AND chmsc.language_code = chmscsh.language_code AND chmsc.status = chmscsh.status) " +
+                "LEFT JOIN hospital h ON (chmscsh.hospital_uid = h.uid AND h.language_code IN(<languageList>) " +
                 "WHERE csms.language_code IN(<languageList>) AND chms.item_url = :item_url AND h.hospital = :hospital " +
                 " AND csms.publish_flag = {PUBLISHED}";
 
