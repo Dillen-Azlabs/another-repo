@@ -23,7 +23,7 @@ public class ContentHubSubSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT chss.* FROM content_hub_sub_sd chss " +
-                "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid AND chss.language_code = chms.language_code AND chss.status = chms.status " +
+                "LEFT JOIN content_hub_main_sd chms ON (chss.content_hub_main_sd_uid = chms.uid AND chss.language_code = chms.language_code AND chss.status = chms.status) " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain " +
                 "AND chss.publish_flag = {PUBLISHED}";
 
@@ -49,7 +49,7 @@ public class ContentHubSubSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT chss.*  FROM content_hub_sub_sd chss " +
-                "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid AND chss.status = chms.status AND chss.language_code = chms.language_code " +
+                "LEFT JOIN content_hub_main_sd chms ON (chss.content_hub_main_sd_uid = chms.uid AND chss.status = chms.status AND chss.language_code = chms.language_code) " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain " +
                 "AND chss.publish_flag = {PUBLISHED}";
 
@@ -88,7 +88,7 @@ public class ContentHubSubSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT  chms.page_title FROM content_hub_sub_sd chss " +
-                "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid  AND chss.status = chms.status AND chss.language_code = chms.language_code " +
+                "LEFT JOIN content_hub_main_sd chms ON (chss.content_hub_main_sd_uid = chms.uid  AND chss.status = chms.status AND chss.language_code = chms.language_code) " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain " +
                 "AND chss.publish_flag = {PUBLISHED}";
 
@@ -110,9 +110,9 @@ public class ContentHubSubSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT chssm.hospital_main_image, chssm.hospital_main_image_alt_text, chssm.social_summary, chssm.meta_title, chssm.meta_description, chssm.overview FROM content_hub_sub_sd chss " +
-                "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid  AND chss.status = chms.status AND chss.language_code = chms.language_code " +
-                "LEFT JOIN content_hub_sub_sd_metadata chssm  ON chss.uid = chssm.content_hub_sub_sd_uid AND chss.language_code = chssm.language_code AND chss.status = chssm.status " +
-                "LEFT JOIN hospital h ON chssm.hospital_uid  = h.uid " +
+                "LEFT JOIN content_hub_main_sd chms ON (chss.content_hub_main_sd_uid = chms.uid  AND chss.status = chms.status AND chss.language_code = chms.language_code) " +
+                "LEFT JOIN content_hub_sub_sd_metadata chssm  ON (chss.uid = chssm.content_hub_sub_sd_uid AND chss.language_code = chssm.language_code AND chss.status = chssm.status) " +
+                "LEFT JOIN hospital h ON (chssm.hospital_uid  = h.uid AND h.language_code IN(<languageList>)) " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain AND h.hospital = :hospital " +
                 "AND chss.publish_flag = {PUBLISHED}";
 
@@ -138,7 +138,7 @@ public class ContentHubSubSdRepository extends BaseRepository{
 
         String sql = "SELECT chssb.uid, chssb.language_code, chssb.publish_flag, chssb.created_dt, chssb.modified_dt, chssb.display_order, " +
                 "chssb.content1, chssb.video_url, chssb.content2, chssb.did_you_know_highlight FROM content_hub_sub_sd chss " +
-                "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid AND chss.language_code = chms.language_code AND chss.status = chms.status " +
+                "LEFT JOIN content_hub_main_sd chms ON (chss.content_hub_main_sd_uid = chms.uid AND chss.language_code = chms.language_code AND chss.status = chms.status) " +
                 "LEFT JOIN content_hub_sub_sd_body chssb  ON (chss.uid = chssb.content_hub_sub_sd_uid AND chss.status = chssb.status AND chss.language_code = chssb.language_code)  " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain " +
                 "AND chss.publish_flag = {PUBLISHED}";
@@ -164,8 +164,8 @@ public class ContentHubSubSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT chssa.uid, chssa.language_code, chssa.created_dt, chssa.modified_dt, chssa.publish_flag, chssa.section_intro, chssa.title, chssa.content, chssa.anchor_id, chssa.display_order FROM content_hub_sub_sd chss " +
-                "LEFT JOIN content_hub_main_sd chms ON chss.content_hub_main_sd_uid = chms.uid AND chss.language_code = chms.language_code AND chss.status = chms.status " +
-                "LEFT JOIN content_hub_sub_sd_accordion chssa ON chss.uid = chssa.content_hub_sub_sd_uid AND chss.language_code = chssa.language_code AND chss.status = chssa.status " +
+                "LEFT JOIN content_hub_main_sd chms ON (chss.content_hub_main_sd_uid = chms.uid AND chss.language_code = chms.language_code AND chss.status = chms.status) " +
+                "LEFT JOIN content_hub_sub_sd_accordion chssa ON (chss.uid = chssa.content_hub_sub_sd_uid AND chss.language_code = chssa.language_code AND chss.status = chssa.status) " +
                 "WHERE chss.language_code IN(<languageList>) AND chss.item_url = :itemUrlSub AND chms.item_url = :itemUrlMain " +
                 "AND chss.publish_flag = {PUBLISHED}";
 
