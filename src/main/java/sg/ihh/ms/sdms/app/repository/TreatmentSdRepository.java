@@ -105,7 +105,7 @@ public class TreatmentSdRepository extends BaseRepository{
         String methodName = "getRelatedCondition";
 
         String relatedConditionSql = "SELECT condition_disease_sd_uid FROM condition_disease_sd_related_treatment cdsdrt" +
-                " LEFT JOIN test_treatment_sd tts ON tts.primary_treatment_uid = cdsdrt.test_treatment_sd_uid AND tts.language_code = cdsdrt.language_code AND tts.status = cdsdrt.status " +
+                " LEFT JOIN test_treatment_sd tts ON (tts.primary_treatment_uid = cdsdrt.test_treatment_sd_uid AND tts.language_code = cdsdrt.language_code AND tts.status = cdsdrt.status) " +
                 " WHERE cdsdrt.test_treatment_sd_uid =:primaryTreatmentUid " +
                 " AND tts.publish_flag = {PUBLISHED}";
 
@@ -141,7 +141,7 @@ public class TreatmentSdRepository extends BaseRepository{
     {
         String methodName = "getRelatedDataTreatments";
         String relatedTreatmentSql = "SELECT related_treatment_uid FROM test_treatment_sd_related_treatment ttsrt " +
-                " LEFT JOIN test_treatment_sd tts ON tts.uid = ttsrt.test_treatment_sd_uid AND tts.language_code = ttsrt.language_code AND tts.status = ttsrt.status " +
+                " LEFT JOIN test_treatment_sd tts ON (tts.uid = ttsrt.test_treatment_sd_uid AND tts.language_code = ttsrt.language_code AND tts.status = ttsrt.status) " +
                 " WHERE ttsrt.test_treatment_sd_uid  =:uid " +
                 " AND tts.publish_flag = {PUBLISHED}";
 
@@ -213,7 +213,7 @@ public class TreatmentSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ttsf.question, ttsf.answer, ttsf.display_order FROM test_treatment_sd tts " +
-                " LEFT JOIN test_treatment_sd_faq ttsf ON tts.uid = ttsf.test_treatment_sd_uid AND tts.language_code = ttsf.language_code AND tts.status = ttsf.status " +
+                " LEFT JOIN test_treatment_sd_faq ttsf ON (tts.uid = ttsf.test_treatment_sd_uid AND tts.language_code = ttsf.language_code AND tts.status = ttsf.status) " +
                 " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url" +
                 " AND tts.publish_flag = {PUBLISHED}";
 
@@ -310,8 +310,8 @@ public class TreatmentSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT s.specialty FROM specialty s " +
-                "INNER JOIN test_treatment_sd tts ON tts.language_code = s.language_code " +
-                "INNER JOIN test_treatment_primary_specialty ttps ON ttps.test_treatment_uid = tts.primary_treatment_uid  AND ttps.specialty_uid = s.uid " +
+                "INNER JOIN test_treatment_sd tts (ON tts.language_code = s.language_code) " +
+                "INNER JOIN test_treatment_primary_specialty ttps ON (ttps.test_treatment_uid = tts.primary_treatment_uid  AND ttps.specialty_uid = s.uid) " +
                 "WHERE ttps.language_code IN(<languageList>) AND ttps.publish_flag = {PUBLISHED} AND tts.uid  = :uid;";
 
         sql = getPublishVersion(version, sql);
@@ -333,8 +333,8 @@ public class TreatmentSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT child_specialty FROM child_specialty cs " +
-                "INNER JOIN test_treatment_sd tts ON tts.language_code = cs.language_code " +
-                "INNER JOIN test_treatment_primary_child_specialty ttpcs ON ttpcs.test_treatment_uid = tts.primary_treatment_uid  AND ttpcs.child_specialty_uid = cs.uid " +
+                "INNER JOIN test_treatment_sd tts ON (tts.language_code = cs.language_code) " +
+                "INNER JOIN test_treatment_primary_child_specialty ttpcs ON (ttpcs.test_treatment_uid = tts.primary_treatment_uid  AND ttpcs.child_specialty_uid = cs.uid) " +
                 "WHERE ttpcs.language_code IN(<languageList>) AND ttpcs.publish_flag = {PUBLISHED} AND tts.uid  = :uid;";
 
         sql = getPublishVersion(version, sql);
@@ -355,8 +355,8 @@ public class TreatmentSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ttsm.wcu, ttsm.doc_intro FROM test_treatment_sd tts " +
-                " LEFT JOIN test_treatment_sd_metadata ttsm ON tts.uid = ttsm.test_treatment_sd_uid AND tts.language_code = ttsm.language_code AND tts.status = ttsm.status " +
-                " LEFT JOIN hospital h ON h.uid = ttsm.hospital_uid  " +
+                " LEFT JOIN test_treatment_sd_metadata ttsm ON (tts.uid = ttsm.test_treatment_sd_uid AND tts.language_code = ttsm.language_code AND tts.status = ttsm.status) " +
+                " LEFT JOIN hospital h ON (h.uid = ttsm.hospital_uid AND h.language_code IN(<languageList>))  " +
                 " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url AND h.hospital = :hospital" +
                 " AND tts.publish_flag = {PUBLISHED} " +
                 "GROUP BY ttsm.test_treatment_sd_uid";
@@ -440,8 +440,8 @@ public class TreatmentSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ttsm.hospital_main_image,ttsm.hospital_main_text,ttsm.meta_title,ttsm.meta_desc FROM test_treatment_sd tts " +
-                " LEFT JOIN test_treatment_sd_metadata ttsm ON tts.uid = ttsm.test_treatment_sd_uid AND tts.language_code = ttsm.language_code AND tts.status = ttsm.status " +
-                " LEFT JOIN hospital h ON ttsm.hospital_uid = h.uid"+
+                " LEFT JOIN test_treatment_sd_metadata ttsm ON (tts.uid = ttsm.test_treatment_sd_uid AND tts.language_code = ttsm.language_code AND tts.status = ttsm.status) " +
+                " LEFT JOIN hospital h ON (ttsm.hospital_uid = h.uid AND h.language_code IN(<languageList>))"+
                 " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url AND h.hospital = :hospital"+
                 " AND tts.publish_flag = {PUBLISHED}";
 
@@ -464,7 +464,7 @@ public class TreatmentSdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT COUNT( ttsf.uid) FROM test_treatment_sd tts " +
-                "LEFT JOIN test_treatment_sd_faq ttsf  ON tts.uid = ttsf.test_treatment_sd_uid  AND tts.language_code = ttsf.language_code AND tts.status = ttsf.status " +
+                "LEFT JOIN test_treatment_sd_faq ttsf  ON (tts.uid = ttsf.test_treatment_sd_uid  AND tts.language_code = ttsf.language_code AND tts.status = ttsf.status) " +
                 " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url "+
                 " AND tts.publish_flag = {PUBLISHED}";
 
