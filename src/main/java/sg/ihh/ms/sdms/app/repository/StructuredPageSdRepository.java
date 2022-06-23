@@ -62,8 +62,8 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT spsm.hospital_main_image, spsm.hospital_main_image_alt_text, spsm.social_summary, spsm.meta_title, spsm.meta_description, spsm.overview  FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_metadata spsm ON sps.uid = spsm.structured_page_sd_uid AND sps.language_code = spsm.language_code AND sps.status = spsm.status " +
-                "LEFT JOIN hospital h ON spsm.hospital_uid  = h.uid " +
+                "LEFT JOIN structured_page_sd_metadata spsm ON (sps.uid = spsm.structured_page_sd_uid AND sps.language_code = spsm.language_code AND sps.status = spsm.status) " +
+                "LEFT JOIN hospital h ON (spsm.hospital_uid  = h.uid AND h.language_code IN(<languageList>)) " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -134,7 +134,7 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
 
             String sql = "SELECT spsb.* FROM structured_page_sd sps " +
-                    "LEFT JOIN structured_page_sd_body spsb  ON sps.uid = spsb.structured_page_sd_uid AND sps.language_code = spsb.language_code AND sps.status = spsb.status " +
+                    "LEFT JOIN structured_page_sd_body spsb  ON (sps.uid = spsb.structured_page_sd_uid AND sps.language_code = spsb.language_code AND sps.status = spsb.status) " +
                     "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url  AND spsb.`section`  = :section " +
                     "AND sps.publish_flag = {PUBLISHED}";
 
@@ -159,11 +159,11 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT sps.language_code, sps.uid, spsas.award_intro, sps.publish_flag,sps.created_dt, sps.modified_dt FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_award_section spsas  ON sps.uid = spsas.structured_page_sd_uid AND sps.status = spsas.status AND sps.language_code = spsas.language_code " +
-                "LEFT JOIN structured_page_sd_award_section_country spsasc ON spsas.uid = spsasc.structured_page_sd_award_section_uid AND spsas.language_code = spsasc.language_code AND spsas.status = spsasc.status " +
-                "LEFT JOIN structured_page_sd_award_section_hospital spsash ON spsas.uid = spsash.structured_page_sd_award_section_uid AND spsas.language_code = spsash.language_code AND spsas.status = spsash.status " +
-                "LEFT JOIN country_of_residence c ON c.uid = spsasc.cor_uid " +
-                "LEFT JOIN hospital h ON spsash.hospital_uid = h.uid  " +
+                "LEFT JOIN structured_page_sd_award_section spsas  ON (sps.uid = spsas.structured_page_sd_uid AND sps.status = spsas.status AND sps.language_code = spsas.language_code) " +
+                "LEFT JOIN structured_page_sd_award_section_country spsasc ON (spsas.uid = spsasc.structured_page_sd_award_section_uid AND spsas.language_code = spsasc.language_code AND spsas.status = spsasc.status) " +
+                "LEFT JOIN structured_page_sd_award_section_hospital spsash ON (spsas.uid = spsash.structured_page_sd_award_section_uid AND spsas.language_code = spsash.language_code AND spsas.status = spsash.status) " +
+                "LEFT JOIN country_of_residence c ON (c.uid = spsasc.cor_uid AND c.language_code IN(<languageList>)) " +
+                "LEFT JOIN hospital h ON (spsash.hospital_uid = h.uid AND h.language_code IN(<languageList>))   " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsas.`section` = :section AND c.cor  = :countryOfResidence " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -186,11 +186,11 @@ public class StructuredPageSdRepository extends BaseRepository {
         final String methodName = "getStructuredPageAwardItem";
         start(methodName);
         String sql ="SELECT DISTINCT spsa.heading, spsa.icon, spsa.description, spsa.display_order FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_awards spsa  ON sps.uid = spsa.structured_page_sd_uid AND sps.language_code = spsa.language_code AND sps.status = spsa.status " +
-                "LEFT JOIN structured_page_sd_awards_country spsasc ON spsa.uid = spsasc.structured_page_sd_awards_uid AND spsa.language_code = spsasc.language_code AND spsa.status = spsasc.status " +
-                "LEFT JOIN structured_page_sd_awards_hospital spsash ON spsa.uid = spsash.structured_page_sd_awards_uid AND spsa.language_code = spsash.language_code AND spsa.status = spsash.status " +
-                "LEFT JOIN country_of_residence c ON c.uid = spsasc.cor_uid " +
-                "LEFT JOIN hospital h ON spsash.hospital_uid = h.uid  " +
+                "LEFT JOIN structured_page_sd_awards spsa  ON (sps.uid = spsa.structured_page_sd_uid AND sps.language_code = spsa.language_code AND sps.status = spsa.status) " +
+                "LEFT JOIN structured_page_sd_awards_country spsasc ON (spsa.uid = spsasc.structured_page_sd_awards_uid AND spsa.language_code = spsasc.language_code AND spsa.status = spsasc.status) " +
+                "LEFT JOIN structured_page_sd_awards_hospital spsash ON (spsa.uid = spsash.structured_page_sd_awards_uid AND spsa.language_code = spsash.language_code AND spsa.status = spsash.status) " +
+                "LEFT JOIN country_of_residence c ON (c.uid = spsasc.cor_uid AND c.language_code IN(<languageList>)) " +
+                "LEFT JOIN hospital h ON (spsash.hospital_uid = h.uid AND h.language_code IN(<languageList>))  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital AND spsa.`section` = :section AND c.cor  = :countryOfResidence " +
                 "AND sps.publish_flag = {PUBLISHED} ";
 
@@ -218,8 +218,8 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT sps.*, spsm.why_choose_us FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_metadata spsm ON sps.uid = spsm.structured_page_sd_uid AND sps.language_code = spsm.language_code AND sps.status = spsm.status " +
-                "LEFT JOIN hospital h ON spsm.hospital_uid = h.uid  " +
+                "LEFT JOIN structured_page_sd_metadata spsm ON (sps.uid = spsm.structured_page_sd_uid AND sps.language_code = spsm.language_code AND sps.status = spsm.status) " +
+                "LEFT JOIN hospital h ON (spsm.hospital_uid = h.uid AND h.language_code IN(<languageList>))  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -281,7 +281,7 @@ public class StructuredPageSdRepository extends BaseRepository {
         String methodName = "getStructuredPageCardCarouselItem";
 
         String sql = "SELECT spsc.* FROM structured_page_sd_card spsc  " +
-                "LEFT JOIN structured_page_sd sps ON sps.uid = spsc.structured_page_sd_uid AND sps.language_code = spsc.language_code AND sps.status = spsc.status " +
+                "LEFT JOIN structured_page_sd sps ON (sps.uid = spsc.structured_page_sd_uid AND sps.language_code = spsc.language_code AND sps.status = spsc.status) " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -306,7 +306,7 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT spsf.* FROM structured_page_sd_faq spsf " +
-                "LEFT JOIN structured_page_sd sps  ON sps.uid = spsf.structured_page_sd_uid AND sps.language_code = spsf.language_code AND sps.status = spsf.status " +
+                "LEFT JOIN structured_page_sd sps  ON (sps.uid = spsf.structured_page_sd_uid AND sps.language_code = spsf.language_code AND sps.status = spsf.status) " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -346,8 +346,8 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT  Count (DISTINCT sps.uid),spspg.*, sps.photo_section_intro FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_photo_gallery spspg  ON sps.uid = spspg.structured_page_sd_uid AND sps.language_code = spspg.language_code AND sps.status = spspg.status " +
-                "LEFT JOIN structured_page_sd_media_card spsmc  ON sps.uid = spsmc.structured_page_sd_uid AND sps.language_code = spsmc.language_code AND sps.status = spsmc.status  " +
+                "LEFT JOIN structured_page_sd_photo_gallery spspg  ON (sps.uid = spspg.structured_page_sd_uid AND sps.language_code = spspg.language_code AND sps.status = spspg.status) " +
+                "LEFT JOIN structured_page_sd_media_card spsmc  ON (sps.uid = spsmc.structured_page_sd_uid AND sps.language_code = spsmc.language_code AND sps.status = spsmc.status)  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -373,7 +373,7 @@ public class StructuredPageSdRepository extends BaseRepository {
                 "AND sps.publish_flag = {PUBLISHED}";
 
         String q2 = "SELECT spspg.* FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_photo_gallery spspg  ON sps.uid = spspg.structured_page_sd_uid AND sps.language_code = spspg.language_code AND sps.status = spspg.status " +
+                "LEFT JOIN structured_page_sd_photo_gallery spspg  ON (sps.uid = spspg.structured_page_sd_uid AND sps.language_code = spspg.language_code AND sps.status = spspg.status) " +
                 " WHERE spspg.structured_page_sd_uid = :spsUid " +
                 " AND sps.publish_flag = {PUBLISHED}";
 
@@ -429,8 +429,8 @@ public class StructuredPageSdRepository extends BaseRepository {
         }
 
         sql = sql + " FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_metadata spsm ON sps.uid = spsm.structured_page_sd_uid AND sps.language_code = spsm.language_code AND sps.status = spsm.status  " +
-                "LEFT JOIN hospital h ON spsm.hospital_uid = h.uid " +
+                "LEFT JOIN structured_page_sd_metadata spsm ON (sps.uid = spsm.structured_page_sd_uid AND sps.language_code = spsm.language_code AND sps.status = spsm.status)  " +
+                "LEFT JOIN hospital h ON (spsm.hospital_uid = h.uid AND h.language_code IN(<languageList>)) " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospital " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -455,7 +455,7 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT spsa.* FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_accordion spsa  ON sps.uid = spsa.structured_page_sd_uid AND sps.language_code = spsa.language_code AND sps.status = spsa.status " +
+                "LEFT JOIN structured_page_sd_accordion spsa  ON (sps.uid = spsa.structured_page_sd_uid AND sps.language_code = spsa.language_code AND sps.status = spsa.status) " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -517,7 +517,7 @@ public class StructuredPageSdRepository extends BaseRepository {
         String methodName = "getStructuredPageMediaSectionItem";
 
         String sql = "SELECT spsmc.* FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_media_card spsmc ON sps.uid = spsmc.structured_page_sd_uid AND sps.language_code = spsmc.language_code AND sps.status = spsmc.status  " +
+                "LEFT JOIN structured_page_sd_media_card spsmc ON (sps.uid = spsmc.structured_page_sd_uid AND sps.language_code = spsmc.language_code AND sps.status = spsmc.status)  " +
                 "WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url " +
                 "AND sps.publish_flag = {PUBLISHED}";
 
@@ -557,9 +557,9 @@ public class StructuredPageSdRepository extends BaseRepository {
         start(methodName);
 
         String sql = " SELECT spsts.*, spsts.tab_section_intro as sectionIntro FROM structured_page_sd sps " +
-                " LEFT JOIN structured_page_sd_tab_section spsts ON sps.uid = spsts.structured_page_sd_uid AND sps.language_code = spsts.language_code AND sps.status = spsts.status " +
-                " LEFT JOIN structured_page_sd_tab_section_hospital spstsh ON spsts.uid = spstsh.structured_page_sd_tab_section_uid AND spstsh.language_code = spsts.language_code AND spstsh.status = spsts.status " +
-                " LEFT JOIN hospital h ON h.uid = spstsh.hospital_uid " +
+                " LEFT JOIN structured_page_sd_tab_section spsts ON (sps.uid = spsts.structured_page_sd_uid AND sps.language_code = spsts.language_code AND sps.status = spsts.status) " +
+                " LEFT JOIN structured_page_sd_tab_section_hospital spstsh ON (spsts.uid = spstsh.structured_page_sd_tab_section_uid AND spstsh.language_code = spsts.language_code AND spstsh.status = spsts.status) " +
+                " LEFT JOIN hospital h ON (h.uid = spstsh.hospital_uid AND h.language_code IN(<languageList>)) " +
                 " WHERE sps.language_code IN(<languageList>) AND sps.item_url = :item_url AND h.hospital = :hospitalCode" +
                 " AND sps.publish_flag = {PUBLISHED}";
 
@@ -586,9 +586,9 @@ public class StructuredPageSdRepository extends BaseRepository {
                 "AND sps.publish_flag = {PUBLISHED}";
 
         String q2 = "SELECT spst.* FROM structured_page_sd sps " +
-                "LEFT JOIN structured_page_sd_tab spst ON sps.uid = spst.structured_page_sd_uid AND sps.language_code = spst.language_code AND sps.status = spst.status " +
-                "LEFT JOIN structured_page_sd_tab_hospital spsth ON spst.uid = spsth.structured_page_sd_tab_uid AND spsth.language_code = spst.language_code AND spsth.status = spst.status " +
-                "LEFT JOIN hospital h ON spsth.hospital_uid  = h.uid   " +
+                "LEFT JOIN structured_page_sd_tab spst ON (sps.uid = spst.structured_page_sd_uid AND sps.language_code = spst.language_code AND sps.status = spst.status) " +
+                "LEFT JOIN structured_page_sd_tab_hospital spsth ON (spst.uid = spsth.structured_page_sd_tab_uid AND spsth.language_code = spst.language_code AND spsth.status = spst.status) " +
+                "LEFT JOIN hospital h ON (spsth.hospital_uid  = h.uid AND spsth.status  = h.status AND spsth.language_code  = h.language_code)   " +
                 " WHERE spst.structured_page_sd_uid = :spsUid AND h.hospital = :hospital" +
                 " AND sps.publish_flag = {PUBLISHED}";
 
