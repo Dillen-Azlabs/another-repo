@@ -51,8 +51,8 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ssm.hospital_main_image,ssm.hospital_main_text FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid AND ss.language_code = ssm.language_code AND ss.status = ssm.status " +
-                " LEFT JOIN hospital h ON ssm.hospital_uid = h.uid" +
+                " LEFT JOIN specialty_sd_metadata ssm ON (ss.uid = ssm.specialty_sd_uid AND ss.language_code = ssm.language_code AND ss.status = ssm.status) " +
+                " LEFT JOIN hospital h ON (ssm.hospital_uid = h.uid AND h.language_code IN(<languageList>)) " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
                 " AND ss.publish_flag = {PUBLISHED}";
 
@@ -153,8 +153,8 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ssm.overview_meta_title,ssm.overview_meta_desc, ssm.oai,ssm.oavu,ssm.wcu,ssm.wcuvu FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid AND ss.language_code = ssm.language_code AND ss.status = ssm.status " +
-                " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
+                " LEFT JOIN specialty_sd_metadata ssm ON (ss.uid = ssm.specialty_sd_uid AND ss.language_code = ssm.language_code AND ss.status = ssm.status) " +
+                " LEFT JOIN hospital h ON (h.uid = ssm.hospital_uid  AND h.language_code IN(<languageList>)) " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
                 " AND ss.publish_flag = {PUBLISHED}";
 
@@ -208,8 +208,8 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ssm.related_condition_meta_title,ssm.related_condition_meta_desc FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid AND ss.language_code = ssm.language_code AND ss.status = ssm.status " +
-                " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
+                " LEFT JOIN specialty_sd_metadata ssm ON (ss.uid = ssm.specialty_sd_uid AND ss.language_code = ssm.language_code AND ss.status = ssm.status) " +
+                " LEFT JOIN hospital h ON (h.uid = ssm.hospital_uid AND h.language_code IN(<languageList>)) " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
                 " AND ss.publish_flag = {PUBLISHED}";
 
@@ -264,8 +264,8 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ssm.related_treatment_meta_title, ssm.related_treatment_meta_desc, ssm.related_treatment_content FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid AND ss.language_code = ssm.language_code AND ss.status = ssm.status " +
-                " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
+                " LEFT JOIN specialty_sd_metadata ssm ON (ss.uid = ssm.specialty_sd_uid AND ss.language_code = ssm.language_code AND ss.status = ssm.status) " +
+                " LEFT JOIN hospital h ON (h.uid = ssm.hospital_uid AND h.language_code IN(<languageList>)) " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
                 " AND ss.publish_flag = {PUBLISHED}";
 
@@ -320,8 +320,8 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ssm.our_doc_meta_title,ssm.our_doc_meta_desc, ssm.our_doc_intro FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid  AND ss.language_code = ssm.language_code AND ss.status = ssm.status " +
-                " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid  " +
+                " LEFT JOIN specialty_sd_metadata ssm ON (ss.uid = ssm.specialty_sd_uid  AND ss.language_code = ssm.language_code AND ss.status = ssm.status) " +
+                " LEFT JOIN hospital h ON (h.uid = ssm.hospital_uid AND h.language_code IN(<languageList>)) " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
                 " AND ss.publish_flag = {PUBLISHED}";
 
@@ -385,7 +385,7 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ssf.question, ssf.answer, ssf.display_order FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_faq ssf ON ss.uid = ssf.specialty_sd_uid AND ss.language_code = ssf.language_code AND ss.status = ssf.status " +
+                " LEFT JOIN specialty_sd_faq ssf ON (ss.uid = ssf.specialty_sd_uid AND ss.language_code = ssf.language_code AND ss.status = ssf.status) " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url " +
                 " AND ss.publish_flag = {PUBLISHED}";
 
@@ -410,8 +410,8 @@ public class SpecialtySdRepository extends BaseRepository{
         start(methodName);
 
         String sql = "SELECT ssm.faq_title, ssm.faq_desc FROM specialty_sd ss " +
-                " LEFT JOIN specialty_sd_metadata ssm ON ss.uid = ssm.specialty_sd_uid AND ss.language_code = ssm.language_code AND ss.status = ssm.status " +
-                " LEFT JOIN hospital h ON h.uid = ssm.hospital_uid " +
+                " LEFT JOIN specialty_sd_metadata ssm ON (ss.uid = ssm.specialty_sd_uid AND ss.language_code = ssm.language_code AND ss.status = ssm.status) " +
+                " LEFT JOIN hospital h ON (h.uid = ssm.hospital_uid AND h.language_code IN(<languageList>)) " +
                 " WHERE ss.language_code IN(<languageList>) AND ss.item_url = :item_url AND h.hospital = :hospital" +
                 " AND ss.publish_flag = {PUBLISHED}";
 
@@ -546,7 +546,7 @@ public class SpecialtySdRepository extends BaseRepository{
         // hardcode for ttps language code for filtering
 
         String query1 = "SELECT item_url, treatment_h1_display FROM test_treatment_sd tts "+
-                "LEFT JOIN test_treatment_primary_specialty ttps  ON tts.primary_treatment_uid = ttps.test_treatment_uid  AND tts.status = ttps.status "+
+                "LEFT JOIN test_treatment_primary_specialty ttps  ON (tts.primary_treatment_uid = ttps.test_treatment_uid  AND tts.status = ttps.status) "+
                 "WHERE tts.language_code IN(<languageList>) AND ttps.specialty_uid = :uid  AND tts.publish_flag = {PUBLISHED} AND ttps.language_code = 'EN'";
 
         String query2 = "SELECT test_treatment_uid FROM test_treatment_other_specialty ttos WHERE ttos.language_code IN(<languageList>) AND ttos.specialty_uid = :uid  AND  ttos.publish_flag = {PUBLISHED}";
