@@ -21,7 +21,7 @@ public class PacRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT pac.*, c.country FROM patient_assistance_centre pac " +
-                " LEFT JOIN country c ON pac.country_uid = c.uid " +
+                " LEFT JOIN country c ON (pac.country_uid = c.uid c.language_code IN(<languageList>)) " +
                 " WHERE pac.language_code IN(<languageList>) " +
                 " AND pac.publish_flag = {PUBLISHED}";
 
@@ -44,7 +44,7 @@ public class PacRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT pac.*, c.country FROM patient_assistance_centre pac " +
-                " LEFT JOIN country c ON pac.country_uid = c.uid " +
+                " LEFT JOIN country c ON (pac.country_uid = c.uid c.language_code IN(<languageList>)) " +
                 " WHERE pac.language_code IN(<languageList>) AND c.country = :country " +
                 " AND pac.publish_flag = {PUBLISHED}";
 
@@ -67,9 +67,9 @@ public class PacRepository extends BaseRepository {
         start(methodName);
 
         String sql = "SELECT pac.*, mp.display_name, c.country FROM patient_assistance_centre pac " +
-                        "LEFT JOIN medical_professional_pac mppac ON pac.uid = mppac.pac_uid AND pac.language_code = mppac.language_code AND pac.status = mppac.status " +
-                        "LEFT JOIN medical_professional mp ON mppac.medical_professional_uid = mp.uid AND mppac.language_code = mp.language_code AND mppac.status = mp.status " +
-                        "LEFT JOIN country c ON c.uid = pac.country_uid " +
+                        "LEFT JOIN medical_professional_pac mppac ON (pac.uid = mppac.pac_uid AND pac.language_code = mppac.language_code AND pac.status = mppac.status) " +
+                        "LEFT JOIN medical_professional mp ON (mppac.medical_professional_uid = mp.uid AND mppac.language_code = mp.language_code AND mppac.status = mp.status) " +
+                        "LEFT JOIN country c ON (c.uid = pac.country_uid AND c.language_code IN(<languageList>)) " +
                         "WHERE pac.language_code IN(<languageList>) AND mp.item_url = :item_url AND c.country <> :exclude_country" +
                         " AND pac.publish_flag = {PUBLISHED}";
 
