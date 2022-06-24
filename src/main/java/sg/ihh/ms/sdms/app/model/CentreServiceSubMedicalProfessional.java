@@ -2,6 +2,7 @@ package sg.ihh.ms.sdms.app.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
 @JsonPropertyOrder({"uid", "languageCode", "itemUrl", "displayName", "salutation", "designation", "profileImageUrl", "profileImageAltText", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class CentreServiceSubMedicalProfessional extends BaseModel{
@@ -59,6 +60,7 @@ public class CentreServiceSubMedicalProfessional extends BaseModel{
         return profileImageUrl;
     }
 
+    @ColumnName("profile_photo_url")
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
@@ -67,6 +69,7 @@ public class CentreServiceSubMedicalProfessional extends BaseModel{
         return profileImageAltText;
     }
 
+    @ColumnName("profile_photo_alt_text")
     public void setProfileImageAltText(String profileImageAltText) {
         this.profileImageAltText = profileImageAltText;
     }
