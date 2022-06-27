@@ -430,13 +430,13 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     public List<CentreServiceSubRelatedSpecialties> getCentreServiceRelatedSpecialties(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
         final String methodName = "getCentreServiceRelatedSpecialties";
         start(methodName);
-        String sql ="  SELECT ss.* FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
-                "LEFT JOIN centre_service_main_sd_specialty csmss ON csms.uid = csmss.centre_service_main_sd_uid  AND csms.status = csmss.status AND csms.language_code = csmss.language_code " +
-                "LEFT JOIN specialty s ON s.uid = csmss.specialty_uid  " +
-                "LEFT JOIN specialty_sd ss  ON s.uid = ss.specialty_uid " +
-                "LEFT JOIN specialty_sd_metadata ssm ON ss.uid  = ssm.specialty_sd_uid  " +
-                "LEFT JOIN hospital h ON ssm.hospital_uid  = h.uid " +
+        String sql ="SELECT ss.* FROM centre_service_sub_sd csss  " +
+                "LEFT JOIN centre_service_main_sd csms ON (csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code)   " +
+                "LEFT JOIN centre_service_main_sd_specialty csmss ON (csms.uid = csmss.centre_service_main_sd_uid  AND csms.status = csmss.status AND csms.language_code = csmss.language_code)  " +
+                "LEFT JOIN specialty s ON (s.uid = csmss.specialty_uid AND s.status = csmss.status AND s.language_code = csmss.language_code)    " +
+                "LEFT JOIN specialty_sd ss  ON (s.uid = ss.specialty_uid AND s.status = ss.status AND s.language_code = ss.language_code) " +
+                "LEFT JOIN specialty_sd_metadata ssm ON (ss.uid  = ssm.specialty_sd_uid AND ss.status = ssm.status AND ss.language_code = ssm.language_code )  " +
+                "LEFT JOIN hospital h ON (ssm.hospital_uid  = h.uid AND h.language_code IN(<languageList>))" +
                 "WHERE ss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain  AND h.hospital = :hospital " +
                 "AND ss.publish_flag = {PUBLISHED} ";
 
