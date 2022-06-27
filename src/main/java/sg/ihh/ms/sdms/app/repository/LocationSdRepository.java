@@ -128,7 +128,7 @@ public class LocationSdRepository  extends BaseRepository {
     private List<LocationSdContact> getLocationSdContact(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
         final String methodName = "getLocationSdContact";
         start(methodName);
-        String sql ="SELECT lsc.contact_header, lsc.contact_number, lsc.display_order  FROM centre_service_sub_sd csss " +
+        String sql ="SELECT lsc.uid FROM centre_service_sub_sd csss " +
                 "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
                 "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid AND csss.status = csssl.status AND csss.language_code = csssl.language_code " +
                 "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid AND ls.status = csssl.status AND ls.language_code = csssl.language_code " +
@@ -140,18 +140,46 @@ public class LocationSdRepository  extends BaseRepository {
 
         sql = getPublishVersion(version, sql);
 
-        List<LocationSdContact> result = new ArrayList<>();
+        List<String> uidList = new ArrayList<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
             query.bindList("languageList", languageList).bind("itemUrlMain", itemUrlMain).bind("itemUrlSub", itemUrlSub).bind("hospital", hospitalCode);
-            result = query.mapToBean(LocationSdContact.class).list();
+            uidList = query.mapTo(String.class).list();
 
         } catch (Exception ex) {
             log.error(methodName, ex);
         }
 
+        List<LocationSdContact> result = new ArrayList<>();
+
+        for(String uid : uidList){
+            if(uid != null && !uid.isEmpty()){
+                LocationSdContact locationSdContact = getLocationSdContactByUid(version, languageList, uid);
+                result.add(locationSdContact);
+            }
+        }
 
         completed(methodName);
+        return result;
+    }
 
+    private LocationSdContact getLocationSdContactByUid(Version version, List<String> languageList, String uid){
+        final String methodName = "getLocationSdContact";
+        start(methodName);
+        String sql ="SELECT lsc.contact_header, lsc.contact_number, lsc.display_order FROM location_sd_contact lsc " +
+                "WHERE lsc.uid = :uid AND lsc.language_code IN(<languageList>) AND lsc.publish_flag = {PUBLISHED} ";
+
+        sql = getPublishVersion(version, sql);
+
+        LocationSdContact result = new LocationSdContact();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("uid", uid);
+            result = query.mapToBean(LocationSdContact.class).one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
         return result;
     }
     //END - Get Locations by Centre & Service
