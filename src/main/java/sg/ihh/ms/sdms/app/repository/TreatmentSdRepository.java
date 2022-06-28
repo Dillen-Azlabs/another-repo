@@ -8,11 +8,9 @@ import sg.ihh.ms.sdms.app.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.Map;
 
 @Repository
 public class TreatmentSdRepository extends BaseRepository{
@@ -232,6 +230,7 @@ public class TreatmentSdRepository extends BaseRepository{
         return result;
     }
     //END - Treatment FAQ Block
+
     //START - Treatment What to Expect Block
     public TreatmentWhatToExpect getTreatmentWhatToExpect(Version version, List<String> languageList, String treatmentItemUrl) {
         final String methodName = "getTreatmentWhatToExpect";
@@ -256,13 +255,15 @@ public class TreatmentSdRepository extends BaseRepository{
         return result;
     }
     //END - Treatment What to Expect Block
+
+    //Start - Treatment Expertise
     public TreatmentExpertise getTreatmentExpertise(Version version, List<String> languageList, String specialtyItemUrl, String hospitalCode) {
         final String methodName = "getTreatmentExpertise";
         start(methodName);
 
         String sql = "SELECT tts.* FROM test_treatment_sd tts " +
                 " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url " +
-                " AND tts.publish_flag = {PUBLISHED}";
+                " AND tts.publish_flag = {PUBLISHED} GROUP BY item_url ";
 
         sql = getPublishVersion(version, sql);
 
@@ -280,7 +281,7 @@ public class TreatmentSdRepository extends BaseRepository{
 
             List<String> specialties = new ArrayList<>();
             List<String> primarySpecialty = getPrimarySpecialty(version, languageList, result.getUid());
-            List<String> primaryChildSpecialty = getPrimaryChildSpecialty(version, languageList, result.getUid());
+            List<String> otherSpecialty = getOtherSpecialty(version, languageList, result.getUid());
 
             if (!primarySpecialty.isEmpty()) {
 
@@ -289,12 +290,12 @@ public class TreatmentSdRepository extends BaseRepository{
                         .collect(Collectors.toList());
                 specialties.addAll(primarySpecialty);
             }
-            if (!primaryChildSpecialty.isEmpty()) {
+            if (!otherSpecialty.isEmpty()) {
 
-                primaryChildSpecialty = primaryChildSpecialty.stream()
+                otherSpecialty = otherSpecialty.stream()
                         .distinct()
                         .collect(Collectors.toList());
-                specialties.addAll(primaryChildSpecialty);
+                specialties.addAll(otherSpecialty);
             }
 
             result.setWcu((String) metadata.get("wcu"));
@@ -309,10 +310,10 @@ public class TreatmentSdRepository extends BaseRepository{
         final String methodName = "getPrimarySpecialty";
         start(methodName);
 
-        String sql = "SELECT s.specialty FROM specialty s " +
-                "INNER JOIN test_treatment_sd tts ON tts.language_code = s.language_code " +
-                "INNER JOIN test_treatment_primary_specialty ttps ON ttps.test_treatment_uid = tts.primary_treatment_uid  AND ttps.specialty_uid = s.uid " +
-                "WHERE ttps.language_code IN(<languageList>) AND ttps.publish_flag = {PUBLISHED} AND tts.uid  = :uid;";
+        String sql = "SELECT s.specialty FROM specialty s  " +
+                "INNER JOIN test_treatment_sd tts ON tts.language_code = s.language_code  " +
+                "INNER JOIN test_treatment_primary_specialty ttps ON tts.primary_treatment_uid = ttps.test_treatment_uid AND ttps.specialty_uid = s.uid " +
+                "WHERE ttps.language_code IN(<languageList>) AND ttps.publish_flag = {PUBLISHED} AND tts.uid  = :uid";
 
         sql = getPublishVersion(version, sql);
 
@@ -327,15 +328,15 @@ public class TreatmentSdRepository extends BaseRepository{
         completed(methodName);
         return result;
     }
-    private List<String> getPrimaryChildSpecialty(Version version, List<String> languageList, String treatmentUid) {
+    private List<String> getOtherSpecialty(Version version, List<String> languageList, String treatmentUid) {
 
-        final String methodName = "getPrimaryChildSpecialty";
+        final String methodName = "getOtherSpecialty";
         start(methodName);
 
-        String sql = "SELECT child_specialty FROM child_specialty cs " +
-                "INNER JOIN test_treatment_sd tts ON tts.language_code = cs.language_code " +
-                "INNER JOIN test_treatment_primary_child_specialty ttpcs ON ttpcs.test_treatment_uid = tts.primary_treatment_uid  AND ttpcs.child_specialty_uid = cs.uid " +
-                "WHERE ttpcs.language_code IN(<languageList>) AND ttpcs.publish_flag = {PUBLISHED} AND tts.uid  = :uid;";
+        String sql = "SELECT s.specialty FROM specialty s  " +
+                "INNER JOIN test_treatment_sd tts ON tts.language_code = s.language_code  " +
+                "INNER JOIN test_treatment_other_specialty ttos ON tts.primary_treatment_uid = ttos.test_treatment_uid AND ttos.specialty_uid = s.uid " +
+                "WHERE ttos.language_code IN(<languageList>) AND ttos.publish_flag = {PUBLISHED} AND tts.uid  = :uid";
 
         sql = getPublishVersion(version, sql);
 
@@ -374,6 +375,8 @@ public class TreatmentSdRepository extends BaseRepository{
         completed(methodName);
         return result;
     }
+
+    
     //START - Treatment Overview Block
     public TreatmentOverview getTreatmentOverview(Version version, List<String> languageList, String treatmentItemUrl) {
         final String methodName = "getTreatmentOverview";
@@ -398,6 +401,7 @@ public class TreatmentSdRepository extends BaseRepository{
         return result;
     }
     //END - Treatment Overview Block
+
     //START - Treatment Detail Block
     public TreatmentDetail getTreatmentDetail(Version version, List<String> languageList, String treatmentItemUrl, String hospitalCode) {
         final String methodName = "getTreatmentDetail";
