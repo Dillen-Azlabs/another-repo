@@ -360,7 +360,7 @@ public class TreatmentSdRepository extends BaseRepository{
                 " LEFT JOIN hospital h ON h.uid = ttsm.hospital_uid  " +
                 " WHERE tts.language_code IN(<languageList>) AND tts.item_url = :item_url AND h.hospital = :hospital" +
                 " AND tts.publish_flag = {PUBLISHED} " +
-                "GROUP BY ttsm.test_treatment_sd_uid";
+                "GROUP BY tts.item_url";
 
         sql = getPublishVersion(version, sql);
 
