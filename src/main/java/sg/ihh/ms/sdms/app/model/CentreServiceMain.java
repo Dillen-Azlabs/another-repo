@@ -17,8 +17,6 @@ public class CentreServiceMain extends BaseModel{
     private String mainImage;
     @JsonProperty("mainImageAltText")
     private String mainImageAltText;
-    @JsonIgnore
-    protected int order;
 
     public CentreServiceMain() {
         // empty constructor
@@ -64,13 +62,4 @@ public class CentreServiceMain extends BaseModel{
         this.mainImageAltText = mainImageAltText;
     }
 
-    @Override
-    public int getOrder() {
-        return order;
-    }
-
-    @Override
-    public void setOrder(int order) {
-        this.order = order;
-    }
 }
