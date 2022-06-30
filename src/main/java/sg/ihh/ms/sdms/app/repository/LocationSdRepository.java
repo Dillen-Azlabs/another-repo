@@ -118,31 +118,25 @@ public class LocationSdRepository  extends BaseRepository {
 
         for (LocationSd locationSd : result) {
 
-            locationSd.setContactNumbers(getLocationSdContact(version,languageList,itemUrlMain,itemUrlSub,hospitalCode));
+            locationSd.setContactNumbers(getLocationSdContact(version,languageList, locationSd.getUid()));
         }
 
         completed(methodName);
         return result;
     }
 
-    private List<LocationSdContact> getLocationSdContact(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
+    private List<LocationSdContact> getLocationSdContact(Version version, List<String> languageList, String locationUid){
         final String methodName = "getLocationSdContact";
         start(methodName);
-        String sql ="SELECT lsc.uid FROM centre_service_sub_sd csss " +
-                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid AND csss.status = csssl.status AND csss.language_code = csssl.language_code " +
-                "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid AND ls.status = csssl.status AND ls.language_code = csssl.language_code " +
+        String sql ="SELECT lsc.uid FROM location_sd ls " +
                 "LEFT JOIN location_sd_contact lsc  ON ls.uid = lsc.location_sd_uid AND ls.status = lsc.status AND ls.language_code = lsc.language_code " +
-                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON csssl.uid  = cssslh.centre_service_sub_sd_location_uid AND cssslh.status = csssl.status AND cssslh.language_code = csssl.language_code " +
-                "LEFT JOIN hospital h ON cssslh.hospital_uid  = h.uid " +
-                "WHERE ls.language_code IN(<languageList>)AND csms.item_url = :itemUrlMain AND csss.item_url = :itemUrlSub  AND h.hospital = :hospital " +
-                "AND ls.publish_flag = {PUBLISHED} ";
+                "WHERE ls.language_code IN(<languageList>) AND ls.uid = :uid AND ls.publish_flag = {PUBLISHED} ";
 
         sql = getPublishVersion(version, sql);
 
         List<String> uidList = new ArrayList<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("itemUrlMain", itemUrlMain).bind("itemUrlSub", itemUrlSub).bind("hospital", hospitalCode);
+            query.bind("uid",locationUid).bindList("languageList", languageList);
             uidList = query.mapTo(String.class).list();
 
         } catch (Exception ex) {
