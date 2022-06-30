@@ -40,7 +40,7 @@ public class LocationSdRepository  extends BaseRepository {
     public List<LocationSd> getLocationSd(Version version, List<String> languageList, String itemUrls, String hospitalCode){
         final String methodName = "getLocationByItemUrl";
         start(methodName);
-        String sql ="SELECT ls.uid, ls.language_code, ls.location_title, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.display_order, ls.publish_flag, ls.created_dt, ls.modified_dt FROM location_sd ls " +
+        String sql ="SELECT ls.uid, ls.language_code, ls.location_title,ls.image_url, ls.google_map_url, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.display_order, ls.publish_flag, ls.created_dt, ls.modified_dt FROM location_sd ls " +
                 "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid " +
                 "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid AND ls.status = lsh.status AND ls.language_code = lsh.language_code " +
                 "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid " +
