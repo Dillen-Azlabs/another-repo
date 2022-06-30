@@ -7,11 +7,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"uid", "languageCode", "locationTitle", "address1", "address2", "city", "state", "postalCode", "country", "contactNumbers", "whatsappNumber", "fax", "email", "order", "publishFlag", "createdDt", "modifiedDt"})
+@JsonPropertyOrder({"uid", "languageCode", "locationTitle", "imageUrl", "googleMapUrl", "address1", "address2", "city", "state", "postalCode", "country", "contactNumbers", "whatsappNumber", "fax", "email", "order", "publishFlag", "createdDt", "modifiedDt"})
 public class LocationSd extends BaseModel {
 
     @JsonProperty("locationTitle")
     private String locationTitle;
+    @JsonProperty("imageUrl")
+    private String imageUrl;
+    @JsonProperty("googleMapUrl")
+    private String googleMapUrl;
     @JsonProperty("address1")
     private String address1;
     @JsonProperty("address2")
@@ -45,6 +49,22 @@ public class LocationSd extends BaseModel {
 
     public void setLocationTitle(String locationTitle) {
         this.locationTitle = locationTitle;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getGoogleMapUrl() {
+        return googleMapUrl;
+    }
+
+    public void setGoogleMapUrl(String googleMapUrl) {
+        this.googleMapUrl = googleMapUrl;
     }
 
     public String getAddress1() {
