@@ -353,9 +353,13 @@ public class CentreServiceSubSdRepository extends BaseRepository {
             Map<String, Object> centreServiceMain = getCentreServiceMain(version, languageList, centreServiceSUrl,centreServiceMUrl,hospitalCode );
             if (metadataDetails.get("hospital_main_image") != null && !metadataDetails.get("hospital_main_image").equals("")) {
                 result.setMainImage((String) metadataDetails.get("hospital_main_image"));
+            }else {
+                result.setMainImage((String) centreServiceMain.get("main_image"));
             }
             if (metadataDetails.get("hospital_main_image_alt_text") != null && !metadataDetails.get("hospital_main_image_alt_text").equals("")) {
                 result.setMainImageAltText((String) metadataDetails.get("hospital_main_image_alt_text"));
+            }else{
+                result.setMainImageAltText((String) centreServiceMain.get("main_image_alt_text"));
             }
             result.setCentreServiceMPageTitle((String) centreServiceMain.get("page_title"));
             result.setSummary((String) centreServiceMain.get("summary"));
@@ -376,7 +380,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         final String methodName = "getCentreServiceMain";
         start(methodName);
 
-        String sql = "SELECT  csms.page_title, csms.summary, csms.hide_hero_image FROM centre_service_sub_sd csss   " +
+        String sql = "SELECT csms.main_image, csms.main_image_alt_text, csms.page_title, csms.summary, csms.hide_hero_image FROM centre_service_sub_sd csss   " +
                 "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
                 "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code  " +
                 "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code = csssmh.language_code " +
