@@ -221,7 +221,7 @@ public class CentreServiceMainSdRepository extends BaseRepository{
         final String methodName = "getCentreServiceMainContentHub";
         start(methodName);
 
-        String sql ="SELECT csms.uid, csms.language_code,csms.page_title, csms.summary, csms.main_image, csms.main_image_alt_text, csms.item_url, csms.display_order, csms.publish_flag, csms.created_dt, csms.modified_dt FROM centre_service_main_sd csms " +
+        String sql ="SELECT chmsc.uid, chmsc.language_code,csms.page_title, csms.summary, csms.main_image, csms.main_image_alt_text, csms.item_url, chmsc.display_order, chmsc.publish_flag, chmsc.created_dt, chmsc.modified_dt FROM centre_service_main_sd csms " +
                 "LEFT JOIN content_hub_main_sd_centre_service chmsc ON csms.uid = chmsc.centre_service_main_sd AND csms.language_code = chmsc.language_code AND csms.status = chmsc.status " +
                 "LEFT JOIN content_hub_main_sd chms  ON chmsc.content_hub_main_sd_uid  = chms.uid AND chmsc.language_code = chms.language_code AND chmsc.status = chms.status " +
                 "LEFT JOIN content_hub_main_sd_centre_service_hospital chmscsh ON chmsc.uid  = chmscsh.content_hub_main_sd_centre_service_uid AND chmsc.language_code = chmscsh.language_code AND chmsc.status = chmscsh.status " +
