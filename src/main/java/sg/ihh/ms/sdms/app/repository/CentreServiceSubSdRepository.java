@@ -351,12 +351,12 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         if (result != null) {
             Map<String, Object> metadataDetails = getMetadataBasicDetail(version, languageList, centreServiceSUrl,centreServiceMUrl, hospitalCode);
             Map<String, Object> centreServiceMain = getCentreServiceMain(version, languageList, centreServiceSUrl,centreServiceMUrl,hospitalCode );
-            if (metadataDetails.get("hospital_main_image") != null && !metadataDetails.get("hospital_main_image").equals("")) {
+            if (metadataDetails.get("hospital_main_image") != null) {
                 result.setMainImage((String) metadataDetails.get("hospital_main_image"));
             }else {
                 result.setMainImage((String) centreServiceMain.get("main_image"));
             }
-            if (metadataDetails.get("hospital_main_image_alt_text") != null && !metadataDetails.get("hospital_main_image_alt_text").equals("")) {
+            if (metadataDetails.get("hospital_main_image_alt_text") != null) {
                 result.setMainImageAltText((String) metadataDetails.get("hospital_main_image_alt_text"));
             }else{
                 result.setMainImageAltText((String) centreServiceMain.get("main_image_alt_text"));
@@ -364,8 +364,8 @@ public class CentreServiceSubSdRepository extends BaseRepository {
             result.setCentreServiceMPageTitle((String) centreServiceMain.get("page_title"));
             result.setSummary((String) centreServiceMain.get("summary"));
             result.setHideHeroImage((boolean) centreServiceMain.get("hide_hero_image"));
-            result.setMetaTitle((String) metadataDetails.get("meta_title"));
-            result.setMetaDescription((String) metadataDetails.get("meta_description"));
+            result.setMetaTitle((String) centreServiceMain.get("meta_title"));
+            result.setMetaDescription((String) centreServiceMain.get("meta_description"));
             result.setSocialSummary((String) metadataDetails.get("social_summary"));
         }else{
             result = new CentreServiceSubBasicDetail();
@@ -380,7 +380,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         final String methodName = "getCentreServiceMain";
         start(methodName);
 
-        String sql = "SELECT csms.main_image, csms.main_image_alt_text, csms.page_title, csms.summary, csms.hide_hero_image FROM centre_service_sub_sd csss   " +
+        String sql = "SELECT csms.main_image, csms.main_image_alt_text, csms.page_title, csms.summary, csms.hide_hero_image, csssm.meta_title, csssm.meta_description  FROM centre_service_sub_sd csss   " +
                 "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
                 "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code  " +
                 "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code = csssmh.language_code " +
@@ -405,7 +405,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         final String methodName = "getMetadataBasicDetail";
         start(methodName);
 
-        String sql = "SELECT csmsm.hospital_main_image, csmsm.hospital_main_image_alt_text, csmsm.social_summary, csssm.meta_title, csssm.meta_description FROM centre_service_sub_sd csss   " +
+        String sql = "SELECT csmsm.hospital_main_image, csmsm.hospital_main_image_alt_text, csmsm.social_summary FROM centre_service_sub_sd csss   " +
                 "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code   " +
                 "LEFT JOIN centre_service_main_sd_metadata csmsm ON csms.uid = csmsm.centre_service_main_sd_uid AND csms.status = csmsm.status AND csms.language_code  = csmsm.language_code  " +
                 "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid AND csss.status = csssm.status AND csss.language_code = csssm.language_code   " +
