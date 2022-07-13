@@ -69,4 +69,24 @@ public class LocationSdService extends  BaseService {
         completed(methodName);
         return response;
     }
+
+    @RequestMapping(path = "search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public LocationSdListResponse getLocationByHospital(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("hospitalCodes") List<String> hospital){
+        final String methodName = "getLocationByHospital";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        List<LocationSd> result = repository.getLocationByHospital(Version.getVersion(version), languageList, hospital);
+
+        LocationSdListResponse response = new LocationSdListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
 }

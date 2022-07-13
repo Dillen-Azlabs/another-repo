@@ -18,7 +18,7 @@ public class LocationSdRepository  extends BaseRepository {
         log = getLogger(this.getClass());
     }
 
-    //START - Get Locations by Centre & Service
+    //START - Get Locations by Item Url
     public  List<LocationSd> getLocationByItemUrl(Version version, List<String> languageList, List<String> itemUrls){
         final String methodName = "getLocationByItemUrl";
         start(methodName);
@@ -42,8 +42,6 @@ public class LocationSdRepository  extends BaseRepository {
         start(methodName);
         String sql ="SELECT ls.uid, ls.language_code, ls.location_title,ls.image_url, ls.google_map_url, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.display_order, ls.publish_flag, ls.created_dt, ls.modified_dt FROM location_sd ls " +
                 "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid " +
-                "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid AND ls.status = lsh.status AND ls.language_code = lsh.language_code " +
-                "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid " +
                 "WHERE ls.language_code IN(<languageList>) AND ls.item_url = :itemUrls " +
                 "AND ls.publish_flag = {PUBLISHED} ";
 
@@ -86,7 +84,7 @@ public class LocationSdRepository  extends BaseRepository {
 
         return result;
     }
-    //END - Get Locations by Centre & Service
+    //END - Get Locations by Item Url
 
     //START - Get Locations by Centre & Service
     public List<LocationSd> getLocationByCentreService(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
@@ -175,4 +173,50 @@ public class LocationSdRepository  extends BaseRepository {
         return result;
     }
     //END - Get Locations by Centre & Service
+
+    //START - Get Locations by Hospital  and Location Type
+    public  List<LocationSd> getLocationByHospital(Version version, List<String> languageList, List<String> hospitalCodes){
+        final String methodName = "getLocationByHospital";
+        start(methodName);
+        List<LocationSd> result = new ArrayList<>();
+
+        for (String hospital : hospitalCodes){
+            List<LocationSd> ls = getLocationSdHospital(version, languageList, hospital);
+            for (LocationSd lsResult : ls){
+                lsResult.setContactNumbers(getLocationSdContact(version,languageList, lsResult.getUid()));
+                result.add(lsResult);
+            }
+        }
+
+        completed(methodName);
+        return result;
+    }
+
+    public List<LocationSd> getLocationSdHospital(Version version, List<String> languageList, String hospitalCodes){
+        final String methodName = "getLocationSdHospital";
+        start(methodName);
+        String sql ="SELECT ls.uid, ls.language_code, ls.location_title,ls.image_url, ls.google_map_url, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.display_order, ls.publish_flag, ls.created_dt, ls.modified_dt FROM location_sd ls " +
+                "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid " +
+                "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid AND ls.status = lsh.status AND ls.language_code = lsh.language_code " +
+                "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid " +
+                "WHERE ls.language_code IN(<languageList>) AND h.hospital = :hospitalCodes " +
+                "AND ls.publish_flag = {PUBLISHED} ";
+
+        sql = getPublishVersion(version, sql);
+
+        List<LocationSd> result = new ArrayList<>();
+
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("hospitalCodes", hospitalCodes);
+            result = query.mapToBean(LocationSd.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+
+        completed(methodName);
+        return result;
+    }
+    
+    //END - Get Locations by Hospital  and Location Type
 }
