@@ -33,15 +33,14 @@ public class LocationSdService extends  BaseService {
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
                     message = "Allowed Values : DRAFT, PUBLISHED") String version,
             @RequestParam("languageCode") String languageCode,
-            @RequestParam("itemUrls") List<String> itemUrl,
-            @RequestParam("hospitalCode") String hospitalCode){
+            @RequestParam("itemUrls") List<String> itemUrl){
         final String methodName = "getLocationByItemUrl";
         start(methodName);
 
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<LocationSd> result = repository.getLocationByItemUrl(Version.getVersion(version), languageList, itemUrl, hospitalCode);
+        List<LocationSd> result = repository.getLocationByItemUrl(Version.getVersion(version), languageList, itemUrl);
 
         LocationSdListResponse response = new LocationSdListResponse(result);
 
