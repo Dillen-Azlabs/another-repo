@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sg.ihh.ms.sdms.app.model.LocationSd;
 import sg.ihh.ms.sdms.app.model.Version;
-import sg.ihh.ms.sdms.app.repository.CentreServiceMainSdRepository;
 import sg.ihh.ms.sdms.app.repository.LocationSdRepository;
 import sg.ihh.ms.sdms.app.rest.model.LocationSdListResponse;
 
@@ -33,15 +32,14 @@ public class LocationSdService extends  BaseService {
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
                     message = "Allowed Values : DRAFT, PUBLISHED") String version,
             @RequestParam("languageCode") String languageCode,
-            @RequestParam("itemUrls") List<String> itemUrl,
-            @RequestParam("hospitalCode") String hospitalCode){
+            @RequestParam("itemUrls") List<String> itemUrl){
         final String methodName = "getLocationByItemUrl";
         start(methodName);
 
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<LocationSd> result = repository.getLocationByItemUrl(Version.getVersion(version), languageList, itemUrl, hospitalCode);
+        List<LocationSd> result = repository.getLocationByItemUrl(Version.getVersion(version), languageList, itemUrl);
 
         LocationSdListResponse response = new LocationSdListResponse(result);
 
@@ -63,7 +61,38 @@ public class LocationSdService extends  BaseService {
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
+
         List<LocationSd> result = repository.getLocationByCentreService(Version.getVersion(version), languageList, centreServiceMUrl,centreServiceSUrl, hospitalCode);
+
+        LocationSdListResponse response = new LocationSdListResponse(result);
+
+        completed(methodName);
+        return response;
+    }
+
+    @RequestMapping(path = "search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public LocationSdListResponse getLocationByHospital(
+            @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
+                    message = "Allowed Values : DRAFT, PUBLISHED") String version,
+            @RequestParam("languageCode") String languageCode,
+            @RequestParam("hospitalCodes") List<String> hospital,
+            @RequestParam("locationTypes") List<String> locationType){
+        final String methodName = "getLocationByHospital";
+        start(methodName);
+
+        // Language Code
+        List<String> languageList = getLanguageList(languageCode);
+
+        if (locationType.isEmpty()) {
+            locationType.add("Hospital");
+            locationType.add("Pharmacy");
+            locationType.add("F&B");
+            locationType.add("Accident and Emergency");
+            locationType.add("Medical facility or centre");
+            locationType.add("Retail shops");
+        }
+
+        List<LocationSd> result = repository.getLocationByHospitalAndLocation(Version.getVersion(version), languageList, hospital,locationType);
 
         LocationSdListResponse response = new LocationSdListResponse(result);
 
