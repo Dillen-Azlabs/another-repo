@@ -335,14 +335,14 @@ public class CentreServiceSubSdRepository extends BaseRepository {
                 "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code  " +
                 "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code  = csssmh.language_code " +
                 "LEFT JOIN hospital h  ON h.uid  = csssmh.hospital_uid " +
-                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND h.hospital = :hospital " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
         CentreServiceSubBasicDetail result = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("itemUrlSub", centreServiceSUrl).bind("itemUrlMain", centreServiceMUrl).bind("hospital", hospitalCode);
+            query.bindList("languageList", languageList).bind("itemUrlSub", centreServiceSUrl).bind("itemUrlMain", centreServiceMUrl);
             result = query.mapToBean(CentreServiceSubBasicDetail.class).one();
         } catch (Exception ex) {
             log.error(methodName, ex);
@@ -350,7 +350,8 @@ public class CentreServiceSubSdRepository extends BaseRepository {
 
         if (result != null) {
             Map<String, Object> metadataDetails = getMetadataBasicDetail(version, languageList, centreServiceSUrl,centreServiceMUrl, hospitalCode);
-            Map<String, Object> centreServiceMain = getCentreServiceMain(version, languageList, centreServiceSUrl,centreServiceMUrl,hospitalCode );
+            Map<String, Object> centreServiceMain = getCentreServiceMain(version, languageList, centreServiceSUrl,centreServiceMUrl);
+
             if (metadataDetails.get("hospital_main_image") != null && !metadataDetails.get("hospital_main_image").equals("")) {
                 result.setMainImage((String) metadataDetails.get("hospital_main_image"));
             }else {
@@ -361,11 +362,20 @@ public class CentreServiceSubSdRepository extends BaseRepository {
             }else{
                 result.setMainImageAltText((String) centreServiceMain.get("main_image_alt_text"));
             }
+
+            if (metadataDetails.get("meta_title") != null && !metadataDetails.get("meta_title").equals("")) {
+                result.setMetaTitle((String) metadataDetails.get("meta_title"));
+            }else {
+                result.setMetaTitle("");
+            }
+            if (metadataDetails.get("meta_description") != null && !metadataDetails.get("meta_description").equals("")) {
+                result.setMetaDescription((String) metadataDetails.get("meta_description"));
+            }else {
+                result.setMetaDescription("");
+            }
             result.setCentreServiceMPageTitle((String) centreServiceMain.get("page_title"));
             result.setSummary((String) centreServiceMain.get("summary"));
             result.setHideHeroImage((boolean) centreServiceMain.get("hide_hero_image"));
-            result.setMetaTitle((String) metadataDetails.get("meta_title"));
-            result.setMetaDescription((String) metadataDetails.get("meta_description"));
             result.setSocialSummary((String) metadataDetails.get("social_summary"));
         }else{
             result = new CentreServiceSubBasicDetail();
@@ -376,7 +386,7 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         return result;
     }
 
-    public Map<String, Object> getCentreServiceMain(Version version, List<String> languageList, String centreServiceSUrl, String centreServiceMUrl, String hospitalCode) {
+    public Map<String, Object> getCentreServiceMain(Version version, List<String> languageList, String centreServiceSUrl, String centreServiceMUrl) {
         final String methodName = "getCentreServiceMain";
         start(methodName);
 
@@ -385,14 +395,14 @@ public class CentreServiceSubSdRepository extends BaseRepository {
                 "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code  " +
                 "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code = csssmh.language_code " +
                 "LEFT JOIN hospital h  ON h.uid  = csssmh.hospital_uid " +
-                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND h.hospital = :hospital " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
         sql = getPublishVersion(version, sql);
 
         Map<String, Object> result = new HashMap<>();
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("itemUrlSub", centreServiceSUrl).bind("itemUrlMain", centreServiceMUrl).bind("hospital", hospitalCode);
+            query.bindList("languageList", languageList).bind("itemUrlSub", centreServiceSUrl).bind("itemUrlMain", centreServiceMUrl);
             result = query.mapToMap().one();
 
         } catch (Exception ex) {
