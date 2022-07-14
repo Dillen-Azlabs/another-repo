@@ -340,11 +340,11 @@ public class MDStaffProviderAppointmentFacilityTemp {
         this.relativeObjectName = relativeObjectName;
     }
 
-    public boolean isNew() {
+    public boolean isIsNew() {
         return isNew;
     }
 
-    public void setNew(boolean isNew) {
+    public void setIsNew(boolean isNew) {
         this.isNew = isNew;
     }
 
@@ -356,11 +356,11 @@ public class MDStaffProviderAppointmentFacilityTemp {
         this.ignoredRequiredFields = ignoredRequiredFields;
     }
 
-    public boolean isLoaded() {
+    public boolean isIsLoaded() {
         return isLoaded;
     }
 
-    public void setLoaded(boolean isLoaded) {
+    public void setIsLoaded(boolean isLoaded) {
         this.isLoaded = isLoaded;
     }
 }
