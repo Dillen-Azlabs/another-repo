@@ -175,31 +175,36 @@ public class LocationSdRepository  extends BaseRepository {
     //END - Get Locations by Centre & Service
 
     //START - Get Locations by Hospital  and Location Type
-    public  List<LocationSd> getLocationByHospital(Version version, List<String> languageList, List<String> hospitalCodes){
+    public  List<LocationSd> getLocationByHospitalAndLocation(Version version, List<String> languageList, List<String> hospitalCodes,List<String> locationTypes){
         final String methodName = "getLocationByHospital";
         start(methodName);
         List<LocationSd> result = new ArrayList<>();
 
         for (String hospital : hospitalCodes){
-            List<LocationSd> ls = getLocationSdHospital(version, languageList, hospital);
-            for (LocationSd lsResult : ls){
-                lsResult.setContactNumbers(getLocationSdContact(version,languageList, lsResult.getUid()));
-                result.add(lsResult);
+            for(String locationType : locationTypes){
+
+                List<LocationSd> ls = getLocationSdHospital(version, languageList, hospital, locationType);
+                for (LocationSd lsResult : ls){
+                    lsResult.setContactNumbers(getLocationSdContact(version,languageList, lsResult.getUid()));
+                    result.add(lsResult);
+                }
             }
+
         }
 
         completed(methodName);
         return result;
     }
 
-    public List<LocationSd> getLocationSdHospital(Version version, List<String> languageList, String hospitalCodes){
+    public List<LocationSd> getLocationSdHospital(Version version, List<String> languageList, String hospitalCodes, String locationTypes){
         final String methodName = "getLocationSdHospital";
         start(methodName);
         String sql ="SELECT ls.uid, ls.language_code, ls.location_title,ls.image_url, ls.google_map_url, ls.address1, ls.address2, ls.city , ls.state, ls.postal_code, cor.cor , ls.whatsapp_number, ls.fax, ls.email, ls.display_order, ls.publish_flag, ls.created_dt, ls.modified_dt FROM location_sd ls " +
                 "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid " +
                 "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid AND ls.status = lsh.status AND ls.language_code = lsh.language_code " +
-                "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid " +
-                "WHERE ls.language_code IN(<languageList>) AND h.hospital = :hospitalCodes " +
+                "LEFT JOIN location_type lt ON lt.uid = ls.location_type_uid  AND ls.status = lt.status AND ls.language_code = lt.language_code " +
+                "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid  " +
+                "WHERE ls.language_code IN(<languageList>) AND h.hospital = :hospitalCodes AND lt.location_type = :locationTypes " +
                 "AND ls.publish_flag = {PUBLISHED} ";
 
         sql = getPublishVersion(version, sql);
@@ -207,7 +212,7 @@ public class LocationSdRepository  extends BaseRepository {
         List<LocationSd> result = new ArrayList<>();
 
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
-            query.bindList("languageList", languageList).bind("hospitalCodes", hospitalCodes);
+            query.bindList("languageList", languageList).bind("hospitalCodes", hospitalCodes).bind("locationTypes", locationTypes);
             result = query.mapToBean(LocationSd.class).list();
 
         } catch (Exception ex) {
@@ -217,6 +222,6 @@ public class LocationSdRepository  extends BaseRepository {
         completed(methodName);
         return result;
     }
-    
+
     //END - Get Locations by Hospital  and Location Type
 }

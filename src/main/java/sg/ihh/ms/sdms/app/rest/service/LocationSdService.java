@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sg.ihh.ms.sdms.app.model.LocationSd;
 import sg.ihh.ms.sdms.app.model.Version;
-import sg.ihh.ms.sdms.app.repository.CentreServiceMainSdRepository;
 import sg.ihh.ms.sdms.app.repository.LocationSdRepository;
 import sg.ihh.ms.sdms.app.rest.model.LocationSdListResponse;
 
@@ -62,6 +61,7 @@ public class LocationSdService extends  BaseService {
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
+
         List<LocationSd> result = repository.getLocationByCentreService(Version.getVersion(version), languageList, centreServiceMUrl,centreServiceSUrl, hospitalCode);
 
         LocationSdListResponse response = new LocationSdListResponse(result);
@@ -75,14 +75,24 @@ public class LocationSdService extends  BaseService {
             @RequestParam("version") @Pattern(regexp = "^(DRAFT|PUBLISHED)$",
                     message = "Allowed Values : DRAFT, PUBLISHED") String version,
             @RequestParam("languageCode") String languageCode,
-            @RequestParam("hospitalCodes") List<String> hospital){
+            @RequestParam("hospitalCodes") List<String> hospital,
+            @RequestParam("locationTypes") List<String> locationType){
         final String methodName = "getLocationByHospital";
         start(methodName);
 
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        List<LocationSd> result = repository.getLocationByHospital(Version.getVersion(version), languageList, hospital);
+        if (locationType.isEmpty()) {
+            locationType.add("Hospital");
+            locationType.add("Pharmacy");
+            locationType.add("F&B");
+            locationType.add("Accident and Emergency");
+            locationType.add("Medical facility or centre");
+            locationType.add("Retail shops");
+        }
+
+        List<LocationSd> result = repository.getLocationByHospitalAndLocation(Version.getVersion(version), languageList, hospital,locationType);
 
         LocationSdListResponse response = new LocationSdListResponse(result);
 
