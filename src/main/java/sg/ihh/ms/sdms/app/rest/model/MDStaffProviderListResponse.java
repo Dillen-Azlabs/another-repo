@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.http.HttpStatus;
 import sg.ihh.ms.sdms.app.model.MDStaffProvider;
-import sg.ihh.ms.sdms.app.model.MedicalProfessionalBasic;
 
 import java.util.List;
 

@@ -32,6 +32,7 @@ public class MDStaffProviderAddress {
     private String state;
     @JsonProperty("Zip")
     private String zip;
+    //10
     @JsonProperty("CountyId")
     private String countyId;
     @JsonProperty("CountryId")
@@ -52,6 +53,7 @@ public class MDStaffProviderAddress {
     private String npi;
     @JsonProperty("MedicareNumber")
     private String medicareNumber;
+    //20
     @JsonProperty("MedicaidNumber")
     private String medicaidNumber;
     @JsonProperty("MondayHours")
@@ -72,6 +74,8 @@ public class MDStaffProviderAddress {
     private String taxID;
     @JsonProperty("ReviewDate")
     private String reviewDate;
+    
+    //30
     @JsonProperty("ReviewDateText")
     private String reviewDateText;
     @JsonProperty("ReviewedBy")
@@ -92,6 +96,8 @@ public class MDStaffProviderAddress {
     private String lastUpdatedText;
     @JsonProperty("UpdatedBy")
     private String updatedBy;
+    
+    //40
     @JsonProperty("InUse")
     private String inUse;
     @JsonProperty("IDNumber")
@@ -112,6 +118,7 @@ public class MDStaffProviderAddress {
     private String startDateText;
     @JsonProperty("EndDate")
     private String endDate;
+    //50
     @JsonProperty("EndDateText")
     private String endDateText;
     @JsonProperty("AccreditationDate")
@@ -132,6 +139,8 @@ public class MDStaffProviderAddress {
     private String billingAddress2;
     @JsonProperty("BillingCity")
     private String billingCity;
+    
+    //60
     @JsonProperty("BillingState")
     private String billingState;
     @JsonProperty("BillingZip")
@@ -152,6 +161,8 @@ public class MDStaffProviderAddress {
     private String billingAddressSourceID;
     @JsonProperty("BillingEmail")
     private String billingEmail;
+    
+    //70
     @JsonProperty("BillingURL")
     private String billingURL;
     @JsonProperty("MailingAddress")
@@ -172,6 +183,8 @@ public class MDStaffProviderAddress {
     private String mailingTelephone;
     @JsonProperty("MailingFax")
     private String mailingFax;
+    
+    //80
     @JsonProperty("MailingNPI")
     private String mailingNPI;
     @JsonProperty("MailingTaxID")
@@ -192,12 +205,18 @@ public class MDStaffProviderAddress {
     private String columnID;
     @JsonProperty("ObjectDescription")
     private String objectDescription;
+    
+    //90
     @JsonProperty("AddressTypeCode")
     private String addressTypeCode;
+    
+    //fk  //mdstaff_address_type_item_id
     @JsonProperty("AddressTypeItem")
     private MDStaffProviderAddressTypeItem addressTypeItem;
     @JsonProperty("SubType")
     private String subType;
+    
+    //fk //mdstaff_medical_group_site_id
     @JsonProperty("MedicalGroup")
     private MDStaffProviderAddressMedicalGroup medicalGroup;
     @JsonProperty("Address1")
@@ -212,6 +231,8 @@ public class MDStaffProviderAddress {
     private String mailingAddressID;
     @JsonProperty("AddressBlock")
     private String addressBlock;
+    
+    //100
     @JsonProperty("ParentField")
     private String parentField;
     @JsonProperty("Column_ProviderID")
