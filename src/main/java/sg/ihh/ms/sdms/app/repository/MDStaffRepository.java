@@ -397,7 +397,7 @@ public class MDStaffRepository extends BaseRepository {
         	result.setMergeFieldNames(new String[0]);
         }
         
-        // Transform arrMergeFielValues String to arrMergeFielValues String[]
+        // Transform MergeFielValues String to MergeFielValues String[]
         String[] arrMergeFielValues = null;
         if(tempResult.getMergeFieldValues() != null && tempResult.getMergeFieldValues().trim()!="")
         {
@@ -420,9 +420,9 @@ public class MDStaffRepository extends BaseRepository {
         result.setObjectDescription(tempResult.getObjectDescription());
         result.setUseCustomFields(tempResult.isUseCustomFields());
         result.setRelativeObjectName(tempResult.getRelativeObjectName());
-        result.setNew(tempResult.isNew());
+        result.setIsNew(tempResult.isIsNew());
         result.setIgnoredRequiredFields(tempResult.isIgnoredRequiredFields());
-        result.setLoaded(tempResult.isLoaded());
+        result.setIsLoaded(tempResult.isIsLoaded());
         
         completed(methodName);
         return result;
