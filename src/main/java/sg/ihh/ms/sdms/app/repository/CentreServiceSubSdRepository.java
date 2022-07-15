@@ -421,10 +421,8 @@ public class CentreServiceSubSdRepository extends BaseRepository {
                 "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code   " +
                 "LEFT JOIN centre_service_main_sd_metadata csmsm ON csms.uid = csmsm.centre_service_main_sd_uid AND csms.status = csmsm.status AND csms.language_code  = csmsm.language_code  " +
                 "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid AND csss.status = csssm.status AND csss.language_code = csssm.language_code   " +
-                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code = csssmh.language_code    " +
-                "LEFT JOIN hospital hs  ON hs.uid  = csssmh.hospital_uid    " +
                 "LEFT JOIN hospital hm  ON hm.uid  = csmsm.hospital_uid " +
-                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND hs.hospital = :hospital AND hm.hospital = :hospital " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND  hm.hospital = :hospital " +
                 "AND csss.publish_flag = {PUBLISHED} ";
 
         sql = getPublishVersion(version, sql);
