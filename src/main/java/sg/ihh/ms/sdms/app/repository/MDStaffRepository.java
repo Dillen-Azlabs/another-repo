@@ -335,8 +335,7 @@ public class MDStaffRepository extends BaseRepository {
         	appt.setIsNew(temp.isIsNew());
         	appt.setIgnoreRequiredFields(temp.isIgnoreRequiredFields());
         	appt.setIsLoaded(temp.isIsLoaded());
-        	
-         	appt.setFacility(getFacility(temp.getFacilityId()));
+         	appt.setFacility(getFacility(temp.getFacilityId(), temp.getAppointmentId()));
          	
          	// Transformed object is added to final result list
          	result.add(appt);
@@ -347,15 +346,16 @@ public class MDStaffRepository extends BaseRepository {
         return result;
     }
     
-    public MDStaffProviderAppointmentFacility getFacility(String facilityId) {
+    public MDStaffProviderAppointmentFacility getFacility(String facilityId, String appointmentId) {
         final String methodName = "getProviderAppointmentFacilities";
         start(methodName);
 
-        String sql = "SELECT fac.* FROM mdstaff_facility fac WHERE fac.facility_Id = :facilityId";
-        
+        String sql = "SELECT fac.* FROM mdstaff_facility fac WHERE fac.facility_Id = :facilityId and fac.appointment_Id = :appointmentId ";
+          
         MDStaffProviderAppointmentFacilityTemp tempResult = null;
         try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
         	 query.bind("facilityId", facilityId);
+        	 query.bind("appointmentId", appointmentId);
         	 tempResult = query.mapToBean(MDStaffProviderAppointmentFacilityTemp.class).one();
         } catch (Exception ex) {
             log.error(methodName, ex);
@@ -364,6 +364,7 @@ public class MDStaffRepository extends BaseRepository {
         // MDStaffProviderAppointmentFacilityTemp class is used to accept the mergeFieldNames and mergeFieldValues as String, which are returned as String by Database Query 
                
         MDStaffProviderAppointmentFacility result = new MDStaffProviderAppointmentFacility();
+        result.setAppointmentId(tempResult.getAppointmentId());
         result.setFacilityId(tempResult.getFacilityId());
         result.setCode(tempResult.getCode());
         result.setName(tempResult.getName());

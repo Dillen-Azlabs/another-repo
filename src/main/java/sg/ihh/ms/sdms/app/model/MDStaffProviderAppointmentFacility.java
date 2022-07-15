@@ -8,7 +8,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 				"LazyLoad","CustomColumn_ID", "ID", "ObjectDescription", "UseCustomFields","RelativeObjectName","IsNew","IgnoredRequiredFields","IsLoaded"})
 
 public class MDStaffProviderAppointmentFacility {
-    
+	
+	//JsonProperty is not required
+	private String appointmentId;
+	    
     @JsonProperty("FacilityID")
     private String facilityId;
 
@@ -133,7 +136,15 @@ public class MDStaffProviderAppointmentFacility {
         // Empty Constructor
     }
     
-    public String getFacilityId() {
+    public String getAppointmentId() {
+		return appointmentId;
+	}
+
+	public void setAppointmentId(String appointmentId) {
+		this.appointmentId = appointmentId;
+	}
+
+	public String getFacilityId() {
         return facilityId;
     }
 
