@@ -36,6 +36,8 @@ public class LocationSd extends BaseModel {
     private String fax;
     @JsonProperty("email")
     private String email;
+    @JsonProperty("hospitals")
+    private List<String> hospitals;
     @JsonProperty("order")
     protected int displayOrder;
 
@@ -145,6 +147,14 @@ public class LocationSd extends BaseModel {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<String> getHospitals() {
+        return hospitals;
+    }
+
+    public void setHospitals(List<String> hospitals) {
+        this.hospitals = hospitals;
     }
 
     public int getDisplayOrder() {
