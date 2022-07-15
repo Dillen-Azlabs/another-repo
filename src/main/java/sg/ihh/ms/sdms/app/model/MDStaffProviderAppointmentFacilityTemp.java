@@ -6,6 +6,7 @@ package sg.ihh.ms.sdms.app.model;
 */
 public class MDStaffProviderAppointmentFacilityTemp {
 	
+	private String appointmentId;	
     private String facilityId;
     private String code;
     private String name;
@@ -14,8 +15,8 @@ public class MDStaffProviderAppointmentFacilityTemp {
     private String city;
     private String state;
     private String zip;
-    private String telephone;
     //10
+    private String telephone;    
     private String fax;
     private String email;
     private String url;
@@ -25,8 +26,8 @@ public class MDStaffProviderAppointmentFacilityTemp {
     private String comments;
     private String country;
     private boolean isArchived;
-    private String uid;
     //20
+    private String uid;    
     private boolean archived;
     private String addressBlock;
 	private String mergeFieldNames;
@@ -36,8 +37,8 @@ public class MDStaffProviderAppointmentFacilityTemp {
     private String columnId;
     private String userName;
     private String objectName;
-    private boolean loadExistingObject;
     //30
+    private boolean loadExistingObject;    
     private String subType;
     private boolean lazyLoad;
     private String customColumnId;
@@ -53,7 +54,15 @@ public class MDStaffProviderAppointmentFacilityTemp {
         // Empty Constructor
     }
 
-    public String getFacilityId() {
+    public String getAppointmentId() {
+		return appointmentId;
+	}
+
+	public void setAppointmentId(String appointmentId) {
+		this.appointmentId = appointmentId;
+	}
+
+	public String getFacilityId() {
         return facilityId;
     }
 
