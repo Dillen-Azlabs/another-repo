@@ -27,8 +27,10 @@ public class LocationSdRepository  extends BaseRepository {
         for (String itemUrl : itemUrls){
             List<LocationSd> ls = getLocationSd(version, languageList, itemUrl);
             List<LocationSdContact> lsc = getLocationSdContactByItemUrl(version, languageList, itemUrl);
+            List<String> hospitalList = checkHospitalList(version, languageList, itemUrl, null, null, null);
             for (LocationSd lsResult : ls){
                 lsResult.setContactNumbers(lsc);
+                lsResult.setHospitals(hospitalList);
                 result.add(lsResult);
             }
         }
@@ -115,6 +117,8 @@ public class LocationSdRepository  extends BaseRepository {
         for (LocationSd locationSd : result) {
 
             locationSd.setContactNumbers(getLocationSdContact(version,languageList, locationSd.getUid()));
+
+            locationSd.setHospitals(checkHospitalList(version,languageList,null, itemUrlMain, itemUrlSub, hospitalCode));
         }
 
         completed(methodName);
@@ -224,4 +228,67 @@ public class LocationSdRepository  extends BaseRepository {
     }
 
     //END - Get Locations by Hospital  and Location Type
+
+    // for get Hospital
+
+    private List<String> checkHospitalList(Version version, List<String> languageList, String itemUrls, String itemUrlMain,String itemUrlSub, String hospitalCode){
+        List<String> result = new ArrayList<>();
+        if(hospitalCode == null && itemUrlMain == null && itemUrlSub == null){
+            result = getHospitalListByUrl(version, languageList, itemUrls, null);
+        }else{
+            result = getHospitalListByCentreService(version, languageList, itemUrlMain, itemUrlSub, hospitalCode);
+        }
+
+        return  result;
+    }
+    private List<String> getHospitalListByUrl(Version version, List<String> languageList, String itemUrls, String hospitalCode){
+        final String methodName = "getHospitalList";
+        start(methodName);
+        String sql ="SELECT h.hospital  FROM location_sd ls   " +
+                "LEFT JOIN location_sd_contact lsc  ON ls.uid = lsc.location_sd_uid AND ls.status = lsc.status AND ls.language_code = lsc.language_code   " +
+                "LEFT JOIN country_of_residence cor ON ls.cor_uid  = cor.uid AND ls.status = cor.status AND ls.language_code = cor.language_code    " +
+                "LEFT JOIN location_sd_hospital lsh ON ls.uid  = lsh.location_sd_uid AND lsc.status = lsh.status AND lsc.language_code = lsh.language_code   " +
+                "LEFT JOIN hospital h ON lsh.hospital_uid  = h.uid  " +
+                "WHERE ls.language_code IN(<languageList>) AND ls.item_url = :itemUrls " +
+                "AND ls.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<String> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrls", itemUrls);
+            result = query.mapTo(String.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
+    private List<String> getHospitalListByCentreService(Version version, List<String> languageList, String itemUrlMain,String itemUrlSub, String hospitalCode){
+        final String methodName = "getHospitalListByCentreService";
+        start(methodName);
+        String sql ="SELECT h.hospital FROM centre_service_sub_sd csss  " +
+                "LEFT JOIN centre_service_main_sd csms ON csms.uid = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code    " +
+                "LEFT JOIN centre_service_sub_sd_location csssl ON csss.uid = csssl.centre_service_sub_sd_uid AND csss.status = csssl.status AND csss.language_code = csssl.language_code   " +
+                "LEFT JOIN location_sd ls  ON ls.uid = csssl.location_uid AND ls.status = csssl.status AND ls.language_code = csssl.language_code  " +
+                "LEFT JOIN centre_service_sub_sd_location_hospital cssslh ON csssl.uid  = cssslh.centre_service_sub_sd_location_uid AND cssslh.status = csssl.status AND cssslh.language_code = csssl.language_code   " +
+                "LEFT JOIN hospital h ON cssslh.hospital_uid  = h.uid  " +
+                "WHERE ls.language_code IN(<languageList>) AND csms.item_url = :itemUrlMain AND csss.item_url = :itemUrlSub  AND h.hospital = :hospital " +
+                "AND ls.publish_flag = {PUBLISHED}";
+
+        sql = getPublishVersion(version, sql);
+
+        List<String> result = new ArrayList<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlMain", itemUrlMain).bind("itemUrlSub", itemUrlSub).bind("hospital", hospitalCode);
+            result = query.mapTo(String.class).list();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
 }
