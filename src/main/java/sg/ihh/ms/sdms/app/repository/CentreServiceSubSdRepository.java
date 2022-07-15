@@ -85,14 +85,16 @@ public class CentreServiceSubSdRepository extends BaseRepository {
     //END - Get Locations by Centre & Service
 
     //Start Get Centre & Service Sub Award List
-    public CentreServiceSubAward getCentreServiceSubAward(Version version, List<String> languageList,String centreServiceMUrl,String centreServiceSUrl, String hospitalCode) {
+    public CentreServiceSubAward getCentreServiceSubAward(Version version, List<String> languageList,String centreServiceMUrl,String centreServiceSUrl, String hospitalCode, String country) {
         final String methodName = "getCentreServiceSubAward";
         start(methodName);
 
         String sql = "SELECT csss.uid, csss.language_code, csss.publish_flag, csss.created_dt, csss.modified_dt FROM centre_service_sub_sd csss    " +
-                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code   " +
-                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON csss.uid = csssas.centre_service_sub_sd_uid AND csss.status = csssas.status AND csss.language_code = csssas.language_code  " +
+                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code    " +
+                "LEFT JOIN centre_service_sub_sd_award_section csssas  ON csss.uid = csssas.centre_service_sub_sd_uid AND csss.status = csssas.status AND csss.language_code = csssas.language_code   " +
                 "LEFT JOIN centre_service_sub_sd_award_section_hospital csssash  ON csssas.uid = csssash.centre_service_sub_sd_award_section_uid  AND csssash.status = csssas.status AND csssash.language_code = csssas.language_code " +
+                "LEFT JOIN centre_service_sub_sd_award_country csssac ON csssas.uid = csssac.centre_service_sub_sd_award_uid  AND csssac.status = csssas.status AND csssac.language_code = csssas.language_code " +
+                "LEFT JOIN country_of_residence cor ON csssac.cor_uid = cor.uid AND csssac.status = cor.status AND csssac.language_code = cor.language_code  " +
                 "LEFT JOIN hospital h ON csssash.hospital_uid = h.uid " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND h.hospital = :hospital AND csms.item_url = :itemUrlMain  " +
                 "AND csss.publish_flag = {PUBLISHED}";

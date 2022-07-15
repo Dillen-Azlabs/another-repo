@@ -55,14 +55,15 @@ public class CentreServiceSubService extends BaseService{
             @RequestParam("languageCode") String languageCode,
             @RequestParam("centreServiceMUrl") String centreServiceMUrl,
             @RequestParam("centreServiceSUrl") String centreServiceSUrl,
-            @RequestParam("hospitalCode") String hospitalCode) {
+            @RequestParam("hospitalCode") String hospitalCode,
+            @RequestParam("country") String country) {
         final String methodName = "getCentreServiceSubAwardList";
         start(methodName);
 
         // Language Code
         List<String> languageList = getLanguageList(languageCode);
 
-        CentreServiceSubAward result = repository.getCentreServiceSubAward(Version.getVersion(version), languageList, centreServiceMUrl,centreServiceSUrl, hospitalCode);
+        CentreServiceSubAward result = repository.getCentreServiceSubAward(Version.getVersion(version), languageList, centreServiceMUrl,centreServiceSUrl, hospitalCode, country);
 
         CentreServiceSubAwardListResponse response = new CentreServiceSubAwardListResponse(result);
 
