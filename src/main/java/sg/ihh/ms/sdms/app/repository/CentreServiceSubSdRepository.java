@@ -334,9 +334,6 @@ public class CentreServiceSubSdRepository extends BaseRepository {
 
         String sql = "SELECT csss.*  FROM centre_service_sub_sd csss    " +
                 "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code  = csssmh.language_code " +
-                "LEFT JOIN hospital h  ON h.uid  = csssmh.hospital_uid " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
@@ -351,34 +348,35 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         }
 
         if (result != null) {
-            Map<String, Object> metadataDetails = getMetadataBasicDetail(version, languageList, centreServiceSUrl,centreServiceMUrl, hospitalCode);
+            Map<String, Object> metadataDetailMain = getMetadataBasicDetailMain(version, languageList, centreServiceSUrl,centreServiceMUrl, hospitalCode);
+            Map<String, Object> metadataDetailSub = getMetadataBasicDetailSub(version, languageList, centreServiceSUrl,centreServiceMUrl, hospitalCode);
             Map<String, Object> centreServiceMain = getCentreServiceMain(version, languageList, centreServiceSUrl,centreServiceMUrl);
 
-            if (metadataDetails.get("hospital_main_image") != null && !metadataDetails.get("hospital_main_image").equals("")) {
-                result.setMainImage((String) metadataDetails.get("hospital_main_image"));
+            if (metadataDetailMain.get("hospital_main_image") != null && !metadataDetailMain.get("hospital_main_image").equals("")) {
+                result.setMainImage((String) metadataDetailMain.get("hospital_main_image"));
             }else {
                 result.setMainImage((String) centreServiceMain.get("main_image"));
             }
-            if (metadataDetails.get("hospital_main_image_alt_text") != null && !metadataDetails.get("hospital_main_image_alt_text").equals("")) {
-                result.setMainImageAltText((String) metadataDetails.get("hospital_main_image_alt_text"));
+            if (metadataDetailMain.get("hospital_main_image_alt_text") != null && !metadataDetailMain.get("hospital_main_image_alt_text").equals("")) {
+                result.setMainImageAltText((String) metadataDetailMain.get("hospital_main_image_alt_text"));
             }else{
                 result.setMainImageAltText((String) centreServiceMain.get("main_image_alt_text"));
             }
 
-            if (metadataDetails.get("meta_title") != null && !metadataDetails.get("meta_title").equals("")) {
-                result.setMetaTitle((String) metadataDetails.get("meta_title"));
+            if (metadataDetailSub.get("meta_title") != null && !metadataDetailSub.get("meta_title").equals("")) {
+                result.setMetaTitle((String) metadataDetailSub.get("meta_title"));
             }else {
                 result.setMetaTitle("");
             }
-            if (metadataDetails.get("meta_description") != null && !metadataDetails.get("meta_description").equals("")) {
-                result.setMetaDescription((String) metadataDetails.get("meta_description"));
+            if (metadataDetailSub.get("meta_description") != null && !metadataDetailSub.get("meta_description").equals("")) {
+                result.setMetaDescription((String) metadataDetailSub.get("meta_description"));
             }else {
                 result.setMetaDescription("");
             }
             result.setCentreServiceMPageTitle((String) centreServiceMain.get("page_title"));
             result.setSummary((String) centreServiceMain.get("summary"));
             result.setHideHeroImage((boolean) centreServiceMain.get("hide_hero_image"));
-            result.setSocialSummary((String) metadataDetails.get("social_summary"));
+            result.setSocialSummary((String) metadataDetailMain.get("social_summary"));
         }else{
             result = new CentreServiceSubBasicDetail();
         }
@@ -394,9 +392,6 @@ public class CentreServiceSubSdRepository extends BaseRepository {
 
         String sql = "SELECT csms.main_image, csms.main_image_alt_text, csms.page_title, csms.summary, csms.hide_hero_image FROM centre_service_sub_sd csss   " +
                 "LEFT JOIN centre_service_main_sd csms ON csms.uid  = csss.centre_service_main_sd_uid AND csss.status = csms.status AND csss.language_code = csms.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid  AND csss.status = csssm.status AND csss.language_code = csssm.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid  = csssmh.centre_service_sub_sd_metadata_uid AND csssm.status = csssmh.status AND csssm.language_code = csssmh.language_code " +
-                "LEFT JOIN hospital h  ON h.uid  = csssmh.hospital_uid " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain " +
                 "AND csss.publish_flag = {PUBLISHED}";
 
@@ -413,16 +408,41 @@ public class CentreServiceSubSdRepository extends BaseRepository {
         completed(methodName);
         return result;
     }
-    public Map<String, Object> getMetadataBasicDetail(Version version, List<String> languageList, String centreServiceSUrl,String centreServiceMUrl, String hospitalCode) {
+    public Map<String, Object> getMetadataBasicDetailMain(Version version, List<String> languageList, String centreServiceSUrl,String centreServiceMUrl, String hospitalCode) {
         final String methodName = "getMetadataBasicDetail";
         start(methodName);
 
-        String sql = "SELECT csmsm.hospital_main_image, csmsm.hospital_main_image_alt_text, csmsm.social_summary, csssm.meta_title, csssm.meta_description FROM centre_service_sub_sd csss   " +
+        String sql = "SELECT csmsm.hospital_main_image, csmsm.hospital_main_image_alt_text, csmsm.social_summary FROM centre_service_sub_sd csss   " +
                 "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code   " +
                 "LEFT JOIN centre_service_main_sd_metadata csmsm ON csms.uid = csmsm.centre_service_main_sd_uid AND csms.status = csmsm.status AND csms.language_code  = csmsm.language_code  " +
-                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid AND csss.status = csssm.status AND csss.language_code = csssm.language_code   " +
                 "LEFT JOIN hospital hm  ON hm.uid  = csmsm.hospital_uid " +
                 "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND  hm.hospital = :hospital " +
+                "AND csss.publish_flag = {PUBLISHED} ";
+
+        sql = getPublishVersion(version, sql);
+
+        Map<String, Object> result = new HashMap<>();
+        try (Handle h = getHandle(); Query query = h.createQuery(sql)) {
+            query.bindList("languageList", languageList).bind("itemUrlSub", centreServiceSUrl).bind("itemUrlMain", centreServiceMUrl).bind("hospital", hospitalCode);
+            result = query.mapToMap().one();
+
+        } catch (Exception ex) {
+            log.error(methodName, ex);
+        }
+        completed(methodName);
+        return result;
+    }
+
+    public Map<String, Object> getMetadataBasicDetailSub(Version version, List<String> languageList, String centreServiceSUrl,String centreServiceMUrl, String hospitalCode) {
+        final String methodName = "getMetadataBasicDetail";
+        start(methodName);
+
+        String sql = "SELECT  csssm.meta_title, csssm.meta_description FROM centre_service_sub_sd csss   " +
+                "LEFT JOIN centre_service_main_sd csms ON csss.centre_service_main_sd_uid  = csms.uid  AND csss.status = csms.status AND csss.language_code = csms.language_code   " +
+                "LEFT JOIN centre_service_sub_sd_metadata csssm ON csss.uid = csssm.centre_service_sub_sd_uid AND csss.status = csssm.status AND csss.language_code = csssm.language_code " +
+                "LEFT JOIN  centre_service_sub_sd_metadata_hospital csssmh ON csssm.uid = csssmh.centre_service_sub_sd_metadata_uid AND csssmh.status = csssm.status AND csssmh.language_code = csssm.language_code " +
+                "LEFT JOIN hospital hs  ON hs.uid  = csssmh.hospital_uid  " +
+                "WHERE csss.language_code IN(<languageList>) AND csss.item_url = :itemUrlSub AND csms.item_url = :itemUrlMain AND  hs.hospital = :hospital " +
                 "AND csss.publish_flag = {PUBLISHED} ";
 
         sql = getPublishVersion(version, sql);
