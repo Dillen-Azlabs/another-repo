@@ -51,7 +51,7 @@ public class CentreServiceMainSdRepository extends BaseRepository{
                 "LEFT JOIN centre_service_main_sd_metadata csmsm  ON ( csms.uid = csmsm.centre_service_main_sd_uid AND  csms.status = csmsm.status AND  csms.language_code = csmsm.language_code) " +
                 "LEFT JOIN hospital h ON ( csmsm.hospital_uid  = h.uid AND csmsm.language_code IN(<languageList>)) " +
                 "WHERE csms.language_code IN(<languageList>) AND h.hospital = :hospital AND csms.uid = :uid" +
-                " AND csms.publish_flag = {PUBLISHED}";
+                " AND csms.publish_flag = {PUBLISHED} ";
 
         sql = getPublishVersion(version, sql);
 
