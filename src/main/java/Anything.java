@@ -5,6 +5,4 @@ public class Anything {
     // another testing
 
     // testing again
-
-    // last one testing
 }
